@@ -1,4 +1,4 @@
-<img src="http://detstvoto.net/uploads/posts/2019-03/1551803344_ne-se-surdi.jpg" width="300">
+<img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300">
 
 # Не се сърди, човече
 
