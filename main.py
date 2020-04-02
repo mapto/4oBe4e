@@ -6,13 +6,23 @@ players = 4
 
 status = {1:[0]*4, 2:[0]*4, 3:[0]*4, 4:[0]*4}
 
+
+def redraw_board():
+    """Draws the board with the current pieces. Do with ASCII for now.
+    @vkantsev can do this
+    """
+    pass
+
 def roll_dice():    
     """Rolls a dice: randomly generate a value between 1 and 6. Use `import random`.
+    @lankata can do this
     """
     pass
 
 def ask_move(player):
-    """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3."""
+    """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
+    @lankata can do this
+    """
     pass
 
 def do_move(player, move):
@@ -29,11 +39,13 @@ def end_game(winner):
     """Celebrate the winning player."""
     print(f"Player {winner} has won!")
 
+
 def start():
     """The main game loop"""
     win = False
     player = 0
     while not win:
+        redraw_board()
         dice = roll_dice()
         
         valid = False
