@@ -1,3 +1,5 @@
+<img src="http://detstvoto.net/uploads/posts/2019-03/1551803344_ne-se-surdi.jpg" width="300">
+
 # Не се сърди, човече
 
 https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
