@@ -1,5 +1,6 @@
+*.code-workspace
+*.ipynb
 .env
 .venv
 .vscode
 __pycache__/
-*.code-workspace
