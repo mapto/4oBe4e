@@ -20,7 +20,7 @@ https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
 # NB: Assuming you are in the project folder
 $ python3 -m pip install --upgrade pip
 $ python3 -m pip install pipenv
-$ pipenv --python 3.8
+$ pipenv --python 3.6
 $ pipenv install --dev --ignore-pipfile
 $ pipenv shell
 ```
