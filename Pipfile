@@ -8,7 +8,6 @@ pytest = "*"
 black = "*"
 
 [packages]
-black = "*"
 
 [requires]
 python_version = "3.8"
