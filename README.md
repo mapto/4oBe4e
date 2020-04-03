@@ -1,3 +1,5 @@
+![build](https://github.com/mapto/4oBe4e/workflows/build/badge.svg)
+
 <img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300">
 
 # Не се сърди, човече
