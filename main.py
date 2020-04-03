@@ -11,6 +11,9 @@ def redraw_board():
     """Draws the board with the current pieces. Do with ASCII for now.
     Return a 21x21 board, represented by 21 lines of 21 characters each.
     @vkantsev can do this
+
+    >>> result = redraw_board(); lines = result.split("\n"); len(lines) == 21 and len(result) = 22 * 21 
+    True
     """
     # TODO: Implement inside of board. As first step draw a blank board.
     # TODO: Then we'll discuss how to add the pieces with their current positions 
@@ -29,14 +32,18 @@ def redraw(player):
 def roll_dice():    
     """Rolls a dice: randomly generate a value between 1 and 6. Use `import random`.
     @lankata can do this
+
+    >>> result = roll_dice(); type(result) == int and 0 < result and result < 7
+    True
     """
-    pass
+    # TODO: Implement
+    return 6
 
 def ask_move(player):
     """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
     @lankata can do this
     """
-    print(f"It is player {player}'s turn.")
+    print("It is player {}'s turn.".format(player))
     print()
     pass
 
@@ -52,7 +59,7 @@ def check_endgame():
 
 def end_game(winner):
     """Celebrate the winning player."""
-    print(f"Player {winner} has won!")
+    print("Player {} has won!".format(winner))
 
 
 def start():
@@ -60,6 +67,7 @@ def start():
     win = False
     player = 0
     redraw(player)
+
     while not win:
         dice = roll_dice()
         
@@ -72,6 +80,7 @@ def start():
         if not win and dice != 6:
             player = (player + 1) % players
         redraw(player)
+        
     end_game(player)
 
 if __name__ == "__main__":
