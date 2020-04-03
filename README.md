@@ -1,5 +1,5 @@
 <p align="right"><img src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg"></p>
-<p align="center"<img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300"></p>
+<p align="center"><img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300"></p>
 
 # Не се сърди, човече
 
