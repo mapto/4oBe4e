@@ -58,9 +58,20 @@ def ask_move(player):
     """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
     @lankata can do this
     """
-    print(f"It is player {player}'s turn.")
-    print()
-    pass
+    x = int(input("Please choose a pawn: "))
+
+    #Please enter an integer: 42
+    if x <= 1:
+        x = 1
+        
+        return('ONE')
+    elif x == 2:
+        return('TWO')
+    elif x == 3:
+        return('THREE')
+    else:
+        return('FOUR') 
+
 
 def do_move(player, move):
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
