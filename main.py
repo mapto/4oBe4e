@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 """The main standalone application for github.com/mapto/4oBe4e"""
+import random
 
 players = 4
 
@@ -50,9 +51,20 @@ def redraw(player):
 
 def roll_dice():    
     """Rolls a dice: randomly generate a value between 1 and 6. Use `import random`.
-    @lankata can do this
     """
-    pass
+    sides = 6 
+    roll_again = input("Ready to roll? ENTER=Roll. Q=Quit." )
+    if roll_again.lower() != "q":
+        num_rolled = roll(sides)
+        print("You rolled a", num_rolled)
+         
+    print("Play yopr number!")
+    return num_rolled
+
+def roll(sides = 6):
+    num_rolled = random.randint(1, sides)
+    return num_rolled
+     
 
 def ask_move(player):
     """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
