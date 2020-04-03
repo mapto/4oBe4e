@@ -1,6 +1,4 @@
-![build](https://github.com/mapto/4oBe4e/workflows/build/badge.svg)
-
-<img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300">
+<img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300" align="middle">
 
 # Не се сърди, човече
 
@@ -25,3 +23,5 @@ $ pipenv --python /usr/bin/python3
 $ pipenv install --dev --ignore-pipfile
 $ pipenv shell
 ```
+
+![build](https://github.com/mapto/4oBe4e/workflows/build/badge.svg)
