@@ -6,19 +6,41 @@ players = 4
 
 status = {1:[0]*4, 2:[0]*4, 3:[0]*4, 4:[0]*4}
 
-
 def redraw_board():
-    """Draws the board with the current pieces. Do with ASCII for now.
-    Return a 21x21 board, represented by 21 lines of 21 characters each.
-    @vkantsev can do this
-    """
-    # TODO: Implement inside of board. As first step draw a blank board.
-    # TODO: Then we'll discuss how to add the pieces with their current positions 
-    result = "/" + "-" * 19 + "\\\n"
-    for i in range(0, 19):
-        result += "|" + " " * 19 + "|\n"
-    result += "\\" + "-" * 19 + "/\n"
-    return result
+    """ Draw an ASCII board with the current pieces. """
+
+
+    # TODO (@vkantsev): Discuss how to add the pieces with their current positions
+
+    BOARD_WIDTH = 45  # width excluding border
+    POS_SHAPE = '( )'  # unit position shape
+    FILLER = ' * '  # filler
+    BORDER_H = '-' # horizontal
+    BORDER_V = '|' # vertical
+
+    # Header
+    board = "/" + BORDER_H * BOARD_WIDTH + "\\" + "\n"
+
+    # Top half
+    board += BORDER_V + (POS_SHAPE * 3).center(BOARD_WIDTH) + BORDER_V + "\n"
+    for i in range(5):
+        board += BORDER_V + "( ) * ( )".center(BOARD_WIDTH) + BORDER_V + "\n"
+
+    # Middle
+    board += BORDER_V + POS_SHAPE * 7 + FILLER + POS_SHAPE * 7 + BORDER_V + "\n"
+    board += BORDER_V + POS_SHAPE + FILLER * 13 + POS_SHAPE + BORDER_V + "\n"
+    board += BORDER_V + POS_SHAPE * 7 + FILLER + POS_SHAPE * 7 + BORDER_V + "\n"
+
+    # Lower half
+    for i in range(5):
+        board += BORDER_V + (POS_SHAPE + FILLER + POS_SHAPE).center(BOARD_WIDTH) + BORDER_V + "\n"
+    board += BORDER_V + (POS_SHAPE * 3).center(BOARD_WIDTH) + BORDER_V + "\n"
+
+    # Footer
+    board += "\\" + BORDER_H * BOARD_WIDTH + "/" + "\n"
+
+    return board
+
 
 def redraw(player):
     """The screen update function. Do not modify this for now."""
@@ -62,7 +84,7 @@ def start():
     redraw(player)
     while not win:
         dice = roll_dice()
-        
+
         valid = False
         while not valid: 
             move = ask_move(player)
