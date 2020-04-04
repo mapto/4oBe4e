@@ -1,5 +1,6 @@
 *.code-workspace
 *.ipynb
+*.pyc
 .env
 .venv
 .vscode
