@@ -1,8 +1,8 @@
-![build status](https://github.com/mapto/4oBe4e/workflows/build/badge.svg)
-
 <p align="center"><img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300"></p>
 
 <h1 align="center">Не се сърди, човече!</h1>
+
+<p align="left"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg">
 
 ## Game rules
 https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
