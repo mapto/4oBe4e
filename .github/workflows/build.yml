@@ -32,3 +32,7 @@ jobs:
       run: |
         export PYTHONPATH=$PWD
         pipenv run pytest .
+    - name: Test with doctest
+      run: |
+        pipenv run python3 -m doctest -v *.py
+
