@@ -108,6 +108,7 @@ def end_game(winner):
     """Celebrate the winning player."""
     print(f"Player {winner} has won!")
 
+
 def choose_first():
     """ score index is 0..3, i.e. player-1 (player are 1..4)
     0 means hasn't drawn, -1 means is already out of drawing
