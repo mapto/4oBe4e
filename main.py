@@ -108,11 +108,35 @@ def end_game(winner):
     """Celebrate the winning player."""
     print(f"Player {winner} has won!")
 
+def choose_first():
+    """ score index is 0..3, i.e. player-1 (player are 1..4)
+    0 means hasn't drawn, -1 means is already out of drawing
+    """
+    m = 0
+    score = [0] * players
+    need_more = True
+    while need_more:
+        for i in range(len(score)):
+            if score[i] != -1:
+                score[i] = roll_dice()
+        m = max(score)
+        if len([v for v in score if v == m]) > 1:
+            for i in range(len(score)):
+                if score[i] == m:
+                    score[i] = 0
+                else:
+                    score[i] = -1
+        else:
+            need_more = False
+    first = score.index(m) + 1
+    print("Player {} plays first".format(first))
+    return first
+
 
 def start():
     """The main game loop"""
     win = False
-    player = 0
+    player = choose_first()
     redraw(player)
     while not win:
         dice = roll_dice()
@@ -124,7 +148,7 @@ def start():
 
         win = check_endgame()
         if not win and dice != 6:
-            player = (player + 1) % players
+            player = ((player + 1) % players) + 1
         redraw(player)
     end_game(player)
 
