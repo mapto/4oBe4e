@@ -5,19 +5,19 @@ import random
 
 players = 4
 
-status = {1:[0]*4, 2:[0]*4, 3:[0]*4, 4:[0]*4}
+status = {1: [0] * 4, 2: [0] * 4, 3: [0] * 4, 4: [0] * 4}
+
 
 def redraw_board():
     """ Draw an ASCII board with the current pieces. """
 
-
     # TODO (@vkantsev): Discuss how to add the pieces with their current positions
 
     BOARD_WIDTH = 45  # width excluding border
-    POS_SHAPE = '( )'  # unit position shape
-    FILLER = ' * '  # filler
-    BORDER_H = '-' # horizontal
-    BORDER_V = '|' # vertical
+    POS_SHAPE = "( )"  # unit position shape
+    FILLER = " * "  # filler
+    BORDER_H = "-"  # horizontal
+    BORDER_V = "|"  # vertical
 
     # Header
     board = "/" + BORDER_H * BOARD_WIDTH + "\\" + "\n"
@@ -34,7 +34,12 @@ def redraw_board():
 
     # Lower half
     for i in range(5):
-        board += BORDER_V + (POS_SHAPE + FILLER + POS_SHAPE).center(BOARD_WIDTH) + BORDER_V + "\n"
+        board += (
+            BORDER_V
+            + (POS_SHAPE + FILLER + POS_SHAPE).center(BOARD_WIDTH)
+            + BORDER_V
+            + "\n"
+        )
     board += BORDER_V + (POS_SHAPE * 3).center(BOARD_WIDTH) + BORDER_V + "\n"
 
     # Footer
@@ -49,22 +54,24 @@ def redraw(player):
     print(redraw_board())
     print()
 
-def roll_dice():    
+
+def roll_dice():
     """Rolls a dice: randomly generate a value between 1 and 6. Use `import random`.
     """
-    sides = 6 
-    roll_again = input("Ready to roll? ENTER=Roll. Q=Quit." )
+    sides = 6
+    roll_again = input("Ready to roll? ENTER=Roll. Q=Quit.")
     if roll_again.lower() != "q":
         num_rolled = roll(sides)
         print("You rolled a", num_rolled)
-         
+
     print("Play yopr number!")
     return num_rolled
 
-def roll(sides = 6):
+
+def roll(sides=6):
     num_rolled = random.randint(1, sides)
     return num_rolled
-     
+
 
 def ask_move(player):
     """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
@@ -72,17 +79,17 @@ def ask_move(player):
     """
     x = int(input("Please choose a pawn: "))
 
-    #Please enter an integer: 42
+    # Please enter an integer: 42
     if x <= 1:
         x = 1
-        
-        return('ONE')
+
+        return "ONE"
     elif x == 2:
-        return('TWO')
+        return "TWO"
     elif x == 3:
-        return('THREE')
+        return "THREE"
     else:
-        return('FOUR') 
+        return "FOUR"
 
 
 def do_move(player, move):
@@ -90,10 +97,12 @@ def do_move(player, move):
     # TODO: Implement
     return True
 
+
 def check_endgame():
     """Check if any of the players has ended the game."""
     # TODO: Implement
     return True
+
 
 def end_game(winner):
     """Celebrate the winning player."""
@@ -109,7 +118,7 @@ def start():
         dice = roll_dice()
 
         valid = False
-        while not valid: 
+        while not valid:
             move = ask_move(player)
             valid = do_move(player, move)
 
@@ -118,6 +127,7 @@ def start():
             player = (player + 1) % players
         redraw(player)
     end_game(player)
+
 
 if __name__ == "__main__":
     start()
