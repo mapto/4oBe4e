@@ -9,7 +9,11 @@ status = {1: [0] * 4, 2: [0] * 4, 3: [0] * 4, 4: [0] * 4}
 
 
 def redraw_board():
-    """ Draw an ASCII board with the current pieces. """
+    """ Draw an ASCII board with the current pieces. 
+
+    >>> result = redraw_board(); lines = result.split("\n"); len(lines) == 21 and len(result) = 22 * 21 
+    True
+    """
 
     # TODO (@vkantsev): Discuss how to add the pieces with their current positions
 
@@ -57,6 +61,10 @@ def redraw(player):
 
 def roll_dice():
     """Rolls a dice: randomly generate a value between 1 and 6. Use `import random`.
+    @lankata can do this
+
+    >>> result = roll_dice(); type(result) == int and 0 < result and result < 7
+    True
     """
     sides = 6
     roll_again = input("Ready to roll? ENTER=Roll. Q=Quit.")
@@ -106,7 +114,8 @@ def check_endgame():
 
 def end_game(winner):
     """Celebrate the winning player."""
-    print(f"Player {winner} has won!")
+    print("Player {} has won!".format(winner))
+
 
 def choose_first():
     """ score index is 0..3, i.e. player-1 (player are 1..4)

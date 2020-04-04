@@ -27,7 +27,11 @@ jobs:
         pipenv install --dev --ignore-pipfile
     - name: Lint with Black
       run: |
+<<<<<<< HEAD
         pipenv run black --check .
+=======
+        pipenv run black .
+>>>>>>> doctest
     - name: Test with pytest
       run: |
         export PYTHONPATH=$PWD
