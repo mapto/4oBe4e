@@ -9,7 +9,11 @@ status = {1: [0] * 4, 2: [0] * 4, 3: [0] * 4, 4: [0] * 4}
 
 
 def redraw_board():
-    """ Draw an ASCII board with the current pieces. """
+    """ Draw an ASCII board with the current pieces. 
+
+    >>> result = redraw_board(); lines = result.split("\n"); len(lines) == 21 and len(result) = 22 * 21 
+    True
+    """
 
     # TODO (@vkantsev): Discuss how to add the pieces with their current positions
 
@@ -55,16 +59,21 @@ def redraw(player):
     print()
 
 
-def roll_dice():
+def roll_dice(player):
     """Rolls a dice: randomly generate a value between 1 and 6. Use `import random`.
+    @lankata can do this
+
+    >>> result = roll_dice(); type(result) == int and 0 < result and result < 7
+    True
     """
     sides = 6
-    roll_again = input("Ready to roll? ENTER=Roll. Q=Quit.")
+    num_rolled = random.randint(1, sides)
+    roll_again = input("Играч {}: Хвърли зара = ENTER ".format(player))
     if roll_again.lower() != "q":
         num_rolled = roll(sides)
-        print("You rolled a", num_rolled)
+        print("Ти хвърли ", num_rolled)
 
-    print("Play yopr number!")
+    print("Играй твоя зар!")
     return num_rolled
 
 
@@ -106,7 +115,7 @@ def check_endgame():
 
 def end_game(winner):
     """Celebrate the winning player."""
-    print(f"Player {winner} has won!")
+    print("Player {} has won!".format(winner))
 
 
 def choose_first():
@@ -119,7 +128,7 @@ def choose_first():
     while need_more:
         for i in range(len(score)):
             if score[i] != -1:
-                score[i] = roll_dice()
+                score[i] = roll_dice(i + 1)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
             for i in range(len(score)):
@@ -140,7 +149,7 @@ def start():
     player = choose_first()
     redraw(player)
     while not win:
-        dice = roll_dice()
+        dice = roll_dice(player)
 
         valid = False
         while not valid:
