@@ -1,11 +1,13 @@
-<p align="center"><img src="https://i.ibb.co/6HMkNLY/1551803344-ne-se-surdi.jpg" width="300"></p>
-
 <h1 align="center">Не се сърди, човече!</h1>
 
 <p align="left"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg">
 
 ## Game rules
 https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
+
+## Mockups and Design
+
+<p align="center"><img src="https://github.com/mapto/4oBe4e/raw/master/mockup.png" width="100%"></p>
 
     /---------------------------------------------\
     |                  (D)(E)(1)   (0)(0)         |
@@ -31,7 +33,9 @@ How to move:
 - [F-J] - Safe zone, other players cannot enter the safe zone of a player. Pieces can stack on top of each other. If a player draws more than it takes to get to (K), the piece cannot move.
 - (K) - End position, each piece has its own position. Once all the pieces of a player are here, they win the game.
 
-## Git flow
+## Setup
+
+### Git flow
 ```
 # NB: Assuming you are in the project folder
 $ git status
@@ -41,7 +45,7 @@ $ git pull
 $ git push
 ```
 
-## Pipenv
+### Pipenv
 ```
 # NB: Assuming you are in the project folder
 $ export PIPENV_VENV_IN_PROJECT=true
