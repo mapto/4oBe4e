@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 """The main standalone application for github.com/mapto/4oBe4e"""
-import random
+
+from player import roll_dice, ask_move
+from game import choose_first, do_move, check_endgame
 
 players = 4
 
@@ -56,94 +58,15 @@ def redraw(player):
     print()
 
 
-def roll_dice(player):
-    """Asks player to roll dice"""
-    sides = 6
-    num_rolled = random.randint(1, sides)
-    roll_again = input("Играч {}: Хвърли зара = ENTER ".format(player))
-    if roll_again.lower() != "q":
-        num_rolled = roll(sides)
-        print("Ти хвърли ", num_rolled)
-
-    print("Играй твоя зар!")
-    return num_rolled
-
-
-def roll(sides=6):
-    """Rolls a dice: randomly generate a value between 1 and 6.
-
-    >>> result = roll(); type(result) == int and 0 < result and result < 7
-    True
-    """
-    num_rolled = random.randint(1, sides)
-    return num_rolled
-
-
-def ask_move(player):
-    """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
-    @lankata can do this
-    """
-    x = int(input("Please choose a pawn: "))
-
-    # Please enter an integer: 42
-    if x <= 1:
-        x = 1
-
-        return "ONE"
-    elif x == 2:
-        return "TWO"
-    elif x == 3:
-        return "THREE"
-    else:
-        return "FOUR"
-
-
-def do_move(player, move):
-    """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
-    # TODO: Implement
-    return True
-
-
-def check_endgame():
-    """Check if any of the players has ended the game."""
-    # TODO: Implement
-    return True
-
-
 def end_game(winner):
     """Celebrate the winning player."""
     print("Player {} has won!".format(winner))
 
 
-def choose_first():
-    """ score index is 0..3, i.e. player-1 (player are 1..4)
-    0 means hasn't drawn, -1 means is already out of drawing
-    """
-    m = 0
-    score = [0] * players
-    need_more = True
-    while need_more:
-        for i in range(len(score)):
-            if score[i] != -1:
-                score[i] = roll_dice(i + 1)
-        m = max(score)
-        if len([v for v in score if v == m]) > 1:
-            for i in range(len(score)):
-                if score[i] == m:
-                    score[i] = 0
-                else:
-                    score[i] = -1
-        else:
-            need_more = False
-    first = score.index(m) + 1
-    print("Player {} plays first".format(first))
-    return first
-
-
-def start():
+def start(players):
     """The main game loop"""
     win = False
-    player = choose_first()
+    player = choose_first(players)
     redraw(player)
     while not win:
         dice = roll_dice(player)
@@ -161,4 +84,4 @@ def start():
 
 
 if __name__ == "__main__":
-    start()
+    start(players)
