@@ -52,6 +52,6 @@ $ export PIPENV_VENV_IN_PROJECT=true
 $ pip3 install --upgrade pip
 $ pip3 install pipenv
 $ pipenv --python /usr/bin/python3
-$ pipenv install --dev --ignore-pipfile
+$ pipenv sync
 $ pipenv shell
 ```
