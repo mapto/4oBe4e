@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 black = "*"
+mypy = "*"
 
 [requires]
 #python_version = "3"  # Don't pin as currently there is no support for relative values (ref: https://github.com/pypa/pipenv/issues/2694)

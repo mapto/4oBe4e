@@ -35,4 +35,7 @@ jobs:
     - name: Test with doctest
       run: |
         pipenv run python3 -m doctest -v *.py
+    - name: Static type checking with mypy
+      run: |
+        pipenv run mypy *.py
 
