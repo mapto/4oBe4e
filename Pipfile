@@ -7,11 +7,10 @@ verify_ssl = true
 pytest = "*"
 black = "*"
 
-[packages]
-black = "*"
-
 [requires]
-python_version = "3"
+#python_version = "3"  # Don't pin as currently there is no support for relative values (ref: https://github.com/pypa/pipenv/issues/2694)
 
 [pipenv]
 allow_prereleases = true
+
+[packages]
