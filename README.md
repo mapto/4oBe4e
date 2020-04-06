@@ -2,7 +2,7 @@
 
 <p align="left"><a href="https://github.com/mapto/4oBe4e/actions"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg"></a></p>
 
-## Game rules
+## Game rules 
 https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
 
 ## Mockups and Design
