@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# coding: utf-8
 
 """The main standalone application for github.com/mapto/4oBe4e"""
 
