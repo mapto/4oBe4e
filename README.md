@@ -34,10 +34,10 @@ https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
 ```
 
 ### How to move:
-- (0) - Start positions, each piece has its own position. When a player draws 6, can take one piece out of start position and move it to their corresponding (1)
-- (1-E) - Shared positions, one player's pieces can stack on top of each other. Pieces move clockwise. If a piece lands on one piece of another player, the hit piece returns to its start position. If the target cell has more than one pieces, I cannot move my piece there. Once a full circle is performed, the piece turns from (E) to [F] and further
-- [F-J] - Safe zone, other players cannot enter the safe zone of a player. Pieces can stack on top of each other. If a player draws more than it takes to get to (K), the piece cannot move.
-- (K) - End position, each piece has its own position. Once all the pieces of a player are here, they win the game.
+- [ home ] - Home positions, each piece has its own position. When a player draws 6, can take one piece out of start position and move it to their corresponding (1)
+- ( path ) - Shared positions, one player's pieces can stack on top of each other. Pieces move clockwise. If a piece lands on one piece of another player, the hit piece returns to its start position. If the target cell has more than one pieces, I cannot move my piece there. Once a full circle is performed, the piece turns from (E) to <F> and further
+- < finish > - Safe zone, other players cannot enter the safe zone of a player. Pieces can stack on top of each other. If a player draws more than it takes to get to their corresponding { finish }, the piece cannot move.
+- { target } - Target positions, each piece has its own position. Once all the pieces of a player are here, they win the game.
 
 ## Setup
 
