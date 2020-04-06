@@ -2,21 +2,27 @@
 
 """The main standalone application for github.com/mapto/4oBe4e"""
 
-from player import roll_dice, ask_move
-from game import choose_first, do_move, check_endgame
+# standard
+from typing import Any, List, Tuple
+
+# external
+from colorama import Back, Fore, Style  # type: ignore
+
+
+# local
+from game import check_endgame, choose_first, do_move
+from player import ask_move, roll_dice
 
 players = 4
 
 status = {1: [0] * 4, 2: [0] * 4, 3: [0] * 4, 4: [0] * 4}
 
 
-def draw_board() -> str:
+def draw_board() -> Tuple[List[Any], ...]:
     """ Draw an ASCII board with the current pieces.
     """
 
     # TODO (@vkantsev): Discuss how to add the pieces with their current positions
-
-    from colorama import Back, Fore, Style
 
     ROWS = 19
     COLS = 19
@@ -98,19 +104,20 @@ def draw_board() -> str:
     return board
 
 
-def redraw(player, board):
+def redraw(player, board) -> None:
     """The screen update function. Do not modify this for now."""
 
     for row in board:
         print("".join(row))
 
 
-def end_game(winner):
+def end_game(winner) -> None:
     """Celebrate the winning player."""
+
     print("Player {} has won!".format(winner))
 
 
-def start(players, board):
+def start(players, board) -> None:
     """The main game loop"""
     win = False
     player = choose_first(players)
