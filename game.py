@@ -11,7 +11,7 @@ def do_move(player, move):
     return True
 
 
-def choose_first(players):
+def choose_first(players: int) -> int:
     """ score index is 0..3, i.e. player-1 (player are 1..4)
     0 means hasn't drawn, -1 means is already out of drawing
     """

@@ -1,5 +1,5 @@
 def test_draw_board():
-    """ Test against a base64 representation of the ASCII board. """
+    """ Test against a md5 representation of the ASCII board. """
 
     from main import draw_board
     from hashlib import md5

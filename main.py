@@ -72,7 +72,7 @@ def draw_board() -> Tuple[List[Any], ...]:
 
     # Fill player areas
     for p in players:
-        for h in p["home"]:
+        for h in p["home"]:  # type: ignore
             for c in h[1]:
                 board[h[0]][c] = eval(f"Fore.{p['colour']}") + HOME_SHAPE
         for t in p["target"]:
@@ -105,17 +105,17 @@ def draw_board() -> Tuple[List[Any], ...]:
     return board
 
 
-def redraw(player, board) -> None:
+def redraw(player: int, board) -> None:
     """The screen update function. Do not modify this for now."""
 
     for row in board:
         print("".join(row))
 
 
-def end_game(winner) -> None:
+def end_game(winner: int) -> None:
     """Celebrate the winning player."""
 
-    print("Player {} has won!".format(winner))
+    print("Player {:d} has won!".format(winner))
 
 
 def start(players, board) -> None:

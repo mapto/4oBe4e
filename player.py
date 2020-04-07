@@ -18,10 +18,10 @@ def roll_dice(player):
     return num_rolled
 
 
-def roll(sides=6):
+def roll(sides: int = 6) -> int:
     """Rolls a dice: randomly generate a value between 1 and 6.
 
-    >>> result = roll(); type(result) == int and 0 < result and result < 7
+    >>> result = roll(); 0 < result and result < 7
     True
     """
     num_rolled = random.randint(1, sides)
