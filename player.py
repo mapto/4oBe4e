@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+# coding: utf-8
 
 """The player interactions"""
 
@@ -28,20 +29,19 @@ def roll(sides: int = 6) -> int:
     return num_rolled
 
 
-def ask_move(player):
-    """Asks player which of his four pieces they want to move. Returns the piece index between 0 and 3.
-    @lankata can do this
-    """
-    x = int(input("Please choose a pawn: "))
+def ask_move(player: int) -> int:
+    """Ask player which pawn to move."""
 
-    # Please enter an integer: 42
-    if x <= 1:
-        x = 1
+    while True:
 
-        return "ONE"
-    elif x == 2:
-        return "TWO"
-    elif x == 3:
-        return "THREE"
-    else:
-        return "FOUR"
+        try:
+            pawn_number = int(input(f"Player {player} choose a pawn to move (0-3): "))
+        except ValueError:
+            continue
+        else:
+            if not (0 <= pawn_number <= 3):
+                continue
+            else:
+                break
+
+    return pawn_number
