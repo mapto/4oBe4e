@@ -19,7 +19,7 @@ players = 4
 status = {1: [0] * 4, 2: [0] * 4, 3: [0] * 4, 4: [0] * 4}
 
 
-def draw_board() -> Tuple[List[Any], ...]:
+def draw_board() -> List:
     """ Draw an ASCII board with the current pieces.
     """
 
@@ -33,35 +33,35 @@ def draw_board() -> Tuple[List[Any], ...]:
     FINISH_SHAPE = " @ "
 
     # Init board
-    board = tuple([[Style.RESET_ALL + "   "] * COLS for row in range(ROWS)])
+    board = [[Style.RESET_ALL + "   "] * COLS for row in range(ROWS)]
 
     # Define players' board attributes
-    players = (
+    players = [
         {
             "colour": "RED",
-            "home": ((5, (2, 3)), (6, (2, 3))),
-            "target": ((7, (6, 7)), (8, (6, 7))),
-            "finish": ((9, [*range(3, 8)]), None),
+            "home": [[5, [2, 3]], [6, [2, 3]]],
+            "target": [[7, [6, 7]], [8, [6, 7]]],
+            "finish": [[9, [*range(3, 8)]], None],
         },
         {
             "colour": "BLUE",
-            "home": ((2, (12, 13)), (3, (12, 13))),
-            "target": ((6, (10, 11)), (7, (10, 11))),
-            "finish": ((3, [9]), (4, [9]), (5, [9]), (6, [9]), (7, [9])),
+            "home": [[2, [12, 13]], [3, [12, 13]]],
+            "target": [[6, [10, 11]], [7, [10, 11]]],
+            "finish": [[3, [9]], [4, [9]], [5, [9]], [6, [9]], [7, [9]]],
         },
         {
             "colour": "GREEN",
-            "home": ((12, (15, 16)), (13, (15, 16))),
-            "target": ((10, (11, 12)), (11, (11, 12))),
-            "finish": ((9, [*range(11, 16)]), None),
+            "home": [[12, [15, 16]], [13, [15, 16]]],
+            "target": [[10, [11, 12]], [11, [11, 12]]],
+            "finish": [[9, [*range(11, 16)]], None],
         },
         {
             "colour": "YELLOW",
-            "home": ((15, (5, 6)), (16, (5, 6))),
-            "target": ((11, (7, 8)), (12, (7, 8))),
-            "finish": ((11, [9]), (12, [9]), (13, [9]), (14, [9]), (15, [9])),
+            "home": [[15, [5, 6]], [16, [5, 6]]],
+            "target": [[11, [7, 8]], [12, [7, 8]]],
+            "finish": [[11, [9]], [12, [9]], [13, [9]], [14, [9]], [15, [9]]],
         },
-    )
+    ]
 
     # Fill board frame
     for i in range(len(board)):
@@ -72,7 +72,7 @@ def draw_board() -> Tuple[List[Any], ...]:
 
     # Fill player areas
     for p in players:
-        for h in p["home"]:  # type: ignore
+        for h in p["home"]:
             for c in h[1]:
                 board[h[0]][c] = eval(f"Fore.{p['colour']}") + HOME_SHAPE
         for t in p["target"]:
@@ -84,14 +84,14 @@ def draw_board() -> Tuple[List[Any], ...]:
                     board[f[0]][c] = eval(f"Fore.{p['colour']}") + FINISH_SHAPE
 
     # Fill footpath
-    footpath = (
-        ((2, 16), (8, 9, 10)),
-        ((3, 4, 14, 15), (8, 10)),
-        ((5, 13), (5, 6, 7, 8, 10, 11, 12, 13)),
-        ((6, 7, 11, 12), (5, 13)),
-        ((8, 10), (2, 3, 4, 5, 13, 14, 15, 16)),
-        ([9], (2, 16)),
-    )
+    footpath = [
+        [[2, 16], [8, 9, 10]],
+        [[3, 4, 14, 15], [8, 10]],
+        [[5, 13], [5, 6, 7, 8, 10, 11, 12, 13]],
+        [[6, 7, 11, 12], [5, 13]],
+        [[8, 10], [2, 3, 4, 5, 13, 14, 15, 16]],
+        [[9], [2, 16]],
+    ]
 
     for p in footpath:
         for r in p[0]:
