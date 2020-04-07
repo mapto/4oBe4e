@@ -4,7 +4,7 @@
 """The main standalone application for github.com/mapto/4oBe4e"""
 
 # standard
-from typing import Any, List, Tuple
+from typing import Any, List, Tuple, Dict
 
 # external
 from colorama import Back, Fore, Style  # type: ignore
@@ -36,7 +36,7 @@ def draw_board() -> List:
     board = [[Style.RESET_ALL + "   "] * COLS for row in range(ROWS)]
 
     # Define players' board attributes
-    players = [
+    players: List[Dict[str, Any]] = [
         {
             "colour": "RED",
             "home": [[5, [2, 3]], [6, [2, 3]]],
@@ -84,7 +84,7 @@ def draw_board() -> List:
                     board[f[0]][c] = eval(f"Fore.{p['colour']}") + FINISH_SHAPE
 
     # Fill footpath
-    footpath = [
+    footpath: List[List[List[int]]] = [
         [[2, 16], [8, 9, 10]],
         [[3, 4, 14, 15], [8, 10]],
         [[5, 13], [5, 6, 7, 8, 10, 11, 12, 13]],
@@ -93,9 +93,9 @@ def draw_board() -> List:
         [[9], [2, 16]],
     ]
 
-    for p in footpath:
-        for r in p[0]:
-            for c in p[1]:
+    for fp in footpath:
+        for r in fp[0]:
+            for c in fp[1]:
                 board[r][c] = Fore.WHITE + FOOTPATH_SHAPE
 
     # Fill Trophies
