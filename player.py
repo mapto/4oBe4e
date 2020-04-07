@@ -30,7 +30,7 @@ def roll(sides: int = 6) -> int:
 
 
 def ask_move(player: int) -> int:
-    """Ask player which pawn to move."""
+    """Ask the player which pawn to move. Returns an integer between 0 and 3."""
 
     while True:
 
@@ -39,9 +39,7 @@ def ask_move(player: int) -> int:
         except ValueError:
             continue
         else:
-            if not (0 <= pawn_number <= 3):
-                continue
-            else:
+            if 0 <= pawn_number <= 3:
                 break
 
     return pawn_number
