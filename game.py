@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-"""The game logic"""
+"""The game logic.
+This should be independent of media used to interact with player."""
 
 from typing import Tuple
 
 from player import roll_dice
 
 
-def do_move(player, move):
+def do_move(player, move) -> bool:
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
     # TODO: Implement
     return True
@@ -24,6 +25,7 @@ def choose_first(players: int) -> int:
     while need_more:
         for i in range(len(score)):
             if score[i] != -1:
+                # TODO: Resolve problem that this relies on logic that involves console interaction
                 score[i] = roll_dice(i + 1)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
@@ -35,11 +37,10 @@ def choose_first(players: int) -> int:
         else:
             need_more = False
     first = score.index(m) + 1
-    print("Player {} plays first".format(first))
     return first
 
 
-def check_endgame():
+def check_endgame() -> bool:
     """Check if any of the players has ended the game."""
     # TODO: Implement
     return True

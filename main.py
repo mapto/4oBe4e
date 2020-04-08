@@ -19,7 +19,7 @@ players = 4
 status = {1: [0] * 4, 2: [0] * 4, 3: [0] * 4, 4: [0] * 4}
 
 
-def draw_board() -> List:
+def draw_board() -> List[List[Any]]:
     """ Draw an ASCII board with the current pieces.
     """
 
@@ -105,7 +105,7 @@ def draw_board() -> List:
     return board
 
 
-def draw_pieces_on_board(board: List, status: Dict) -> List:
+def draw_pieces_on_board(board: List[List[Any]], status: Dict[int, List[int]]) -> List[List[Any]]:
     """ It is not part of a job of this method to resolve game logic,
     such as collision of pieces of different players on the path"""
     for player in range(1, 5):
@@ -134,13 +134,15 @@ def end_game(winner: int) -> None:
     print("Player {:d} has won!".format(winner))
 
 
-def start(players, board) -> None:
+def start(players: int, board: List[List[Any]]) -> None:
     """The main game loop"""
     win = False
     player = choose_first(players)
+    print("Player {} plays first".format(player))
     redraw()
     while not win:
         dice = roll_dice(player)
+        print("Играй твоя зар!")
 
         valid = False
         while not valid:

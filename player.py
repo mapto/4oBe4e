@@ -1,31 +1,18 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-"""The player interactions"""
+"""The player text-based interactions.
+This is specific to standalone text-based application.
+Web application will use another implementation of this logic."""
 
-import random
+from util import roll
 
-
-def roll_dice(player):
+def roll_dice(player: int) -> int:
     """Asks player to roll dice"""
     sides = 6
-    num_rolled = random.randint(1, sides)
     roll_again = input("Играч {}: Хвърли зара = ENTER ".format(player))
-    if roll_again.lower() != "q":
-        num_rolled = roll(sides)
-        print("Ти хвърли ", num_rolled)
-
-    print("Играй твоя зар!")
-    return num_rolled
-
-
-def roll(sides: int = 6) -> int:
-    """Rolls a dice: randomly generate a value between 1 and 6.
-
-    >>> result = roll(); 1 <= result <= 6
-    True
-    """
-    num_rolled = random.randint(1, sides)
+    num_rolled = roll(sides)
+    print("Ти хвърли ", num_rolled)
     return num_rolled
 
 
