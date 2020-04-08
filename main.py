@@ -126,6 +126,7 @@ def redraw() -> None:
     board = draw_board()
     draw_pieces_on_board(board, status)
 
+    print()
     for row in board:
         print("".join(row))
 
@@ -133,18 +134,21 @@ def redraw() -> None:
 def end_game(winner: int) -> None:
     """Celebrate the winning player."""
 
+    redraw()
     print("Player {:d} has won!".format(winner))
 
 
 def start(players: int, board: List[List[Any]]) -> None:
     """The main game loop"""
-    win = False
+
     player = choose_first(players)
-    print("Player {} plays first".format(player))
-    redraw()
+    print()
+    print("Player {} plays first!".format(player))
+
+    win = False
     while not win:
+        redraw()
         dice = roll_dice(player)
-        print("Играй твоя зар!")
 
         valid = False
         while not valid:
@@ -154,7 +158,7 @@ def start(players: int, board: List[List[Any]]) -> None:
         win = check_endgame()
         if not win and dice != 6:
             player = ((player + 1) % players) + 1
-        redraw()
+
     end_game(player)
 
 

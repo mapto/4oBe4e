@@ -26,7 +26,7 @@ def choose_first(players: int) -> int:
         for i in range(len(score)):
             if score[i] != -1:
                 # TODO: Resolve problem that this relies on logic that involves console interaction
-                score[i] = roll_dice(i + 1)
+                score[i] = roll_dice(player=i + 1)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
             for i in range(len(score)):

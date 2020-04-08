@@ -11,9 +11,9 @@ from util import roll
 def roll_dice(player: int) -> int:
     """Asks player to roll dice"""
     sides = 6
-    roll_again = input("Играч {}: Хвърли зара = ENTER ".format(player))
+    roll_again = input("Player {}: Press ENTER to roll your dice...".format(player))
     num_rolled = roll(sides)
-    print("Ти хвърли ", num_rolled)
+    print("You rolled {}.".format(num_rolled))
     return num_rolled
 
 
@@ -23,7 +23,7 @@ def ask_move(player: int) -> int:
     while True:
 
         try:
-            pawn_number = int(input(f"Player {player} choose a pawn to move (0-3): "))
+            pawn_number = int(input(f"Player {player}: Choose a piece to move (0-3): "))
         except ValueError:
             continue
         else:
