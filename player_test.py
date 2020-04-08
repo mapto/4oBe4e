@@ -2,6 +2,7 @@
 # coding: utf-8
 
 from io import StringIO
+
 import pytest  # type: ignore
 
 import player
