@@ -6,7 +6,7 @@ This should be independent of media used to interact with player."""
 
 from typing import Tuple
 
-from player import roll_dice
+from action import roll_dice
 
 
 def do_move(player, move) -> bool:

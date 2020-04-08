@@ -12,7 +12,7 @@ from colorama import Back, Fore, Style  # type: ignore
 
 # local
 from game import check_endgame, choose_first, do_move, put_piece_on_board
-from player import ask_move, roll_dice
+from action import ask_move, roll_dice
 
 players = 4
 
