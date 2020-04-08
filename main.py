@@ -105,7 +105,9 @@ def draw_board() -> List[List[Any]]:
     return board
 
 
-def draw_pieces_on_board(board: List[List[Any]], status: Dict[int, List[int]]) -> List[List[Any]]:
+def draw_pieces_on_board(
+    board: List[List[Any]], status: Dict[int, List[int]]
+) -> List[List[Any]]:
     """ It is not part of a job of this method to resolve game logic,
     such as collision of pieces of different players on the path"""
     for player in range(1, 5):

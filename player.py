@@ -7,6 +7,7 @@ Web application will use another implementation of this logic."""
 
 from util import roll
 
+
 def roll_dice(player: int) -> int:
     """Asks player to roll dice"""
     sides = 6
