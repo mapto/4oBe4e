@@ -45,31 +45,33 @@ def check_endgame():
     return True
 
 
-def coord_in_start(player: int, piece: int, progress: int) -> Tuple[int, int]:
-    """TODO: draw in start positions: each piece has its location
-    Logic very similar to draw_in_target"""
-    return (5, 2)
+def coord_in_home(player: int, piece: int, progress: int) -> Tuple[int, int]:
+    """Draw in home positions: each piece has its location. Progress is always same, thus irrelevant"""
+    zones = {1: (5,2), 2: (2,12), 3: (12,15), 4: (15,5)}
+    shift = {0: (0,0), 1: (0,1), 2:(1,0), 3: (1,1)}
+    return (zones[player][0] + shift[piece][0], zones[player][1] + shift[piece][1])
 
 
 def coord_on_path(player: int, piece: int, progress: int) -> Tuple[int, int]:
     """TODO: draw on path: if two or more pieces on same cell, instead of number,
     draw a placeholder, which does not need to show piece number
     possibly split this in 4 or 8 different cases.
-    Logic is invariant to piece parameter"""
+    Parameter piece does't influence logic"""
     return (2, 8)
 
 
 def coord_on_finish(player: int, piece: int, progress: int) -> Tuple[int, int]:
     """TODO: draw on path: if two or more pieces on same cell, instead of number,
     draw a placeholder, which does not need to show piece number.
-    Logic is invariant to piece parameter"""
+    Parameter piece does't influence logic"""
     return (3, 9)
 
 
 def coord_in_target(player: int, piece: int, progress: int) -> Tuple[int, int]:
-    """TODO: draw in target positions: each piece has its location
-    Logic very similar to draw_in_start"""
-    return (6, 7)
+    """Draw in target positions: each piece has its location. Progress is always same, thus irrelevant"""
+    zones = {1: (7,6), 2: (6,10), 3: (10,11), 4: (11,7)}
+    shift = {0: (0,0), 1: (0,1), 2:(1,0), 3: (1,1)}
+    return (zones[player][0] + shift[piece][0], zones[player][1] + shift[piece][1])
 
 
 def put_piece_on_board(player: int, piece: int, progress: int) -> Tuple[int, int]:
@@ -78,7 +80,7 @@ def put_piece_on_board(player: int, piece: int, progress: int) -> Tuple[int, int
     """
     coords = (0, 0)
     if progress == 0:
-        coords = coord_in_start(player, piece, progress)
+        coords = coord_in_home(player, piece, progress)
     elif 0 < progress <= 56:
         coords = coord_on_path(player, piece, progress)
     elif 56 < progress <= 61:
@@ -87,6 +89,5 @@ def put_piece_on_board(player: int, piece: int, progress: int) -> Tuple[int, int
         coords = coord_in_target(player, piece, progress)
     else:
         raise NotImplementedError()
-    
-    return coords
 
+    return coords
