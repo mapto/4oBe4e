@@ -22,7 +22,7 @@ def roll_dice(player):
 def roll(sides: int = 6) -> int:
     """Rolls a dice: randomly generate a value between 1 and 6.
 
-    >>> result = roll(); 0 < result and result < 7
+    >>> result = roll(); 1 <= result <= 6
     True
     """
     num_rolled = random.randint(1, sides)
@@ -39,9 +39,11 @@ def ask_move(player: int) -> int:
         except ValueError:
             continue
         else:
-            if not (0 <= pawn_number <= 3):
-                continue
-            else:
+            if 0 <= pawn_number <= 3:
                 break
 
     return pawn_number
+
+
+if __name__ == "__main__":
+    pass
