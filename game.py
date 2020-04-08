@@ -3,6 +3,8 @@
 
 """The game logic"""
 
+from typing import Tuple
+
 from player import roll_dice
 
 
@@ -41,3 +43,50 @@ def check_endgame():
     """Check if any of the players has ended the game."""
     # TODO: Implement
     return True
+
+
+def coord_in_start(player: int, piece: int, progress: int) -> Tuple[int, int]:
+    """TODO: draw in start positions: each piece has its location
+    Logic very similar to draw_in_target"""
+    return (5, 2)
+
+
+def coord_on_path(player: int, piece: int, progress: int) -> Tuple[int, int]:
+    """TODO: draw on path: if two or more pieces on same cell, instead of number,
+    draw a placeholder, which does not need to show piece number
+    possibly split this in 4 or 8 different cases.
+    Logic is invariant to piece parameter"""
+    return (2, 8)
+
+
+def coord_on_finish(player: int, piece: int, progress: int) -> Tuple[int, int]:
+    """TODO: draw on path: if two or more pieces on same cell, instead of number,
+    draw a placeholder, which does not need to show piece number.
+    Logic is invariant to piece parameter"""
+    return (3, 9)
+
+
+def coord_in_target(player: int, piece: int, progress: int) -> Tuple[int, int]:
+    """TODO: draw in target positions: each piece has its location
+    Logic very similar to draw_in_start"""
+    return (6, 7)
+
+
+def put_piece_on_board(player: int, piece: int, progress: int) -> Tuple[int, int]:
+    """Currently player is in [1..4], piece is in [0..3]. Do we need to change this?
+    TODO: Refactor to implement startegy pattern
+    """
+    coords = (0, 0)
+    if progress == 0:
+        coords = coord_in_start(player, piece, progress)
+    elif 0 < progress <= 56:
+        coords = coord_on_path(player, piece, progress)
+    elif 56 < progress <= 61:
+        coords = coord_on_finish(player, piece, progress)
+    elif progress == 62:
+        coords = coord_in_target(player, piece, progress)
+    else:
+        raise NotImplementedError()
+    
+    return coords
+

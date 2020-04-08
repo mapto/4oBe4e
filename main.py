@@ -11,7 +11,7 @@ from colorama import Back, Fore, Style  # type: ignore
 
 
 # local
-from game import check_endgame, choose_first, do_move
+from game import check_endgame, choose_first, do_move, put_piece_on_board
 from player import ask_move, roll_dice
 
 players = 4
@@ -105,8 +105,24 @@ def draw_board() -> List:
     return board
 
 
-def redraw(player: int, board) -> None:
+def draw_pieces_on_board(board: List, status: Dict) -> List:
+    """ It is not part of a job of this method to resolve game logic,
+    such as collision of pieces of different players on the path"""
+    for player in range(1, 5):
+        for piece in range(4):
+            (x, y) = put_piece_on_board(player, piece, status[player][piece])
+            # TODO: Draw the piece on the board properly
+            # If there's already another piece, indicate this with another symbol for collision
+            board[x][y] = "." + str(piece) + "."
+
+    return board
+
+
+def redraw() -> None:
     """The screen update function. Do not modify this for now."""
+
+    board = draw_board()
+    draw_pieces_on_board(board, status)
 
     for row in board:
         print("".join(row))
@@ -122,7 +138,7 @@ def start(players, board) -> None:
     """The main game loop"""
     win = False
     player = choose_first(players)
-    redraw(player, board)
+    redraw()
     while not win:
         dice = roll_dice(player)
 
@@ -134,7 +150,7 @@ def start(players, board) -> None:
         win = check_endgame()
         if not win and dice != 6:
             player = ((player + 1) % players) + 1
-        redraw(player, board)
+        redraw()
     end_game(player)
 
 
