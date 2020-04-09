@@ -1,0 +1,19 @@
+#!/bin/sh -e
+# Git pre-commit hook
+# $ ln -sf pre-commit .git/hooks/pre-commit
+
+export PIPENV_VERBOSITY=-1 
+
+cd $(git rev-parse --show-toplevel)
+
+echo '>>> Run Black'
+pipenv run black --check .
+
+echo '>>> Run Pylint'
+pipenv run pylint -E src/
+
+echo '>>> Run Mypy'
+pipenv run mypy src/
+
+echo '>>>  Run Pytest'
+pipenv run pytest -v --doctest-modules .
