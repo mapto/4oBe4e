@@ -3,6 +3,7 @@
 *.pyc
 .mypy_cache/
 .env
+.pytest_cache/
 .venv
 .vscode
 __pycache__/
