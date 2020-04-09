@@ -1,7 +1,7 @@
 def test_draw_board():
     """ Test drawing of ASCII board. """
 
-    from main import draw_board
+    from console_view import draw_board
 
     board = [
         [
