@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Git pre-commit hook
+# Git pre-commit hook. Use with a symlink:
 # $ ln -sf ../../pre-commit .git/hooks/pre-commit
 
 export PIPENV_VERBOSITY=-1 
