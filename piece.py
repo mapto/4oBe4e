@@ -1,8 +1,6 @@
 class Piece:
-  def __init__(self, pience_number: int, player: int, absolutePosition: int):
-    self.piece_number: int = pience_number
-    self.player: int = player
-    self.absolutePosition: int = absolutePosition
-    self.position: int = 0
-
-  def __eq__(self, other: Any) -> bool:  
+    def __init__(self, player: int, piece_number: int, absolutePosition: int = 0):
+        self.piece_number: int = piece_number
+        self.player: int = player
+        self.absolutePosition: int = absolutePosition
+        self.position: int = 0

@@ -1,15 +1,22 @@
+from typing import List
+
+from piece import Piece
+
+
 class Board:
-  def __init__(self, number_layers: int = 4, numberOfPieces: int = 4):
-    self.numberPlayers = numberOf
-    self.numberOfPieces = numberPlayers
-    self.pieces: List[Pieces] = [new Piece()]
-    self.winners: List[int] = []
+    def __init__(self, number_players: int = 4, numberOfPieces: int = 4):
+        self._pieces: List[Piece] = []
+        for player in range(1, number_players + 1):
+            for piece in range(numberOfPieces):
+                self._pieces.append(Piece(player, piece))
+        self._winners: List[int] = []
 
-  def moveForward(p: Piece, positions: int) -> List[int]:
+    def moveForward(self, p: Piece, positions: int) -> List[int]:
+        # TODO
+        return []
 
-  def winners() -> List[int]:
-    return self.winners
+    def winners(self) -> List[int]:
+        return self._winners
 
-  def pieces() -> List[Piece]:
-    return self.peices
-  
+    def pieces(self) -> List[Piece]:
+        return self._pieces
