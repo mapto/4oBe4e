@@ -12,7 +12,8 @@ class Board:
         self._winners: List[int] = []
 
     def moveForward(self, p: Piece, positions: int) -> List[int]:
-        # TODO
+        # TODO redundancy/duplicate with game.do_move.
+        # @mapto proposes that this class is kept only as a model and logic is external to it
         return []
 
     def winners(self) -> List[int]:
