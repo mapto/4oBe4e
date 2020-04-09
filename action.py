@@ -11,7 +11,7 @@ from util import roll
 def roll_dice(player: int) -> int:
     """Asks player to roll dice"""
     sides = 6
-    roll_again = input("Player {}: Press ENTER to roll your dice...".format(player))
+    input("Player {}: Press ENTER to roll your dice...".format(player))
     num_rolled = roll(sides)
     print("You rolled {}.".format(num_rolled))
     return num_rolled
