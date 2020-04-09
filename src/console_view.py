@@ -22,7 +22,7 @@ def draw_board() -> List[List[Any]]:
     HOME_SHAPE = "[ ]"
     TARGET_SHAPE = "{ }"
     FOOTPATH_SHAPE = "( )"
-    FINISH_SHAPE = " @ "
+    FINISH_SHAPE = " + "
 
     # Init board
     board = [[Style.RESET_ALL + "   "] * COLS for row in range(ROWS)]
