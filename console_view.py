@@ -111,6 +111,12 @@ def draw_pieces_on_board(
     return board
 
 
+def end_game(status: List[Piece], winner: int) -> None:
+    """Celebrate the winning player."""
+    redraw(status)
+    print("Player {:d} has won!".format(winner))
+
+
 def redraw(status: List[Piece]) -> None:
     """The screen update function. Do not modify this for now."""
 

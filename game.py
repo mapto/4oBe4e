@@ -4,25 +4,26 @@
 """The game logic.
 This should be independent of media used to interact with player."""
 
-from typing import Tuple
+from typing import Tuple, List, Set
 
 
 from piece import Piece
+from player import Player
 from action import roll_dice
 
 
-def do_move(player, move) -> bool:
+def do_move(status: List[Piece], player: int, move: int) -> bool:
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
     # TODO: Implement
     return True
 
 
-def choose_first(players: int) -> int:
+def choose_first(players: Set[Player]) -> Player:
     """ score index is 0..3, i.e. player-1 (player are 1..4)
     0 means hasn't drawn, -1 means is already out of drawing
     """
     m = 0
-    score = [0] * players
+    score = [0] * len(players)
     need_more = True
     while need_more:
         for i in range(len(score)):
@@ -32,14 +33,10 @@ def choose_first(players: int) -> int:
         m = max(score)
         if len([v for v in score if v == m]) > 1:
             for i in range(len(score)):
-                if score[i] == m:
-                    score[i] = 0
-                else:
-                    score[i] = -1
+                score[i] = 0 if score[i] == m else -1
         else:
             need_more = False
-    first = score.index(m) + 1
-    return first
+    return Player.get(score.index(m) + 1)
 
 
 def check_endgame() -> bool:

@@ -9,46 +9,45 @@ from typing import Any, List
 # local
 from piece import Piece
 from board import Board
+from player import Player
 from game import check_endgame, choose_first, do_move
 from action import ask_move, roll_dice
-from console_view import redraw, draw_board
-
-players = 4
-
-board = Board()
-status = board.pieces()
+from console_view import redraw, end_game
 
 
-def end_game(winner: int) -> None:
-    """Celebrate the winning player."""
+def play(players: int, first_player: Player) -> None:
+    board = Board()
+    status = board.pieces()
 
-    redraw(status)
-    print("Player {:d} has won!".format(winner))
-
-
-def start(players: int, board: List[List[Any]]) -> None:
-    """The main game loop"""
-
-    player = choose_first(players)
-    print()
-    print("Player {} plays first!".format(player))
-
+    next = first_player.number
     win = False
     while not win:
         redraw(status)
-        dice = roll_dice(player)
+        dice = roll_dice(next)
 
         valid = False
         while not valid:
-            move = ask_move(player)
-            valid = do_move(player, move)
+            move = ask_move(next)
+            valid = do_move(status, next, move)
 
         win = check_endgame()
         if not win and dice != 6:
-            player = ((player + 1) % players) + 1
+            next = ((next + 1) % players) + 1
 
-    end_game(player)
+    end_game(status, next)
+
+
+def main(num_players: int) -> None:
+    """The main game loop"""
+    for i in range(num_players):
+        Player.create()
+
+    player = choose_first(Player.players)
+    print()
+    print("Player {} plays first!".format(player))
+
+    play(num_players, player)
 
 
 if __name__ == "__main__":
-    start(players, draw_board())
+    main(num_players=4)
