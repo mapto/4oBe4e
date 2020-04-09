@@ -112,19 +112,40 @@ def coord_on_finish(piece: Piece) -> Tuple[int, int]:
     Parameter piece does't influence logic
     
     >>> coord_on_finish(Piece(1, 1, 57))
-    (3, 9)
+    (9, 3)
 
     The following tests currently fail, thus disabled when pushed. Enable for development:
-    >> coord_on_finish(Piece(2, 1, 58))
-    (9, 4)
+    >>> coord_on_finish(Piece(2, 1, 58))
+    (4, 9)
 
-    >> coord_on_finish(Piece(3, 1, 59))
-    (13, 9)
+    >>> coord_on_finish(Piece(3, 1, 59))
+    (9, 13)
 
-    >> coord_on_finish(Piece(3, 1, 61))
+    >>> coord_on_finish(Piece(3, 1, 61))
     (9, 11)
+
+    >>> coord_on_finish(Piece(4, 1, 57))
+    (15, 9)
+
+    >>> coord_on_finish(Piece(4, 1, 61))
+    (11, 9)
     """
-    return (3, 9)
+    assert 56 < piece.progress() < 62
+
+    pos = piece.progress()
+    player = piece.player()
+    (x, y) = (0, 0)
+
+    if player in [1, 3]:
+        x = 9
+        y = pos - 56 + 2 if player == 1 else 15 - (pos - 56 - 1)
+    elif player in [2, 4]:
+        x = pos - 56 + 2 if player == 2 else 15 - (pos - 56 - 1)
+        y = 9
+    else:
+        raise NotImplementedError()
+
+    return (x, y)
 
 
 def coord_in_target(piece: Piece) -> Tuple[int, int]:
