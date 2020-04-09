@@ -132,20 +132,15 @@ def coord_on_finish(piece: Piece) -> Tuple[int, int]:
     """
     assert 56 < piece.progress() < 62
 
+    pos = piece.progress()
+    player = piece.player()
     (x, y) = (0, 0)
-    if piece.player() == 1 or piece.player() == 3:
+
+    if player in [1, 3]:
         x = 9
-        y = (
-            piece.progress() - 56 + 2
-            if piece.player() == 1
-            else 15 - (piece.progress() - 56 - 1)
-        )
-    elif piece.player() == 2 or piece.player() == 4:
-        x = (
-            piece.progress() - 56 + 2
-            if piece.player() == 2
-            else 15 - (piece.progress() - 56 - 1)
-        )
+        y = pos - 56 + 2 if player == 1 else 15 - (pos - 56 - 1)
+    elif player in [2, 4]:
+        x = pos - 56 + 2 if player == 2 else 15 - (pos - 56 - 1)
         y = 9
     else:
         raise NotImplementedError()
