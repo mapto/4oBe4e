@@ -1,12 +1,9 @@
 # coding: utf-8
 
-# standard
 from typing import Any, List, Dict
 
-# external
 from colorama import Back, Fore, Style  # type: ignore
 
-# local
 from piece import Piece
 from game import put_piece_on_board
 
