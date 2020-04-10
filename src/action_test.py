@@ -9,11 +9,18 @@ from piece import Piece
 import action
 
 
+def test_roll_dice(monkeypatch):
+
+    user_input = StringIO("\n")
+    monkeypatch.setattr("sys.stdin", user_input)
+    assert 1 <= action.roll_dice(1) <= 6
+
+
 def test_ask_move_invalid_input(monkeypatch):
 
     pieces = [Piece(1, 0, 1), Piece(1, 1, 1), Piece(1, 2, 1), Piece(1, 3, 1)]
 
-    pawn_number = StringIO(f"\n")
+    pawn_number = StringIO("\n")
     monkeypatch.setattr("sys.stdin", pawn_number)
     with pytest.raises(EOFError):
         action.ask_move(pieces)
@@ -23,17 +30,17 @@ def test_ask_move_invalid_input(monkeypatch):
     with pytest.raises(EOFError):
         action.ask_move(pieces)
 
-    pawn_number = StringIO(f"-1\n")
+    pawn_number = StringIO("-1\n")
     monkeypatch.setattr("sys.stdin", pawn_number)
     with pytest.raises(EOFError):
         action.ask_move(pieces)
 
-    pawn_number = StringIO(f"1.3\n")
+    pawn_number = StringIO("1.3\n")
     monkeypatch.setattr("sys.stdin", pawn_number)
     with pytest.raises(EOFError):
         action.ask_move(pieces)
 
-    pawn_number = StringIO(f"4\n")
+    pawn_number = StringIO("4\n")
     monkeypatch.setattr("sys.stdin", pawn_number)
     with pytest.raises(EOFError):
         action.ask_move(pieces)

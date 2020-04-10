@@ -25,10 +25,7 @@ class Player:
 
     @staticmethod
     def create(color: str = None, name: str = None) -> "Player":
-        """
-        >>> Player.create()
-        1
-        """
+
         if not color:
             if len(Player.players) == len(colors):
                 raise PermissionError(
