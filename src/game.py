@@ -88,34 +88,108 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     draw a placeholder, which does not need to show piece number
     possibly split this in 4 or 8 different cases.
     Parameter piece does't influence logic
+
+             REL: ABS conversion
+    P1     1..56: (pos)
+    P2     1..42: (pos + 14)
+          43..56: (pos + 14) % 56
+    P3     1..28: (pos + 2 * 14)
+          29..56: (pos + 2 * 14) % 56
+    P4     1..14: (pos + 3 * 14)
+          15..56: (pos + 3 * 14) % 56
+
+    ABS_TO_ROWCOL = (
+    ('home','home'),
+    (8, 2),
+    (8, 3),
+    (8, 4),
+    (8, 5),
+    (7, 5),
+    (6, 5),
+    (5, 5),
+    (5, 6),
+    (5, 7),
+     (5, 8),
+     (4, 8),
+     (3, 8),
+     (2, 8),
+     (2, 9),
+     (2, 10),
+     (3, 10),
+     (4, 10),
+     (5, 10),
+     (5, 11),
+     (5, 12),
+     (5, 13),
+     (6, 13),
+     (7, 13),
+     (8, 13),
+     (8, 14),
+     (8, 15),
+     (8, 16),
+     (9, 16),
+     (10, 16),
+     (10, 15),
+     (10, 14),
+     (10, 13),
+     (11, 13),
+     (12, 13),
+     (13, 13),
+     (13, 12),
+     (13, 11),
+     (13, 10),
+     (14, 10),
+     (15, 10),
+     (16, 10),
+     (16, 9),
+     (16, 8),
+     (15, 8),
+     (14, 8),
+     (13, 8),
+     (13, 7),
+     (13, 6),
+     (13, 5),
+     (12, 5),
+     (11, 5),
+     (10, 5),
+     (10, 4),
+     (10, 3),
+     (10, 2),
+     (9, 2)
+)
     
     >>> coord_on_path(Piece(1, 1, 1))
-    (2, 8)
+    (8, 2)
 
     The following tests currently fail, thus disabled when pushed. Enable for development:
 
     Test player 2:
     >> coord_on_finish(Piece(2, 1, 2))
-    (10, 3)
+    (3, 10)
 
     Test player 3:
     >> coord_on_finish(Piece(3, 1, 3))
-    (14, 10)
+    (10, 14)
 
     Test overlap:
     >> coord_on_finish(Piece(2, 1, 17))
-    (14, 10)
+    (10, 14)
 
     Test turn:
     >> coord_on_finish(Piece(3, 1, 5))
-    (13, 11)
+    (11, 13)
 
     Test last position:
     >> coord_on_finish(Piece(4, 1, 56))
-    (9, 16)
+    (16, 9)
     """
+    assert 0 < piece.progress() < 57
 
-    return (2, 8)
+    pos = piece.progress()
+    player = piece.player()
+    (row, col) = (0, 0)
+
+    return (8, 2)
 
 
 def coord_on_finish(piece: Piece) -> Tuple[int, int]:
