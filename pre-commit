@@ -1,13 +1,15 @@
 #!/bin/sh -e
+# Git pre-commit hook. Use with a symlink:
+# $ ln -sf ../../pre-commit .git/hooks/pre-commit
 
-# Only difference from pre-commit is that black performs formatting
+# Only difference from ci-build.sh is that black only checks formatting
 
 export PIPENV_VERBOSITY=-1 
 
 cd $(git rev-parse --show-toplevel)
 
 echo '>>> Run Black'
-pipenv run black src
+pipenv run black --check src
 
 echo '>>> Run Pylint'
 pipenv run pylint -E src/
