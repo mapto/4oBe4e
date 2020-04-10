@@ -10,7 +10,7 @@ from typing import Any, List
 from piece import Piece
 from board import Board
 from player import Player
-from game import check_endgame, choose_first, do_move
+from game import check_endgame, choose_first, do_move, get_valid_moves
 from action import ask_move, roll_dice
 from console_view import redraw, end_game
 
@@ -25,12 +25,13 @@ def play(players: int, first_player: Player) -> None:
         redraw(status)
         dice = roll_dice(next)
 
-        valid = False
+        valid_moves = get_valid_moves(Player.get(next), dice, status)
+        valid = not valid_moves
         while not valid:
-            move = ask_move(next)
+            move = ask_move(valid_moves)
             valid = do_move(status, next, move)
 
-        win = check_endgame()
+        win = check_endgame(status)
         if not win and dice != 6:
             next = ((next + 1) % players) + 1
 

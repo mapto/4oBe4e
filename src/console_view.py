@@ -106,7 +106,7 @@ def draw_pieces_on_board(
         (x, y) = put_piece_on_board(piece)
         # TODO: Draw the piece on the board properly
         # If there's already another piece, indicate this with another symbol for collision
-        board[x][y] = "." + str(piece.id()) + "."
+        board[x][y] = "." + str(piece) + "."
 
     return board
 

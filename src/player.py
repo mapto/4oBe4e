@@ -25,7 +25,10 @@ class Player:
 
     @staticmethod
     def create(color: str = None, name: str = None) -> "Player":
-
+        """
+        >>> Player.create()
+        1
+        """
         if not color:
             if len(Player.players) == len(colors):
                 raise PermissionError(
@@ -34,7 +37,7 @@ class Player:
             color = colors.difference([p.color for p in Player.players]).pop()
         if not name:
             name = color
-        number = len(Player.players) + 2
+        number = len(Player.players) + 1
         player = Player(number, name, color)
         Player.players.add(player)
 
@@ -51,3 +54,14 @@ class Player:
 
     def __str__(self):
         return str(self.number)
+
+    def __repr__(self):
+        return str(self.number)
+
+    def __eq__(self, other):
+        if isinstance(other, Player):
+            return self.name == other.name and self.number == other.number
+        return False
+
+    def __hash__(self):
+        return hash((self.name, self.number))

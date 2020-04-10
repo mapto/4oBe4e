@@ -4,7 +4,7 @@
 """The game logic.
 This should be independent of media used to interact with player."""
 
-from typing import Tuple, List, Set
+from typing import Tuple, List, Set, Dict
 
 
 from piece import Piece
@@ -39,10 +39,16 @@ def choose_first(players: Set[Player]) -> Player:
     return Player.get(score.index(m) + 1)
 
 
-def check_endgame() -> bool:
+def check_endgame(status: List[Piece]) -> bool:
     """Check if any of the players has ended the game."""
-    # TODO: Implement
-    return True
+    player_finished: Dict[int, bool] = {}
+    for piece in status:
+        player = piece.player()
+        if player in player_finished:
+            player_finished[player] = player_finished[player] and piece.is_finished()
+        else:
+            player_finished[player] = True
+    return len([s for s in player_finished if s]) < 2
 
 
 def coord_in_home(piece: Piece) -> Tuple[int, int]:
@@ -192,3 +198,43 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
         raise NotImplementedError()
 
     return coords
+
+
+def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
+    """
+    >>> p = Piece(1, 1); is_valid_move(p, 6, [p])
+    True
+
+    >>> p = Piece(1, 1); is_valid_move(p, 1, [p])
+    False
+
+    >>> p = Piece(1, 1, 1); is_valid_move(p, 1, [p])
+    True
+
+    >>> p = Piece(1, 1, 1); is_valid_move(p, 6, [p])
+    True
+
+    """
+    if 0 == dice:
+        raise ValueError("Invalid dice: {}".format(dice))
+
+    pos = piece.progress()
+    if pos == 0:
+        return dice == 6
+    if 0 < pos <= 56:
+        at_dest = [
+            p
+            for p in status
+            if piece.position() == p.position() and piece.player() != p.player()
+        ]
+        return 2 > len(at_dest)
+    if 56 < pos <= 61:
+        return pos + dice <= 62
+
+    assert pos == 62
+    return False
+
+
+def get_valid_moves(player: Player, dice: int, status: List[Piece]) -> List[Piece]:
+    own = [p for p in status if p.player == player]
+    return [p for p in own if is_valid_move(p, dice, status)]
