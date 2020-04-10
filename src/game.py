@@ -89,79 +89,18 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     possibly split this in 4 or 8 different cases.
     Parameter piece does't influence logic
 
-             REL: ABS conversion
-    P1     1..56: (pos)
-    P2     1..42: (pos + 14)
-          43..56: (pos + 14) % 56
-    P3     1..28: (pos + 2 * 14)
-          29..56: (pos + 2 * 14) % 56
-    P4     1..14: (pos + 3 * 14)
-          15..56: (pos + 3 * 14) % 56
+    Player (absolute) Progress to (relative) Position conversion:
+        P0     1..56: (pos)
+        P1     1..42: (p_num * shift + pos)
+              43..56: (p_num * shift + pos) % end_progress
+        P2     1..28: (p_num * shift + pos)
+              29..56: (p_num * shift + pos) % end_progress
+        P3     1..14: (p_num * shift + pos)
+              15..56: (p_num * shift + pos) % end_progress
 
-    ABS_TO_ROWCOL = (
-    ('home','home'),
-    (8, 2),
-    (8, 3),
-    (8, 4),
-    (8, 5),
-    (7, 5),
-    (6, 5),
-    (5, 5),
-    (5, 6),
-    (5, 7),
-     (5, 8),
-     (4, 8),
-     (3, 8),
-     (2, 8),
-     (2, 9),
-     (2, 10),
-     (3, 10),
-     (4, 10),
-     (5, 10),
-     (5, 11),
-     (5, 12),
-     (5, 13),
-     (6, 13),
-     (7, 13),
-     (8, 13),
-     (8, 14),
-     (8, 15),
-     (8, 16),
-     (9, 16),
-     (10, 16),
-     (10, 15),
-     (10, 14),
-     (10, 13),
-     (11, 13),
-     (12, 13),
-     (13, 13),
-     (13, 12),
-     (13, 11),
-     (13, 10),
-     (14, 10),
-     (15, 10),
-     (16, 10),
-     (16, 9),
-     (16, 8),
-     (15, 8),
-     (14, 8),
-     (13, 8),
-     (13, 7),
-     (13, 6),
-     (13, 5),
-     (12, 5),
-     (11, 5),
-     (10, 5),
-     (10, 4),
-     (10, 3),
-     (10, 2),
-     (9, 2)
-)
-    
+
     >>> coord_on_path(Piece(1, 1, 1))
     (8, 2)
-
-    The following tests currently fail, thus disabled when pushed. Enable for development:
 
     Test player 2:
     >> coord_on_finish(Piece(2, 1, 2))
@@ -183,13 +122,77 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     >> coord_on_finish(Piece(4, 1, 56))
     (16, 9)
     """
-    assert 0 < piece.progress() < 57
 
-    pos = piece.progress()
+    assert 1 <= piece.progress() <= 56 and 0 <= piece.player <= 3
+
+    POSITION_TO_ROWCOL: Tuple[Tuple[int, int], ...] = (
+        (0, 0),
+        (8, 2),
+        (8, 3),
+        (8, 4),
+        (8, 5),
+        (7, 5),
+        (6, 5),
+        (5, 5),
+        (5, 6),
+        (5, 7),
+        (5, 8),
+        (4, 8),
+        (3, 8),
+        (2, 8),
+        (2, 9),
+        (2, 10),
+        (3, 10),
+        (4, 10),
+        (5, 10),
+        (5, 11),
+        (5, 12),
+        (5, 13),
+        (6, 13),
+        (7, 13),
+        (8, 13),
+        (8, 14),
+        (8, 15),
+        (8, 16),
+        (9, 16),
+        (10, 16),
+        (10, 15),
+        (10, 14),
+        (10, 13),
+        (11, 13),
+        (12, 13),
+        (13, 13),
+        (13, 12),
+        (13, 11),
+        (13, 10),
+        (14, 10),
+        (15, 10),
+        (16, 10),
+        (16, 9),
+        (16, 8),
+        (15, 8),
+        (14, 8),
+        (13, 8),
+        (13, 7),
+        (13, 6),
+        (13, 5),
+        (12, 5),
+        (11, 5),
+        (10, 5),
+        (10, 4),
+        (10, 3),
+        (10, 2),
+        (9, 2),
+    )
+
+    progress = piece.progress()
     player = piece.player()
-    (row, col) = (0, 0)
+    shift = 14
+    path_lap = 56
+    position = player * shift + progress
+    position = position if position <= path_lap else position % path_lap
 
-    return (8, 2)
+    return POSITION_TO_ROWCOL[position]
 
 
 def coord_on_finish(piece: Piece) -> Tuple[int, int]:
