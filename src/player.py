@@ -62,3 +62,4 @@ class Player:
 
     def __hash__(self):
         return hash((self.name, self.number))
+

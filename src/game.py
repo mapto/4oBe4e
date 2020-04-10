@@ -29,7 +29,7 @@ def choose_first(players: Set[Player]) -> Player:
         for i in range(len(score)):
             if score[i] != -1:
                 # TODO: Resolve problem that this relies on logic that involves console interaction
-                score[i] = roll_dice(player=i + 1)
+                score[i] = roll_dice(player_num = i + 1)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
             for i in range(len(score)):
@@ -236,5 +236,22 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
 
 
 def get_valid_moves(player: Player, dice: int, status: List[Piece]) -> List[Piece]:
-    own = [p for p in status if p.player == player]
+    """
+    >>> p = Player.create(); p2 = Player.create()
+    >>> get_valid_moves(p, 6, [Piece(1, 0), Piece(1, 1), Piece(2, 0), Piece(2, 1)])
+    [0, 1]
+
+    >>> get_valid_moves(p, 1, [Piece(1, 0), Piece(1, 1), Piece(1, 2), Piece(2, 0)])
+    []
+
+    >>> get_valid_moves(p, 1, [Piece(1, 0, 1), Piece(1, 1), Piece(1, 2), Piece(2, 0)])
+    [0]
+
+    >>> get_valid_moves(p, 1, [Piece(1, 0, 1), Piece(1, 1, 57), Piece(1, 2), Piece(2, 0)])
+    [0, 1]
+
+    >>> get_valid_moves(p, 6, [Piece(1, 0, 1), Piece(1, 1, 60), Piece(1, 2), Piece(1, 3, 0)])
+    [0, 2, 3]
+    """
+    own = [p for p in status if p.player() == player.number]
     return [p for p in own if is_valid_move(p, dice, status)]

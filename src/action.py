@@ -12,10 +12,10 @@ from util import roll
 from piece import Piece
 
 
-def roll_dice(player: int) -> int:
+def roll_dice(player_num: int) -> int:
     """Asks player to roll dice"""
     sides = 6
-    input("Player {}: Press ENTER to roll your dice...".format(player))
+    input("Player {}: Press ENTER to roll your dice...".format(player_num))
     num_rolled = roll(sides)
     print("You rolled {}.".format(num_rolled))
     return num_rolled

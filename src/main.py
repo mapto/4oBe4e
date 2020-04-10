@@ -33,7 +33,7 @@ def play(players: int, first_player: Player) -> None:
 
         win = check_endgame(status)
         if not win and dice != 6:
-            next = ((next + 1) % players) + 1
+            next = (next % players) + 1
 
     end_game(status, next)
 
