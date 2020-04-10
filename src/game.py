@@ -12,9 +12,15 @@ from player import Player
 from action import roll_dice
 
 
-def do_move(status: List[Piece], player: int, move: int) -> bool:
+def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) -> bool:
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
-    # TODO: Implement
+    movable_piece_nums = [p.id() for p in get_valid_moves(player, dice, status)]
+    if not (piece_to_move in movable_piece_nums):
+        return False
+
+    for piece in status:
+        if piece.player() == player.number and piece.id() == piece_to_move:
+            piece.move(dice)
     return True
 
 
@@ -29,7 +35,7 @@ def choose_first(players: Set[Player]) -> Player:
         for i in range(len(score)):
             if score[i] != -1:
                 # TODO: Resolve problem that this relies on logic that involves console interaction
-                score[i] = roll_dice(player_num = i + 1)
+                score[i] = roll_dice(player_num=i + 1)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
             for i in range(len(score)):

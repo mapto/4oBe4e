@@ -24,12 +24,12 @@ def play(players: int, first_player: Player) -> None:
     while not win:
         redraw(status)
         dice = roll_dice(next)
-
-        valid_moves = get_valid_moves(Player.get(next), dice, status)
+        player = Player.get(next)
+        valid_moves = get_valid_moves(player, dice, status)
         valid = not valid_moves
         while not valid:
-            move = ask_move(valid_moves)
-            valid = do_move(status, next, move)
+            piece_to_move = ask_move(valid_moves)
+            valid = do_move(status, player, piece_to_move, dice)
 
         win = check_endgame(status)
         if not win and dice != 6:

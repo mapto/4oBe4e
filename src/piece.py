@@ -13,6 +13,9 @@ class Piece:
         self._player_num: int = player_number
         self._position: int = absolutePosition
 
+    def move(self, move: int) -> None:
+        self._position += move
+
     def id(self) -> int:
         return self.piece_number
 
@@ -40,4 +43,3 @@ class Piece:
 
     def __repr__(self):
         return str(self.id())
-
