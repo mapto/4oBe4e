@@ -40,7 +40,7 @@ def play(players: int, first_player: Player) -> None:
 
 def main(num_players: int) -> None:
     """The main game loop"""
-    for i in range(num_players):
+    for _ in range(num_players):
         Player.create()
 
     player = choose_first(Player.players)
