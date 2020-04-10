@@ -99,28 +99,29 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
               15..56: (p_num * shift + pos) % end_progress
 
 
+    Test player 1:
     >>> coord_on_path(Piece(0, 1, 1))
     (8, 2)
 
     Test player 2:
-    >> coord_on_finish(Piece(2, 1, 2))
-    (3, 10)
+    >>> coord_on_path(Piece(1, 1, 1))
+    (2, 10)
 
     Test player 3:
-    >> coord_on_finish(Piece(3, 1, 3))
-    (10, 14)
+    >>> coord_on_path(Piece(2, 1, 1))
+    (10, 16)
+
+    Test player 4:
+    >>> coord_on_path(Piece(3, 1, 1))
+    (16, 8)
+
+    Test path wrap:
+    >>> coord_on_path(Piece(3, 1, 56))
+    (16, 9)
 
     Test overlap:
-    >> coord_on_finish(Piece(2, 1, 17))
+    >> coord_on_path(Piece(2, 1, 17))
     (10, 14)
-
-    Test turn:
-    >> coord_on_finish(Piece(3, 1, 5))
-    (11, 13)
-
-    Test last position:
-    >> coord_on_finish(Piece(4, 1, 56))
-    (16, 9)
     """
 
     assert 1 <= piece.progress() <= 56 and 0 <= piece.player() <= 3
@@ -188,9 +189,9 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     progress = piece.progress()
     player = piece.player()
     shift = 14
-    path_lap = 56
+    path_wrap = 56
     position = player * shift + progress
-    position = position if position <= path_lap else position % path_lap
+    position = position if position <= path_wrap else position % path_wrap
 
     return POSITION_TO_ROWCOL[position]
 
