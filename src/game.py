@@ -99,7 +99,7 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
               15..56: (p_num * shift + pos) % end_progress
 
 
-    >>> coord_on_path(Piece(1, 1, 1))
+    >>> coord_on_path(Piece(0, 1, 1))
     (8, 2)
 
     Test player 2:
@@ -123,7 +123,7 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     (16, 9)
     """
 
-    assert 1 <= piece.progress() <= 56 and 0 <= piece.player <= 3
+    assert 1 <= piece.progress() <= 56 and 0 <= piece.player() <= 3
 
     POSITION_TO_ROWCOL: Tuple[Tuple[int, int], ...] = (
         (0, 0),
