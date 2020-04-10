@@ -1,0 +1,36 @@
+4oBe4e.css
+/* add your CSS here */
+body {
+    font-family: "Times New Roman", Times, serif;
+}
+img.board {
+    border-style: hidden;
+    height: 800px;
+    float: left;
+    margin-left: 50px;
+    }
+img.dice {
+    border-style: hidden;
+    padding-bottom: 50px;
+    padding-top: 50px;
+    height: 200px;
+    float: right;
+    margin-top: px;
+    margin-right: 200px;
+    }
+ul {
+    font-weight: bold;
+    font-size: xx-large;
+    border-style: hidden;
+    list-style:none;
+    border-style: hidden;
+    padding:30px;
+    float: right;
+    margin-right: 325px;
+  }
+li.red {color: red;}
+li.green {color: green;}
+li.blue {color: blue;}
+li.yellow {color: rgb(255, 208, 0);}
+
+  
