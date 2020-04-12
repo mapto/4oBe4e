@@ -1,6 +1,7 @@
 *.code-workspace
 *.ipynb
 *.pyc
+*.swp
 .mypy_cache/
 .env
 .pytest_cache/

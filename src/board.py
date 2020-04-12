@@ -1,13 +1,14 @@
+from dataclasses import dataclass
 from typing import List
 
 from piece import Piece
 
 
 class Board:
-    def __init__(self, number_players: int = 4, numberOfPieces: int = 4):
+    def __init__(self, number_players: int = 4, number_of_pieces: int = 4):
         self._pieces: List[Piece] = []
         for player in range(1, number_players + 1):
-            for piece in range(numberOfPieces):
+            for piece in range(number_of_pieces):
                 self._pieces.append(Piece(player, piece))
 
     def moveForward(self, piece: Piece, positions: int) -> List[int]:
