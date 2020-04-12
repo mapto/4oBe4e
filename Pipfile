@@ -14,8 +14,6 @@ colorama = "*"
 flask = "*"
 dataclasses = "*"
 importlib_metadata = "*"
-pampy = "*"
->>>>>>> Define state of the game and the engine class
 
 [dev-packages]
 pytest = "*"
