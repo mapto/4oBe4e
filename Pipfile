@@ -14,6 +14,7 @@ colorama = "*"
 flask = "*"
 dataclasses = "*"
 importlib_metadata = "*"
+pampy = "*"
 
 [dev-packages]
 pytest = "*"
