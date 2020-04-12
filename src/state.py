@@ -24,6 +24,9 @@ class MovePiece(GameAction):
     piece: Piece
     dice: int
 
+@dataclass
+class PieceOut(MovePiece):
+
 
 @dataclass
 class Board:
@@ -46,6 +49,18 @@ class Board:
     # the position on which the piece is out of the finish zone
     # calculated in __post_init__. Probably there is a better way
     end_progress: int = 0
+
+    def __post_init(self):
+        assert self.players_count > 1
+        assert self.pieces_per_player > 0
+        assert len(self.pieces) == self.players_count * self.pieces_per_player
+        assert self.shape_angles > 2
+        assert self.shape_side_length > 5
+        assert self.finish_zone_length > 2
+        assert (
+            self.end_progress
+            == self.shape_angles * self.shape_side_length + 1 + self.finish_zone_length
+        )
 
     @staticmethod
     def create(
@@ -76,7 +91,7 @@ class Board:
 
 @dataclass
 class GameState:
-    number: int  # unique ordinal number of the state
     board: Board
+    number: int = 0  # unique ordinal number of the state
     current_player: int = 0
     valid_actions = [RollDice(player=0)]

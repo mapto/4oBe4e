@@ -13,6 +13,7 @@ allow_prereleases = true
 colorama = "*"
 dataclasses = "*"
 importlib_metadata = "*"
+pampy = "*"
 
 [dev-packages]
 pytest = "*"
