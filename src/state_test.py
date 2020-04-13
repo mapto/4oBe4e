@@ -116,5 +116,7 @@ def test_game_state_defaults(monkeypatch):
 
     assert state.board == board
     assert state.number == 0
+    assert state.dice == -1
+    assert state.winners == []
     assert state.current_player == 0
     assert state.valid_actions == [RollDice(player=0)]
