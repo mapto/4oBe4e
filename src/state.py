@@ -24,8 +24,10 @@ class MovePiece(GameAction):
     piece: Piece
     dice: int
 
+
 @dataclass
 class PieceOut(MovePiece):
+    pass
 
 
 @dataclass
@@ -93,5 +95,7 @@ class Board:
 class GameState:
     board: Board
     number: int = 0  # unique ordinal number of the state
+    dice: int = -1
+    winners: List[int] = field(default_factory=lambda: [])
     current_player: int = 0
     valid_actions = [RollDice(player=0)]
