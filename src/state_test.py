@@ -110,6 +110,21 @@ def test_custom_board_init(monkeypatch):
     assert board.pieces == [Piece(0, 0, 0), Piece(0, 1, 0)]
 
 
+def test_negative_create_wrong_players_board(monkeypatch):
+    # player index bigger then the board
+    with pytest.raises(Exception):
+        board = Board.create(players=[6, 1], shape_angles=5)
+    # board with no players
+    with pytest.raises(Exception):
+        board = Board.create(players=[])
+    # board with duplicate players
+    with pytest.raises(Exception):
+        board = Board.create(players=[1, 1])
+    # board with too many players
+    with pytest.raises(Exception):
+        board = Board.create(players=[0, 1, 2], shape_angles=2)
+
+
 def test_game_state_defaults(monkeypatch):
     board = Board.create()
     state = GameState.create(board)
