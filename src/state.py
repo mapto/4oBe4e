@@ -51,7 +51,7 @@ class Board:
     # the position on which the piece is out of the finish zone
     end_progress: int = 0
 
-    def __post_init(self):
+    def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
         assert max(self.players) <= self.shape_angles
