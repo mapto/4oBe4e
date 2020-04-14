@@ -5,7 +5,7 @@ from state import Piece, Board, GameAction, RollDice, MovePiece, PieceOut, GameS
 
 class GameEngine:
     def __init__(self, board: Board):
-        self.state = GameState(board)
+        self.state = GameState.create(board)
 
     def get_state(self) -> GameState:
         return self.state

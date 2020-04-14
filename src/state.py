@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Sequence
 
 
 @dataclass
@@ -32,7 +32,8 @@ class PieceOut(MovePiece):
 
 @dataclass
 class Board:
-    players_count: int = 4  # number of the players playing the current game
+    # number of the players playing the current game
+    players: List[int] = field(default_factory=lambda: [0, 1, 2, 3])
     pieces_per_player: int = 4  # how many pieces each player has
     pieces: List[Piece] = field(default_factory=lambda: [])
 
@@ -42,20 +43,21 @@ class Board:
     shape_side_length: int = 14  # side length of the board shape
 
     # the offset between two neighbor players start possitions on the board
-    # calculated in __post_init__. Probably there is a better way
     player_shift: int = 0
 
     # the length in possitions on the board of the finish zoen
     finish_zone_length: int = 5
 
     # the position on which the piece is out of the finish zone
-    # calculated in __post_init__. Probably there is a better way
     end_progress: int = 0
 
     def __post_init(self):
-        assert self.players_count > 1
+        assert len(self.players) > 1
+        assert len(set(self.players)) == len(self.players)
+        assert max(self.players) <= self.shape_angles
+        assert len(self.players) <= self.shape_angles
         assert self.pieces_per_player > 0
-        assert len(self.pieces) == self.players_count * self.pieces_per_player
+        assert len(self.pieces) == len(self.players) * self.pieces_per_player
         assert self.shape_angles > 2
         assert self.shape_side_length > 5
         assert self.finish_zone_length > 2
@@ -66,7 +68,7 @@ class Board:
 
     @staticmethod
     def create(
-        players_count: int = 4,
+        players: List[int] = [0, 1, 2, 3],
         pieces_per_player: int = 4,
         shape_angles: int = 4,
         shape_side_length: int = 14,
@@ -75,12 +77,12 @@ class Board:
         pieces: List[Piece] = []
         player_shift: int = shape_side_length + 1
         end_progress: int = 1 + shape_angles * shape_side_length + finish_zone_length
-        for player_num in range(0, players_count):
+        for player_num in range(0, len(players)):
             for piece_num in range(pieces_per_player):
                 pieces.append(Piece(piece_num, player_num))
 
         return Board(
-            players_count=players_count,
+            players=players,
             pieces_per_player=pieces_per_player,
             pieces=pieces,
             shape_angles=shape_angles,
@@ -94,8 +96,13 @@ class Board:
 @dataclass
 class GameState:
     board: Board
+    valid_actions: Sequence[GameAction]
     number: int = 0  # unique ordinal number of the state
     dice: int = -1
     winners: List[int] = field(default_factory=lambda: [])
     current_player: int = 0
-    valid_actions = [RollDice(player=0)]
+
+    @staticmethod
+    def create(board: Board):
+        valid_actions = [RollDice(player=board.players[0])]
+        return GameState(board=board, valid_actions=valid_actions)
