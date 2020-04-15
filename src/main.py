@@ -33,9 +33,9 @@ def play(players: int, first_player: Player) -> None:
 
         win = check_endgame(status)
         if not win and dice != 6:
-            next = (next % players) + 1
+            next = (next + 1) % players
 
-    end_game(status, next)
+    end_game(status, player)
 
 
 def main(num_players: int) -> None:
@@ -45,7 +45,7 @@ def main(num_players: int) -> None:
 
     player = choose_first(Player.players)
     print()
-    print("Player {} plays first!".format(player))
+    print("{:s} plays first!".format(player))
 
     play(num_players, player)
 

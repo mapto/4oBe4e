@@ -14,12 +14,12 @@ from action import roll_dice
 
 def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) -> bool:
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
-    movable_piece_nums = [p.id() for p in get_valid_moves(player, dice, status)]
+    movable_piece_nums = [p.index() for p in get_valid_moves(player, dice, status)]
     if not (piece_to_move in movable_piece_nums):
         return False
 
     for piece in status:
-        if piece.player() == player.number and piece.id() == piece_to_move:
+        if piece.player() == player.number and piece.index() == piece_to_move:
             piece.move(dice)
     return True
 
@@ -35,14 +35,14 @@ def choose_first(players: Set[Player]) -> Player:
         for i in range(len(score)):
             if score[i] != -1:
                 # TODO: Resolve problem that this relies on logic that involves console interaction
-                score[i] = roll_dice(player_num=i + 1)
+                score[i] = roll_dice(player_num=i)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
             for i in range(len(score)):
                 score[i] = 0 if score[i] == m else -1
         else:
             need_more = False
-    return Player.get(score.index(m) + 1)
+    return Player.get(score.index(m))
 
 
 def check_endgame(status: List[Piece]) -> bool:
@@ -78,8 +78,8 @@ def coord_in_home(piece: Piece) -> Tuple[int, int]:
     shift = {0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)}
 
     return (
-        zones[piece.player()][0] + shift[piece.id()][0],
-        zones[piece.player()][1] + shift[piece.id()][1],
+        zones[piece.player()][0] + shift[piece.index()][0],
+        zones[piece.player()][1] + shift[piece.index()][1],
     )
 
 
@@ -259,8 +259,8 @@ def coord_in_target(piece: Piece) -> Tuple[int, int]:
     shift = {0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)}
 
     return (
-        zones[piece.player()][0] + shift[piece.id()][0],
-        zones[piece.player()][1] + shift[piece.id()][1],
+        zones[piece.player()][0] + shift[piece.index()][0],
+        zones[piece.player()][1] + shift[piece.index()][1],
     )
 
 
@@ -321,20 +321,20 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
 
 def get_valid_moves(player: Player, dice: int, status: List[Piece]) -> List[Piece]:
     """
-    >>> p = Player.create(); p2 = Player.create()
-    >>> get_valid_moves(p, 6, [Piece(1, 0), Piece(1, 1), Piece(2, 0), Piece(2, 1)])
+    >>> p = Player.create(); p2 = Player.create(); p = Player.get(0)
+    >>> get_valid_moves(p, 6, [Piece(0, 0), Piece(0, 1), Piece(1, 0), Piece(1, 1)])
     [0, 1]
 
-    >>> get_valid_moves(p, 1, [Piece(1, 0), Piece(1, 1), Piece(1, 2), Piece(2, 0)])
+    >>> get_valid_moves(p, 1, [Piece(0, 0), Piece(0, 1), Piece(0, 2), Piece(1, 0)])
     []
 
-    >>> get_valid_moves(p, 1, [Piece(1, 0, 1), Piece(1, 1), Piece(1, 2), Piece(2, 0)])
+    >>> get_valid_moves(p, 1, [Piece(0, 0, 1), Piece(0, 1), Piece(0, 2), Piece(1, 0)])
     [0]
 
-    >>> get_valid_moves(p, 1, [Piece(1, 0, 1), Piece(1, 1, 57), Piece(1, 2), Piece(2, 0)])
+    >>> get_valid_moves(p, 1, [Piece(0, 0, 1), Piece(0, 1, 57), Piece(0, 2), Piece(1, 0)])
     [0, 1]
 
-    >>> get_valid_moves(p, 6, [Piece(1, 0, 1), Piece(1, 1, 60), Piece(1, 2), Piece(1, 3, 0)])
+    >>> get_valid_moves(p, 6, [Piece(0, 0, 1), Piece(0, 1, 60), Piece(0, 2), Piece(0, 3, 0)])
     [0, 2, 3]
     """
     own = [p for p in status if p.player() == player.number]

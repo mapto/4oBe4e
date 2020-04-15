@@ -32,9 +32,9 @@ class Player:
                     "Console interface cannot assign any more colours"
                 )
             color = colors.difference([p.color for p in Player.players]).pop()
+        number = len(Player.players)
         if not name:
-            name = color
-        number = len(Player.players) + 1
+            name = "Player {:d}".format(number + 1)
         player = Player(number, name, color)
         Player.players.add(player)
 
@@ -51,6 +51,13 @@ class Player:
 
     def __str__(self):
         return str(self.number)
+
+    def __format__(self, format):
+        if format == "s":
+            return self.name
+        if format == "d":
+            return self.number
+        return str(self)
 
     def __repr__(self):
         return str(self.number)

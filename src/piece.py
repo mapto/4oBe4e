@@ -16,7 +16,7 @@ class Piece:
     def move(self, move: int) -> None:
         self._position += move
 
-    def id(self) -> int:
+    def index(self) -> int:
         return self.piece_number
 
     def player(self) -> int:
@@ -32,14 +32,22 @@ class Piece:
         return self._player_num * PLAYER_SHIFT + self._position
 
     def __eq__(self, other: Any) -> bool:
-        return (
-            self.__class__ == other.__class__
-            and self.piece_number == other.piece_number
-            and self.player == other.player
-        )
+        if isinstance(other, Piece):
+            return self.player() == other.player() and self.index() == other.index()
+        return False
 
     def __str__(self):
-        return str(self.id())
+        return str(chr(ord("A") + self.piece_number))
+
+    def __int__(self):
+        return self.index()
 
     def __repr__(self):
-        return str(self.id())
+        return str(self.index())
+
+    def __format__(self, format):
+        if format == "s":
+            return str(self)
+        if format == "d":
+            return int(self)
+        return str(self.index())

@@ -5,6 +5,7 @@ from typing import Any, List, Dict
 from colorama import Back, Fore, Style  # type: ignore
 
 from piece import Piece
+from player import Player
 from game import put_piece_on_board
 
 
@@ -108,10 +109,10 @@ def draw_pieces_on_board(
     return board
 
 
-def end_game(status: List[Piece], winner: int) -> None:
+def end_game(status: List[Piece], winner: Player) -> None:
     """Celebrate the winning player."""
     redraw(status)
-    print("Player {:d} has won!".format(winner))
+    print("{:s} has won!".format(winner))
 
 
 def redraw(status: List[Piece]) -> None:
