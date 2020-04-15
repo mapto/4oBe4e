@@ -92,17 +92,39 @@ class Board:
             end_progress=end_progress,
         )
 
+    def relative_position(self, piece: Piece) -> int:
+        return 0
+
+    def is_on_start(self, piece: Piece) -> bool:
+        return piece.position == 0
+
+    def is_on_path(self, piece: Piece) -> bool:
+        relative_position = self.relative_position(piece)
+        end_path = self.end_progress - self.finish_zone_length
+        return piece.position > 0 and relative_position < end_path
+
+    def is_on_safe(self, piece: Piece) -> bool:
+        relative_position = self.relative_position(piece)
+        return relative_position > self.end_progress
+
+    def is_on_target(self, piece: Piece) -> bool:
+        relative_position = self.relative_position(piece)
+        return relative_position == self.end_progress
+
 
 @dataclass
 class GameState:
     board: Board
     valid_actions: Sequence[GameAction]
+    current_player: int
     number: int = 0  # unique ordinal number of the state
     dice: int = -1
     winners: List[int] = field(default_factory=lambda: [])
-    current_player: int = 0
 
     @staticmethod
     def create(board: Board):
-        valid_actions = [RollDice(player=board.players[0])]
-        return GameState(board=board, valid_actions=valid_actions)
+        current_player = board.players[0]
+        valid_actions = [RollDice(player=current_player)]
+        return GameState(
+            board=board, current_player=current_player, valid_actions=valid_actions
+        )
