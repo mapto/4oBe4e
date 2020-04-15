@@ -131,6 +131,10 @@ def test_ask_limited_valid_input(monkeypatch):
     monkeypatch.setattr("sys.stdin", pawn_number)
     assert action.ask_move(pieces) == 1
 
+    pawn_number = StringIO("\n")
+    monkeypatch.setattr("sys.stdin", pawn_number)
+    assert action.ask_move(pieces) == 1
+
     pawn_number = StringIO("C\n")
     monkeypatch.setattr("sys.stdin", pawn_number)
     with pytest.raises(EOFError):

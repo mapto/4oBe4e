@@ -41,6 +41,8 @@ def ask_move(movable_pieces: List[Piece]) -> int:
         else:
             if pawn_symbol.upper() in valid_moves:
                 return ord(pawn_symbol.upper()) - ord("A")
+            if not pawn_symbol and len(valid_moves) == 1:
+                return ord(valid_moves[0]) - ord("A")
 
 
 if __name__ == "__main__":

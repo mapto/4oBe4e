@@ -20,7 +20,13 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
 
     for piece in status:
         if piece.player() == player.number and piece.index() == piece_to_move:
-            piece.move(dice)
+            if piece.progress() == 0:
+                if dice == 6:
+                    piece.move(1)
+                else:
+                    raise ValueError("Home can only be left with a full dice")
+            else:
+                piece.move(dice)
     return True
 
 
