@@ -23,14 +23,15 @@ ul {
     font-size: xx-large;
     border-style: hidden;
     list-style:none;
-    border-style: hidden;
-    padding:30px;
+    padding:20px;
     float: right;
-    margin-right: 325px;
+    margin-right: 200px;
   }
-li.red {color: red;}
-li.green {color: green;}
-li.blue {color: blue;}
-li.yellow {color: rgb(255, 208, 0);}
-
+label.red {color: red;}
+label.green {color: green;}
+label.blue {color: blue;}
+label.yellow {color: rgb(255, 208, 0);}
+label {
+    text-shadow: 1px 0 black;
+}
   
