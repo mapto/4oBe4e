@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Sequence
+from typing import List, Sequence, Set
 
 
 @dataclass
@@ -33,7 +33,7 @@ class PieceOut(MovePiece):
 @dataclass
 class Board:
     # number of the players playing the current game
-    players: List[int] = field(default_factory=lambda: [0, 1, 2, 3])
+    players: List[int] = field(default_factory=lambda: [1, 3])
     pieces_per_player: int = 4  # how many pieces each player has
     pieces: List[Piece] = field(default_factory=lambda: [])
 
@@ -92,21 +92,27 @@ class Board:
             end_progress=end_progress,
         )
 
+
+    # TODO finish off implementation and add unit tests
     def relative_position(self, piece: Piece) -> int:
         return 0
 
+    # TODO finish off implementation and add unit tests
     def is_on_start(self, piece: Piece) -> bool:
         return piece.position == 0
 
+    # TODO finish off implementation and add unit tests
     def is_on_path(self, piece: Piece) -> bool:
         relative_position = self.relative_position(piece)
         end_path = self.end_progress - self.finish_zone_length
         return piece.position > 0 and relative_position < end_path
 
+    # TODO finish off implementation and add unit tests
     def is_on_safe(self, piece: Piece) -> bool:
         relative_position = self.relative_position(piece)
         return relative_position > self.end_progress
 
+    # TODO finish off implementation and add unit tests
     def is_on_target(self, piece: Piece) -> bool:
         relative_position = self.relative_position(piece)
         return relative_position == self.end_progress
@@ -120,6 +126,9 @@ class GameState:
     number: int = 0  # unique ordinal number of the state
     dice: int = -1
     winners: List[int] = field(default_factory=lambda: [])
+
+    def next_player() -> int:
+        return -1
 
     @staticmethod
     def create(board: Board):
