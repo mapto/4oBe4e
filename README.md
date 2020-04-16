@@ -59,11 +59,13 @@ $ pip3 install --upgrade pip
 $ pip3 install pipenv
 $ pipenv --python /usr/bin/python3
 $ pipenv sync --dev
-$ pipenv shell
 ```
 
 ### Dummy Web Server
 1. Setup Pipenv as shown above
 2. Start the Web app:  
-`$ ./dummy-webapp.py`
+```
+$ pipenv shell
+$ ./dummy-webapp.py`
+```
 3. Open http://127.0.0.1:5000 in browser
