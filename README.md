@@ -63,8 +63,7 @@ $ pipenv shell
 ```
 
 ### Dummy Web Server
-```
-# TODO: move to pipenv
-$ pip3 install flask
-$ python3 dummy-webapp.py
-# open http://127.0.0.1:5000 in browser
+1. Setup Pipenv as shown above
+2. Start the Web app:  
+`$ ./dummy-webapp.py`
+3. Open http://127.0.0.1:5000 in browser
