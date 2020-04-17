@@ -8,6 +8,41 @@ from piece import Piece
 from player import Player
 from game import put_piece_on_board
 
+HOME_ZONE = 0
+END_PROGRESS = 62
+
+# Define players' board attributes
+players: List[Dict[str, Any]] = [
+    {
+        "colour": "RED",
+        "home": [[5, [2, 3]], [6, [2, 3]]],
+        "target": [[7, [6, 7]], [8, [6, 7]]],
+        "finish": [[9, [*range(3, 8)]], None],
+    },
+    {
+        "colour": "BLUE",
+        "home": [[2, [12, 13]], [3, [12, 13]]],
+        "target": [[6, [10, 11]], [7, [10, 11]]],
+        "finish": [[3, [9]], [4, [9]], [5, [9]], [6, [9]], [7, [9]]],
+    },
+    {
+        "colour": "GREEN",
+        "home": [[12, [15, 16]], [13, [15, 16]]],
+        "target": [[10, [11, 12]], [11, [11, 12]]],
+        "finish": [[9, [*range(11, 16)]], None],
+    },
+    {
+        "colour": "YELLOW",
+        "home": [[15, [5, 6]], [16, [5, 6]]],
+        "target": [[11, [7, 8]], [12, [7, 8]]],
+        "finish": [[11, [9]], [12, [9]], [13, [9]], [14, [9]], [15, [9]]],
+    },
+]
+
+
+def _colour(name: str = "WHITE") -> str:
+    return eval(f"Fore.{name}")
+
 
 def draw_board() -> List[List[Any]]:
     """ Draw an ASCII board with the current pieces.
@@ -25,34 +60,6 @@ def draw_board() -> List[List[Any]]:
     # Init board
     board = [[Style.RESET_ALL + "   "] * COLS for row in range(ROWS)]
 
-    # Define players' board attributes
-    players: List[Dict[str, Any]] = [
-        {
-            "colour": "RED",
-            "home": [[5, [2, 3]], [6, [2, 3]]],
-            "target": [[7, [6, 7]], [8, [6, 7]]],
-            "finish": [[9, [*range(3, 8)]], None],
-        },
-        {
-            "colour": "BLUE",
-            "home": [[2, [12, 13]], [3, [12, 13]]],
-            "target": [[6, [10, 11]], [7, [10, 11]]],
-            "finish": [[3, [9]], [4, [9]], [5, [9]], [6, [9]], [7, [9]]],
-        },
-        {
-            "colour": "GREEN",
-            "home": [[12, [15, 16]], [13, [15, 16]]],
-            "target": [[10, [11, 12]], [11, [11, 12]]],
-            "finish": [[9, [*range(11, 16)]], None],
-        },
-        {
-            "colour": "YELLOW",
-            "home": [[15, [5, 6]], [16, [5, 6]]],
-            "target": [[11, [7, 8]], [12, [7, 8]]],
-            "finish": [[11, [9]], [12, [9]], [13, [9]], [14, [9]], [15, [9]]],
-        },
-    ]
-
     # Fill board frame
     for i in range(len(board)):
         board[i][:: len(board[i]) - 1] = [Fore.MAGENTA + " . ", Fore.MAGENTA + " . "]
@@ -64,14 +71,14 @@ def draw_board() -> List[List[Any]]:
     for p in players:
         for h in p["home"]:
             for c in h[1]:
-                board[h[0]][c] = eval(f"Fore.{p['colour']}") + HOME_SHAPE
+                board[h[0]][c] = _colour(p["colour"]) + HOME_SHAPE
         for t in p["target"]:
             for c in t[1]:
-                board[t[0]][c] = eval(f"Fore.{p['colour']}") + TARGET_SHAPE
+                board[t[0]][c] = _colour(p["colour"]) + TARGET_SHAPE
         for f in p["finish"]:
             if f:
                 for c in f[1]:
-                    board[f[0]][c] = eval(f"Fore.{p['colour']}") + FINISH_SHAPE
+                    board[f[0]][c] = _colour(p["colour"]) + FINISH_SHAPE
 
     # Fill footpath
     footpath: List[List[List[int]]] = [
@@ -95,6 +102,12 @@ def draw_board() -> List[List[Any]]:
     return board
 
 
+def _cant_overlap(piece: Piece) -> bool:
+    """Even though this is piece-related logic, it has to do only with visualisation.
+    Thus in view, rather than object logic"""
+    return not (HOME_ZONE < piece.progress() < END_PROGRESS)
+
+
 def draw_pieces_on_board(
     board: List[List[Any]], pieces: List[Piece]
 ) -> List[List[Any]]:
@@ -102,9 +115,10 @@ def draw_pieces_on_board(
     such as collision of pieces of different players on the path"""
     for piece in pieces:
         (x, y) = put_piece_on_board(piece)
-        # TODO: Draw the piece on the board properly
-        # If there's already another piece, indicate this with another symbol for collision
-        board[x][y] = "." + str(piece) + "."
+        player_progress = [p.progress() for p in pieces if p.player() == piece.player()]
+        count = player_progress.count(piece.progress())
+        val = str(piece) if _cant_overlap(piece) or count == 1 else str(count)
+        board[x][y] = f"{_colour(players[piece.player()]['colour'])}.{val}."
 
     return board
 
