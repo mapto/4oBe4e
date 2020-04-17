@@ -1,40 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
 	<title>НЕ СЕ СЪРДИ ЧОВЕЧЕ</title>
 	<link rel="stylesheet" href="4oBe4e.css">
 </head>
 <body>
 	<div>
         <h3></h3>
-        <ul>
-        <form action="/action_page.php">
-            <label class= red for="fname">ИГРАЧ 1</label>
-            <input type="text" id="fname" name="fname">
+        <ul class="players">
+        <form action="/action_page">
+            <label class= red for="player1">ИГРАЧ 1</label>
+            <input type="text" id="player1" name="player1">
             <input type="submit" value="Submit"><br>
-            <label class= green for="fname">ИГРАЧ 2</label>
-            <input type="text" id="fname" name="fname">
+            <label class= green for="player2">ИГРАЧ 2</label>
+            <input type="text" id="player2" name="player2">
             <input type="submit" value="Submit"><br>
-            <label class= blue for="fname">ИГРАЧ 3</label>
-            <input type="text" id="fname" name="fname">
+            <label class= blue for="player3">ИГРАЧ 3</label>
+            <input type="text" id="player3" name="player3">
             <input type="submit" value="Submit"><br>
-            <label class= yellow for="fname">ИГРАЧ 4</label>
-            <input type="text" id="fname" name="fname">
+            <label class= yellow for="player4">ИГРАЧ 4</label>
+            <input type="text" id="player4" name="player4">
             <input type="submit" value="Submit">
         </form>
         </ul>
-    <div>
-        <img class="board" src="https://upload.wikimedia.org/wikipedia/commons/7/78/PetitsChevaux1.svg" alt="не се сърди човече">
-        <p></p>
+    <div class="board">
+        <img class="board1" src="https://upload.wikimedia.org/wikipedia/commons/7/78/PetitsChevaux1.svg" alt="не се сърди човече">
     </div>
-    <div>
-        <img class="dice" src="https://cdn.dribbble.com/users/41854/screenshots/2479300/sana-dice-800x600.gif" alt="зар">
-        <p></p>
+        <img class="img1" src="images/red1.png">
+      <div>
         <ul>
-            <a href="https://bg.wikipedia.org/wiki/%D0%9D%D0%B5_%D1%81%D0%B5_%D1%81%D1%8A%D1%80%D0%B4%D0%B8,_%D1%87%D0%BE%D0%B2%D0%B5%D1%87%D0%B5" target="_blank"><li >Правила</li></a>
+            <a class="rules" href="https://bg.wikipedia.org/wiki/%D0%9D%D0%B5_%D1%81%D0%B5_%D1%81%D1%8A%D1%80%D0%B4%D0%B8,_%D1%87%D0%BE%D0%B2%D0%B5%D1%87%D0%B5" target="_blank"><li >Правила</li></a>
         </ul>
     </div>
-	</div>
+<script type="text/javascript" src="js/index.js"></script>
 </body>
 </html>
