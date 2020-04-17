@@ -2,6 +2,7 @@ import pytest  # type: ignore
 from state import Board, Piece, PieceOut, GameState, RollDice
 from engine import GameEngine, Dice
 
+
 def test_initial_gate_state(monkeypatch):
     # Given
     board = Board.create(players=[1, 3])
@@ -44,11 +45,12 @@ def test_play_roll_dice_6(monkeypatch):
     assert new_state == game.get_state()
     assert new_state.dice == 6
     assert new_state.valid_actions == [
-      PieceOut(player=1, piece=Piece(0, 1, 0), dice=6),
-      PieceOut(player=1, piece=Piece(1, 1, 0), dice=6),
-      PieceOut(player=1, piece=Piece(2, 1, 0), dice=6),
-      PieceOut(player=1, piece=Piece(3, 1, 0), dice=6),
+        PieceOut(player=1, piece=Piece(0, 1, 0), dice=6),
+        PieceOut(player=1, piece=Piece(1, 1, 0), dice=6),
+        PieceOut(player=1, piece=Piece(2, 1, 0), dice=6),
+        PieceOut(player=1, piece=Piece(3, 1, 0), dice=6),
     ]
+
 
 def test_play_roll_dice_3(monkeypatch):
     # Given
@@ -65,5 +67,6 @@ def test_play_roll_dice_3(monkeypatch):
     assert new_state == game.get_state()
     assert new_state.dice == 3
     assert new_state.valid_actions == [RollDice(player=3)]
+
 
 # TODO write tests for playing the game to completion from 2 players without knock outs

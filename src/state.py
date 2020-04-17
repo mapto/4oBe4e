@@ -92,7 +92,6 @@ class Board:
             end_progress=end_progress,
         )
 
-
     # TODO finish off implementation and add unit tests
     def relative_position(self, piece: Piece) -> int:
         return 0
