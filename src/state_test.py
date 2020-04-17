@@ -1,5 +1,6 @@
 import pytest  # type: ignore
 from state import Board, Piece, GameState, RollDice
+import dataclasses, json
 
 
 def test_default_board_init(monkeypatch):
@@ -152,3 +153,8 @@ def test_game_state_defaults(monkeypatch):
     assert state.winners == []
     assert state.current_player == 0
     assert state.valid_actions == [RollDice(player=0)]
+
+
+def test_board_to_json(monkeypatch):
+    board = Board.create()
+    board_json = json.dumps(dataclasses.asdict(board))

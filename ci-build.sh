@@ -13,7 +13,7 @@ echo '>>> Run Mypy'
 pipenv run mypy src
 
 echo '>>>  Run Pytest'
-pipenv run pytest -v --doctest-modules src
+pipenv run pytest -v --doctest-modules -s src
 
 echo '>>> Run Black'
 pipenv run black src
