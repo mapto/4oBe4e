@@ -66,21 +66,21 @@ def check_endgame(status: List[Piece]) -> bool:
 def coord_in_home(piece: Piece) -> Tuple[int, int]:
     """Draw in home positions: each piece has its location. Progress is always same, thus irrelevant
     
-    >>> coord_in_home(Piece(1, 0))
+    >>> coord_in_home(Piece(0, 0))
     (5, 2)
 
-    >>> coord_in_home(Piece(2, 1))
+    >>> coord_in_home(Piece(1, 1))
     (2, 13)
 
-    >>> coord_in_home(Piece(3, 2))
+    >>> coord_in_home(Piece(2, 2))
     (13, 15)
 
-    >>> coord_in_home(Piece(4, 3))
+    >>> coord_in_home(Piece(3, 3))
     (16, 6)
     """
     assert piece.progress() == 0
 
-    zones = {1: (5, 2), 2: (2, 12), 3: (12, 15), 4: (15, 5)}
+    zones = [(5, 2), (2, 12), (12, 15), (15, 5)]
     shift = {0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)}
 
     return (

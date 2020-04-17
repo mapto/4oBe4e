@@ -6,7 +6,7 @@ from piece import Piece
 class Board:
     def __init__(self, number_players: int = 4, numberOfPieces: int = 4):
         self._pieces: List[Piece] = []
-        for player in range(1, number_players + 1):
+        for player in range(number_players):
             for piece in range(numberOfPieces):
                 self._pieces.append(Piece(player, piece))
 
