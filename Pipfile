@@ -7,7 +7,7 @@ verify_ssl = true
 allow_prereleases = true
 
 [requires]
-#python_version = "3"  # Don't pin as currently there is no support for relative values (ref: https://github.com/pypa/pipenv/issues/2694)
+python_version = "3.6"
 
 [packages]
 colorama = "*"
