@@ -30,7 +30,7 @@ class GameEngine:
             if piece.player == player:
                 calc_valid_actions(piece)
         if len(valid_actions) == 0:
-            valid_action.append(RollDice())
+            valid_actions.append(RollDice(player))
 
         self.state.valid_actions = valid_actions
         return self.state

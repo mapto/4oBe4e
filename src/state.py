@@ -54,7 +54,7 @@ class Board:
     def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
-        assert max(self.players) <= self.shape_angles
+        # assert max(self.players) <= self.shape_angles
         assert len(self.players) <= self.shape_angles
         assert self.pieces_per_player > 0
         assert len(self.pieces) == len(self.players) * self.pieces_per_player
@@ -126,7 +126,7 @@ class GameState:
     dice: int = -1
     winners: List[int] = field(default_factory=lambda: [])
 
-    def next_player() -> int:
+    def next_player(self) -> int:
         return -1
 
     @staticmethod
