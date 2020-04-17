@@ -31,8 +31,7 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
 
 
 def choose_first(players: Set[Player]) -> Player:
-    """ score index is 0..3, i.e. player-1 (player are 1..4)
-    0 means hasn't drawn, -1 means is already out of drawing
+    """ score 0 means player hasn't drawn, -1 means is already out of drawing
     """
     m = 0
     score = [0] * len(players)
@@ -81,7 +80,7 @@ def coord_in_home(piece: Piece) -> Tuple[int, int]:
     assert piece.progress() == 0
 
     zones = [(5, 2), (2, 12), (12, 15), (15, 5)]
-    shift = {0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)}
+    shift = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
     return (
         zones[piece.player()][0] + shift[piece.index()][0],
@@ -247,22 +246,22 @@ def coord_on_finish(piece: Piece) -> Tuple[int, int]:
 def coord_in_target(piece: Piece) -> Tuple[int, int]:
     """Draw in target positions: each piece has its location. Progress is always same, thus irrelevant
     
-    >>> coord_in_target(Piece(1, 0, 62))
+    >>> coord_in_target(Piece(0, 0, 62))
     (7, 6)
 
-    >>> coord_in_target(Piece(2, 1, 62))
+    >>> coord_in_target(Piece(1, 1, 62))
     (6, 11)
 
-    >>> coord_in_target(Piece(3, 2, 62))
+    >>> coord_in_target(Piece(2, 2, 62))
     (11, 11)
 
-    >>> coord_in_target(Piece(4, 3, 62))
+    >>> coord_in_target(Piece(3, 3, 62))
     (12, 8)
     """
     assert piece.progress() == 62
 
-    zones = {1: (7, 6), 2: (6, 10), 3: (10, 11), 4: (11, 7)}
-    shift = {0: (0, 0), 1: (0, 1), 2: (1, 0), 3: (1, 1)}
+    zones = [(7, 6), (6, 10), (10, 11), (11, 7)]
+    shift = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
     return (
         zones[piece.player()][0] + shift[piece.index()][0],
