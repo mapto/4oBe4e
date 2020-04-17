@@ -3,35 +3,40 @@
 body {
     font-family: "Times New Roman", Times, serif;
 }
-img.board {
+.board {
     border-style: hidden;
-    height: 800px;
     float: left;
-    margin-left: 50px;
+    margin-left: 20px;
+    width: 55%;
     }
-img.dice {
-    border-style: hidden;
-    padding-bottom: 50px;
-    padding-top: 50px;
-    height: 200px;
-    float: right;
-    margin-top: px;
-    margin-right: 200px;
-    }
-ul {
+.players {
     font-weight: bold;
     font-size: xx-large;
     border-style: hidden;
     list-style:none;
-    padding:20px;
     float: right;
-    margin-right: 200px;
+    margin-right: 150px;
+    margin-top: 40px;
+    margin-top: 70px;
   }
 label.red {color: red;}
 label.green {color: green;}
 label.blue {color: blue;}
 label.yellow {color: rgb(255, 208, 0);}
-label {
-    text-shadow: 1px 0 black;
+label {text-shadow: 1px 0 black;}
+
+.img1 {
+    float: right;
+    margin-right: 380px;
+    margin-top: 100px;
+    height: 130px;
 }
-  
+.rules {
+    font-weight: bold;
+    font-size: xx-large;
+    border-style: hidden;
+    float: right;
+    margin-top: 200px;
+    margin-right: 380px;
+    list-style:none;
+}
