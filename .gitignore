@@ -2,8 +2,9 @@
 *.ipynb
 *.pyc
 *.swp
-.mypy_cache/
+*.tmp
 .env
+.mypy_cache/
 .pytest_cache/
 .venv
 .vscode
