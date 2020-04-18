@@ -1,5 +1,5 @@
 import pytest  # type: ignore
-from state import Board, Piece, PieceOut, GameState, RollDice
+from state import Board, Piece, GameState, GameMove
 from engine import GameEngine, Dice
 
 
@@ -23,11 +23,11 @@ def test_play_invalid_action_on_initial_state(monkeypatch):
 
     # When we try to play an invalid action PieceOut
     with pytest.raises(Exception):
-        game.play(PieceOut(1, 1, 6))
+        game.play(GameMove.piece_out(1, 1, 6))
 
     # When we try to play valid action for an invalid Player
     with pytest.raises(Exception):
-        game.play(RollDice(player=3))
+        game.play(GameMove.roll_dice(player=3))
 
 
 def test_play_roll_dice_6(monkeypatch):
@@ -39,16 +39,16 @@ def test_play_roll_dice_6(monkeypatch):
     game = GameEngine(board, dice)
 
     # When
-    new_state = game.play(RollDice(player=1))
+    new_state = game.play(GameMove.roll_dice(player=1))
 
     # Then
     assert new_state == game.get_state()
     assert new_state.dice == 6
     assert new_state.valid_actions == [
-        PieceOut(player=1, piece=Piece(0, 1, 0), dice=6),
-        PieceOut(player=1, piece=Piece(1, 1, 0), dice=6),
-        PieceOut(player=1, piece=Piece(2, 1, 0), dice=6),
-        PieceOut(player=1, piece=Piece(3, 1, 0), dice=6),
+        GameMove.piece_out(player=1, piece=0, dice=6),
+        GameMove.piece_out(player=1, piece=1, dice=6),
+        GameMove.piece_out(player=1, piece=2, dice=6),
+        GameMove.piece_out(player=1, piece=3, dice=6),
     ]
 
 
@@ -61,12 +61,12 @@ def test_play_roll_dice_3(monkeypatch):
     game = GameEngine(board, dice)
 
     # When
-    new_state = game.play(RollDice(player=1))
+    new_state = game.play(GameMove.roll_dice(player=1))
 
     # Then
     assert new_state == game.get_state()
     assert new_state.dice == 3
-    # assert new_state.valid_actions == [RollDice(player=3)]
+    # assert new_state.valid_actions == [GameMove.roll_dice(player=3)]
 
 
 # TODO write tests for playing the game to completion from 2 players without knock outs
