@@ -199,3 +199,39 @@ def test_board_is_on_start():
 
     p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=2))
     assert not p0_on_start
+
+
+def test_board_is_on_path():
+    board = Board.create()
+
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=0))
+    assert not p0_on_path
+
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=10))
+    assert p0_on_path
+
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=61))
+    assert not p0_on_path
+
+
+def test_board_is_on_finish():
+    board = Board.create()
+
+    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, position=60))
+    assert not p0_on_finish
+
+    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, position=61))
+    assert p0_on_finish
+
+    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, position=66))
+    assert not p0_on_finish
+
+
+def test_board_is_on_target():
+    board = Board.create()
+
+    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, position=60))
+    assert not p0_on_target
+
+    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, position=66))
+    assert p0_on_target
