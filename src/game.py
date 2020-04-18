@@ -11,6 +11,10 @@ from piece import Piece
 from player import Player
 from action import roll_dice
 
+# TODO: Extract to board
+LAST_ON_PATH = 14 * 4
+END_PROGRESS = LAST_ON_PATH + 6
+
 
 def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) -> bool:
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
@@ -18,15 +22,26 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
     if not (piece_to_move in movable_piece_nums):
         return False
 
-    for piece in status:
-        if piece.player() == player.number and piece.index() == piece_to_move:
-            if piece.progress() == 0:
-                if dice == 6:
-                    piece.move(1)
-                else:
-                    raise ValueError("Home can only be left with a full dice")
-            else:
-                piece.move(dice)
+    current = [
+        p for p in status if p.player() == player.number and p.index() == piece_to_move
+    ]
+    assert len(current) == 1
+    piece = current[0]
+    if piece.progress() == 0:
+        if dice == 6:
+            piece.move(1)
+        else:
+            raise ValueError("Home can only be left with a full dice")
+    else:
+        piece.move(dice)
+        if 0 < piece.progress() <= LAST_ON_PATH:
+            others = [
+                o
+                for o in status
+                if o.player() != player.number and piece.position() == o.position()
+            ]
+            for other in others:
+                other.send_home()
     return True
 
 
@@ -89,10 +104,10 @@ def coord_in_home(piece: Piece) -> Tuple[int, int]:
 
 
 def coord_on_path(piece: Piece) -> Tuple[int, int]:
-    """TODO: draw on path: if two or more pieces on same cell, instead of number,
-    draw a placeholder, which does not need to show piece number
-    possibly split this in 4 or 8 different cases.
-    Parameter piece does't influence logic
+    """Draws on path: if two or more pieces on same cell, instead of number,
+    draws a placeholder, which does not need to show piece number
+    Logic split this in 4 different cases, determined by player offset.
+    Parameter piece does't influence logic.
 
     Player (absolute) Progress to (relative) Position conversion:
         P0     1..56: (pos)
@@ -129,7 +144,7 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     (10, 14)
     """
 
-    assert 1 <= piece.progress() <= 56 and 0 <= piece.player() <= 3
+    assert 1 <= piece.progress() <= LAST_ON_PATH and 0 <= piece.player() <= 3
 
     POSITION_TO_ROWCOL: Tuple[Tuple[int, int], ...] = (
         (0, 0),
@@ -191,14 +206,7 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
         (9, 2),
     )
 
-    progress = piece.progress()
-    player = piece.player()
-    shift = 14
-    path_wrap = 56
-    position = player * shift + progress
-    position = position if position <= path_wrap else position % path_wrap
-
-    return POSITION_TO_ROWCOL[position]
+    return POSITION_TO_ROWCOL[piece.position()]
 
 
 def coord_on_finish(piece: Piece) -> Tuple[int, int]:
@@ -225,7 +233,7 @@ def coord_on_finish(piece: Piece) -> Tuple[int, int]:
     >>> coord_on_finish(Piece(4, 1, 61))
     (11, 9)
     """
-    pos = piece.progress() - 56
+    pos = piece.progress() - LAST_ON_PATH
     assert 0 < pos < 6
 
     player = piece.player()
@@ -277,11 +285,11 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     progress = piece.progress()
     if progress == 0:
         coords = coord_in_home(piece)
-    elif 0 < progress <= 56:
+    elif 0 < progress <= LAST_ON_PATH:
         coords = coord_on_path(piece)
-    elif 56 < progress <= 61:
+    elif LAST_ON_PATH < progress < END_PROGRESS:
         coords = coord_on_finish(piece)
-    elif progress == 62:
+    elif progress == END_PROGRESS:
         coords = coord_in_target(piece)
     else:
         raise NotImplementedError()
@@ -310,17 +318,17 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
     pos = piece.progress()
     if pos == 0:
         return dice == 6
-    if 0 < pos <= 56:
+    if 0 < pos <= LAST_ON_PATH:
         at_dest = [
             p
             for p in status
             if piece.position() == p.position() and piece.player() != p.player()
         ]
         return 2 > len(at_dest)
-    if 56 < pos <= 61:
-        return pos + dice <= 62
+    if LAST_ON_PATH < pos < END_PROGRESS:
+        return pos + dice <= END_PROGRESS
 
-    assert pos == 62
+    assert pos == END_PROGRESS
     return False
 
 
