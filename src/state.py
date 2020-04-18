@@ -109,19 +109,16 @@ class Board:
     def is_on_start(self, piece: Piece) -> bool:
         return True if piece.position == 1 else False
 
-    # TODO finish off implementation and add unit tests
     def is_on_path(self, piece: Piece) -> bool:
         return True if 1 <= piece.position <= self.path_zone_length else False
 
-    # TODO finish off implementation and add unit tests
     def is_on_finish(self, piece: Piece) -> bool:
         return (
             True
-            if self.path_zone_length > piece.position < self.end_progress
+            if self.path_zone_length < piece.position < self.end_progress
             else False
         )
 
-    # TODO finish off implementation and add unit tests
     def is_on_target(self, piece: Piece) -> bool:
         return (
             True
