@@ -2,12 +2,11 @@
 # coding: utf-8
 
 from flask import Flask
-from flask import request, redirect, send_from_directory
+from flask import request, Response, redirect, send_from_directory
 import dataclasses, json
 import uuid
 from state import Board, GameState, GameMove
 from engine import GameEngine
-from flask import jsonify
 from typing import Dict
 
 static_path = "."
@@ -40,7 +39,7 @@ curl -H '4oBe4e-user-token:<user-token>' localhost:5000/play/roll
 def join(player: str):
     global engine
     if player in player_name_token:
-        return player_name_token[player]
+        return json.dumps({"player_token": player_name_token[player]})
     if len(player_token_name) == 4:
         players: Dict[str, int] = dict(
             (name, player_token_number[token])
@@ -55,7 +54,7 @@ def join(player: str):
     if len(player_token_name) == 4:
         board = Board.create(list(player_token_number.values()))
         engine = GameEngine(board)
-    return player_uuid
+    return json.dumps({"player_token": player_uuid})
 
 
 @app.route("/players")
@@ -66,13 +65,20 @@ def players():
 
 
 def __get_player_number() -> int:
-    user_token = request.headers.get("4oBe4e-user-token")
-    if user_token is None:
+    try:
+        user_token = request.headers.get("4oBe4e-user-token")
+        if user_token is None:
+            raise ValueError("There is no user token in the 4oBe4e-user-token header")
+        user_id = player_token_number[user_token]
+        if user_id is None:
+            raise ValueError("Unknown user with token:" + user_token)
+    except KeyError:
         raise ValueError("There is no user token in the 4oBe4e-user-token header")
-    user_id = player_token_number[user_token]
-    if user_id is None:
-        raise ValueError("Unknown user with token:" + user_token)
     return user_id
+
+
+def __error_response(err: str) -> Response:
+    return Response(json.dumps({"error": err}), status=400, mimetype="application/json")
 
 
 def __state_to_json(state: GameState) -> str:
@@ -82,33 +88,50 @@ def __state_to_json(state: GameState) -> str:
 @app.route("/state")
 def get_state():
     if engine == None:
-        raise SystemError("there is still no game")
+        return Response(
+            json.dumps(
+                {
+                    "error": "There is no game started yet because there is no 4 players",
+                    "players": players(),
+                }
+            ),
+            status=400,
+            mimetype="application/json",
+        )
     return __state_to_json(engine.state)
 
 
 @app.route("/play/roll")
 def play_roll():
-    player = __get_player_number()
-    new_state = engine.play(GameMove.roll_dice(player))
-    return __state_to_json(new_state)
+    try:
+        player = __get_player_number()
+    except ValueError as ve:
+        return __error_response(str(ve.args[0]))
+    else:
+        new_state = engine.play(GameMove.roll_dice(player))
+        return __state_to_json(new_state)
 
 
 @app.route("/play/move/<piece>/<dice>")
 def play_move(piece: int, dice: int):
-    player = __get_player_number()
-    piece_obj = (
-        engine.state.board.pieces
-    )  # TODO select the correct peice based on piece num and player num
-    new_state = engine.play(GameMove.move_piece(player, piece_obj, dice))
-    return __state_to_json(new_state)
+    try:
+        player = __get_player_number()
+    except ValueError as ve:
+        return __error_response(str(ve.args[0]))
+    else:
+        new_state = engine.play(GameMove.move_piece(player, piece, dice))
+        return __state_to_json(new_state)
 
 
 @app.route("/play/out/<piece>/<dice>")
 def play_out(piece: int, dice: int):
-    player = __get_player_number()
-    piece_obj = engine.state.board.pieces
-    new_state = engine.play(GameMove.piece_out(player, piece_obj, dice))
-    return __state_to_json(new_state)
+    try:
+        player = __get_player_number()
+    except ValueError as ve:
+        return __error_response(str(ve.__str__))
+    else:
+        new_state = engine.play(GameMove.piece_out(player, piece, dice))
+        return __state_to_json(new_state)
 
 
 if __name__ == "__main__":

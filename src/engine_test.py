@@ -66,7 +66,7 @@ def test_play_roll_dice_3(monkeypatch):
     # Then
     assert new_state == game.get_state()
     assert new_state.dice == 3
-    # assert new_state.valid_actions == [RollDice(player=3)]
+    # assert new_state.valid_actions == [GameMove.roll_dice(player=3)]
 
 
 # TODO write tests for playing the game to completion from 2 players without knock outs
