@@ -39,44 +39,46 @@ class Board:
 
     # board shape and constants with their defaults for a square board
     # with side 14 positions
-    shape_angles: int = 4  # rectangular = 4, triangular = 3, pentagon = 5
-    shape_side_length: int = 14  # side length of the board shape
+    board_corners: int = 4  # rectangular = 4, triangular = 3, pentagon = 5
+    board_side_length: int = 14  # side length of the board shape
 
     # the offset between two neighbor players start possitions on the board
-    player_shift: int = 0
+    player_shift: int = (board_side_length + 1)
 
-    # the length in possitions on the board of the finish zoen
+    # normal walk path length including connecting corners
+    path_zone_length: int = (board_corners * board_side_length) + board_corners
+
+    # the length of the finish zone (at the end of the path_zone)
     finish_zone_length: int = 5
 
     # the position on which the piece is out of the finish zone
-    end_progress: int = 0
+    end_progress: int = (path_zone_length + finish_zone_length + 1)
 
     def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
-        # assert max(self.players) <= self.shape_angles
-        assert len(self.players) <= self.shape_angles
+        assert len(self.players) <= self.board_corners
         assert self.pieces_per_player > 0
         assert len(self.pieces) == len(self.players) * self.pieces_per_player
-        assert self.shape_angles > 2
-        assert self.shape_side_length > 5
+        assert self.board_corners > 2
+        assert self.board_side_length > 5
         assert self.finish_zone_length > 2
-        assert (
-            self.end_progress
-            == self.shape_angles * self.shape_side_length + 1 + self.finish_zone_length
+        assert self.end_progress == (
+            self.path_zone_length + self.finish_zone_length + 1
         )
 
     @staticmethod
     def create(
         players: List[int] = [0, 1, 2, 3],
         pieces_per_player: int = 4,
-        shape_angles: int = 4,
-        shape_side_length: int = 14,
-        finish_zone_length=5,
+        board_corners: int = 4,
+        board_side_length: int = 14,
+        finish_zone_length: int = 5,
     ):
         pieces: List[Piece] = []
-        player_shift: int = shape_side_length + 1
-        end_progress: int = 1 + shape_angles * shape_side_length + finish_zone_length
+        player_shift: int = (board_side_length + 1)
+        path_zone_length: int = (board_corners * board_side_length) + board_corners
+        end_progress: int = (path_zone_length + finish_zone_length + 1)
         for player_num in range(0, len(players)):
             for piece_num in range(pieces_per_player):
                 pieces.append(Piece(piece_num, player_num))
@@ -84,37 +86,48 @@ class Board:
         return Board(
             players=players,
             pieces_per_player=pieces_per_player,
-            pieces=pieces,
-            shape_angles=shape_angles,
-            shape_side_length=shape_side_length,
-            player_shift=player_shift,
+            board_corners=board_corners,
+            board_side_length=board_side_length,
             finish_zone_length=finish_zone_length,
+            pieces=pieces,
+            player_shift=player_shift,
+            path_zone_length=path_zone_length,
             end_progress=end_progress,
         )
 
-    # TODO finish off implementation and add unit tests
     def relative_position(self, piece: Piece) -> int:
-        return 0
+        # Relative position is only relevant within the path_zone
+        assert self.is_on_path(piece)
+        relative_position = (piece.player * self.player_shift) + piece.position
+        relative_position = (
+            relative_position
+            if relative_position <= self.path_zone_length
+            else relative_position % self.path_zone_length
+        )
+        return relative_position
 
-    # TODO finish off implementation and add unit tests
     def is_on_start(self, piece: Piece) -> bool:
-        return piece.position == 0
+        return True if piece.position == 1 else False
 
     # TODO finish off implementation and add unit tests
     def is_on_path(self, piece: Piece) -> bool:
-        relative_position = self.relative_position(piece)
-        end_path = self.end_progress - self.finish_zone_length
-        return piece.position > 0 and relative_position < end_path
+        return True if 1 <= piece.position <= self.path_zone_length else False
 
     # TODO finish off implementation and add unit tests
-    def is_on_safe(self, piece: Piece) -> bool:
-        relative_position = self.relative_position(piece)
-        return relative_position > self.end_progress
+    def is_on_finish(self, piece: Piece) -> bool:
+        return (
+            True
+            if self.path_zone_length > piece.position < self.end_progress
+            else False
+        )
 
     # TODO finish off implementation and add unit tests
     def is_on_target(self, piece: Piece) -> bool:
-        relative_position = self.relative_position(piece)
-        return relative_position == self.end_progress
+        return (
+            True
+            if piece.position > (self.path_zone_length + self.finish_zone_length)
+            else False
+        )
 
 
 @dataclass
