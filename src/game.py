@@ -34,14 +34,14 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
             raise ValueError("Home can only be left with a full dice")
     else:
         piece.move(dice)
-        if 0 < piece.progress() <= LAST_ON_PATH:
-            others = [
-                o
-                for o in status
-                if o.player() != player.number and piece.position() == o.position()
-            ]
-            for other in others:
-                other.send_home()
+    if 0 < piece.progress() <= LAST_ON_PATH:
+        others = [
+            o
+            for o in status
+            if o.player() != player.number and piece.position() == o.position()
+        ]
+        for other in others:
+            other.send_home()
     return True
 
 
