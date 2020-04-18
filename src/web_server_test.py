@@ -39,6 +39,19 @@ def test_join(monkeypatch, client):
     # Then we expect to recieve it's token
     assert isinstance(player1_token, str)
 
+    # When we ask for state before the game has begun (4 players joined)
+    rv = client.get("/state")
+    error = json.loads(rv.data)
+    # Then we expect response code 400
+    assert rv.status_code == 400
+    # And an error message
+    assert json.dumps(error) == json.dumps(
+        {
+            "error": "There is no game started yet because there is no 4 players",
+            "players": {"player1": 0},
+        }
+    )
+
     # When we join player1 again
     rv = client.get("/join/player1")
     players1_second = json.loads(rv.data)
@@ -96,12 +109,12 @@ def test_roll_no_user_token(monkeypatch, client):
     # When we try to play with incorrect user token
     rv = client.get("/play/roll", headers={"4oBe4e-user-token": "wrong-token"})
     error = json.loads(rv.data)
-    assert rv.status_code == 400
-    assert error == {"error": "There is no user token in the 4oBe4e-user-token header"}
 
     # Then we expect response code 400
+    assert rv.status_code == 400
 
     # And an error message
+    assert error == {"error": "There is no user token in the 4oBe4e-user-token header"}
 
 
 def test_roll(monkeypatch, client):

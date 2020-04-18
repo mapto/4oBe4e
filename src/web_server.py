@@ -67,18 +67,23 @@ def players():
 def __get_player_number() -> int:
     try:
         user_token = request.headers.get("4oBe4e-user-token")
+        missing_token_message = "There is no user token in the 4oBe4e-user-token header"
         if user_token is None:
-            raise ValueError("There is no user token in the 4oBe4e-user-token header")
+            raise ValueError(missing_token_message)
         user_id = player_token_number[user_token]
         if user_id is None:
             raise ValueError("Unknown user with token:" + user_token)
     except KeyError:
-        raise ValueError("There is no user token in the 4oBe4e-user-token header")
+        raise ValueError(missing_token_message)
     return user_id
 
 
 def __error_response(err: str) -> Response:
-    return Response(json.dumps({"error": err}), status=400, mimetype="application/json")
+    return __error_response__(json.dumps({"error": err}))
+
+
+def __error_response__(err: str) -> Response:
+    return Response(err, status=400, mimetype="application/json")
 
 
 def __state_to_json(state: GameState) -> str:
@@ -87,18 +92,17 @@ def __state_to_json(state: GameState) -> str:
 
 @app.route("/state")
 def get_state():
-    if engine == None:
-        return Response(
+    try:
+        return __state_to_json(engine.state)
+    except NameError:
+        return __error_response__(
             json.dumps(
                 {
                     "error": "There is no game started yet because there is no 4 players",
                     "players": players(),
                 }
-            ),
-            status=400,
-            mimetype="application/json",
+            )
         )
-    return __state_to_json(engine.state)
 
 
 @app.route("/play/roll")
