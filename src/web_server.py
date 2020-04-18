@@ -5,7 +5,7 @@ from flask import Flask
 from flask import request, redirect, send_from_directory
 import dataclasses, json
 import uuid
-from state import Board, GameState, MovePiece, PieceOut, RollDice
+from state import Board, GameState, GameMove
 from engine import GameEngine
 from flask import jsonify
 from typing import Dict
@@ -89,7 +89,7 @@ def get_state():
 @app.route("/play/roll")
 def play_roll():
     player = __get_player_number()
-    new_state = engine.play(RollDice(player))
+    new_state = engine.play(GameMove.roll_dice(player))
     return __state_to_json(new_state)
 
 
@@ -99,7 +99,7 @@ def play_move(piece: int, dice: int):
     piece_obj = (
         engine.state.board.pieces
     )  # TODO select the correct peice based on piece num and player num
-    new_state = engine.play(MovePiece(player, piece_obj, dice))
+    new_state = engine.play(GameMove.move_piece(player, piece_obj, dice))
     return __state_to_json(new_state)
 
 
@@ -107,7 +107,7 @@ def play_move(piece: int, dice: int):
 def play_out(piece: int, dice: int):
     player = __get_player_number()
     piece_obj = engine.state.board.pieces
-    new_state = engine.play(PieceOut(player, piece_obj, dice))
+    new_state = engine.play(GameMove.piece_out(player, piece_obj, dice))
     return __state_to_json(new_state)
 
 

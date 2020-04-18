@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Sequence, Set
+from enum import Enum
 
 
 @dataclass
@@ -9,25 +10,29 @@ class Piece:
     position: int = 0  # the absolute position on the board
 
 
+ROLL_DICE = 1
+MOVE_PIECE = 2
+PIECE_OUT = 3
+
+
 @dataclass
-class GameAction:
+class GameMove:
+    move_type: int
     player: int
+    piece: int = -1
+    dice: int = -1
 
+    @staticmethod
+    def roll_dice(player: int):
+        return GameMove(ROLL_DICE, player)
 
-@dataclass
-class RollDice(GameAction):
-    pass
+    @staticmethod
+    def move_piece(player: int, piece: int, dice: int):
+        return GameMove(MOVE_PIECE, player, piece, dice)
 
-
-@dataclass
-class MovePiece(GameAction):
-    piece: Piece
-    dice: int
-
-
-@dataclass
-class PieceOut(MovePiece):
-    pass
+    @staticmethod
+    def piece_out(player: int, piece: int, dice: int):
+        return GameMove(PIECE_OUT, player, piece, dice)
 
 
 @dataclass
@@ -120,7 +125,7 @@ class Board:
 @dataclass
 class GameState:
     board: Board
-    valid_actions: Sequence[GameAction]
+    valid_actions: Sequence[GameMove]
     current_player: int
     number: int = 0  # unique ordinal number of the state
     dice: int = -1
@@ -132,7 +137,7 @@ class GameState:
     @staticmethod
     def create(board: Board):
         current_player = board.players[0]
-        valid_actions = [RollDice(player=current_player)]
+        valid_actions = [GameMove.roll_dice(player=current_player)]
         return GameState(
             board=board, current_player=current_player, valid_actions=valid_actions
         )
