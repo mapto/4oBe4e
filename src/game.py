@@ -66,7 +66,26 @@ def choose_first(players: Set[Player]) -> Player:
 
 
 def check_endgame(status: List[Piece]) -> bool:
-    """Check if any of the players has ended the game."""
+    """Check if any of the players has ended the game.
+    
+    >>> check_endgame([Piece(0, 0),Piece(0, 1),Piece(0, 2),Piece(0, 3),\
+        Piece(1, 0),Piece(1, 1),Piece(1, 2),Piece(1, 3),\
+        Piece(2, 0),Piece(2, 1),Piece(2, 2),Piece(2, 3),\
+        Piece(3, 0),Piece(3, 1),Piece(3, 2),Piece(3, 3)])
+    False
+    
+    >>> check_endgame([Piece(0, 0),Piece(0, 1),Piece(0, 2),Piece(0, 3),\
+        Piece(1, 0),Piece(1, 1),Piece(1, 2),Piece(1, 3),\
+        Piece(2, 0),Piece(2, 1),Piece(2, 2),Piece(2, 3),\
+        Piece(3, 0, 62),Piece(3, 1, 62),Piece(3, 2, 62),Piece(3, 3, 62)])
+    True
+    
+    >>> check_endgame([Piece(0, 0),Piece(0, 1),Piece(0, 2),Piece(0, 3),\
+        Piece(1, 0, 62),Piece(1, 1, 62),Piece(1, 2, 62),Piece(1, 3, 61),\
+        Piece(2, 0, 60),Piece(2, 1, 60),Piece(2, 2, 60),Piece(2, 3, 60),\
+        Piece(3, 0, 10),Piece(3, 1, 20),Piece(3, 2, 30),Piece(3, 3, 40)])
+    False
+    """
     player_finished: Dict[int, bool] = {}
     for piece in status:
         player = piece.player()
@@ -74,7 +93,8 @@ def check_endgame(status: List[Piece]) -> bool:
             player_finished[player] = player_finished[player] and piece.is_finished()
         else:
             player_finished[player] = True
-    return len([s for s in player_finished if s]) < 2
+
+    return len([k for k, v in player_finished.items() if v]) > 0
 
 
 def coord_in_home(piece: Piece) -> Tuple[int, int]:

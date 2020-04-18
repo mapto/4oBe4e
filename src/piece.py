@@ -31,6 +31,16 @@ class Piece:
         return self.__position
 
     def is_finished(self) -> bool:
+        """
+        >>> p = Piece(0, 0, 62); p.is_finished()
+        True
+
+        >>> p = Piece(1, 1, 61); p.is_finished()
+        False
+
+        >>> p = Piece(2, 2); p.is_finished()
+        False
+        """
         return self.progress() == END_PROGRESS
 
     def position(self) -> int:

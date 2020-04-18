@@ -9,7 +9,7 @@ from player import Player
 from game import put_piece_on_board
 
 HOME_ZONE = 0
-END_PROGRESS = 62
+END_PROGRESS = 14 * 4 + 6
 
 # Define players' board attributes
 players: List[Dict[str, Any]] = [
