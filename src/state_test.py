@@ -162,7 +162,7 @@ def test_board_to_json(monkeypatch):
     board = Board.create()
     board_json = json.dumps(dataclasses.asdict(board))
     # print(board_json) TODO: compare expected output
-    
+
     state = GameState.create(board)
     state_json = json.dumps(dataclasses.asdict(state))
     # print(state_json) TODO: compare expected output
