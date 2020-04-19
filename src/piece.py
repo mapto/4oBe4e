@@ -5,16 +5,16 @@ from util import progress_to_position
 
 
 class Piece:
-    def __init__(self, player_number: int, piece_number: int, position: int = 0):
+    def __init__(self, player_number: int, piece_number: int, progress: int = 0):
         self.piece_number: int = piece_number
         self.__player_num: int = player_number
-        self.__position: int = position
+        self.__progress: int = progress
 
     def move(self, move: int) -> None:
-        self.__position += move
+        self.__progress += move
 
     def send_home(self) -> None:
-        self.__position = 0
+        self.__progress = 0
 
     def index(self) -> int:
         return self.piece_number
@@ -23,8 +23,10 @@ class Piece:
         return self.__player_num
 
     def progress(self) -> int:
-        """Progress of player relative to start position. Unique for each player"""
-        return self.__position
+        """Progress of player relative to start position. Unique for each player.
+        Normally always incremental (see move()).
+        Only exception is when hit by another player (see send_home())"""
+        return self.__progress
 
     def is_finished(self) -> bool:
         """
@@ -40,8 +42,9 @@ class Piece:
         return self.progress() == END_PROGRESS
 
     def position(self) -> int:
-        """Position of player on board. On path is common for all players.
-        Return 0 when not on path (i.e. no clashes possible)
+        """Position of player on board. Shared by pieces of all players.
+        Used to determine colisions when on common path.
+        Return 0 when not in a position where could clash with others.
         
         >>> p = Piece(0, 0); p.position()
         0
@@ -61,7 +64,7 @@ class Piece:
         >>> p = Piece(3, 0, 13); p.position()
         55
         """
-        return progress_to_position(self.__player_num, self.__position)
+        return progress_to_position(self.__player_num, self.__progress)
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Piece):
