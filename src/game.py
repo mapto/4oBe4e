@@ -12,7 +12,8 @@ from player import Player
 from action import roll_dice
 
 # TODO: Extract to board
-LAST_ON_PATH = 14 * 4
+PLAYER_SHIFT = 14
+LAST_ON_PATH = PLAYER_SHIFT * 4
 END_PROGRESS = LAST_ON_PATH + 6
 
 
@@ -35,11 +36,8 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
     else:
         piece.move(dice)
     if 0 < piece.progress() <= LAST_ON_PATH:
-        others = [
-            o
-            for o in status
-            if o.player() != player.number and piece.position() == o.position()
-        ]
+        on_path = __pieces_on_path(status, piece.position())
+        others = [o for o in on_path if o.player() != player.number]
         for other in others:
             other.send_home()
     return True
@@ -317,6 +315,20 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     return coords
 
 
+def __pieces_on_path(status: List[Piece], position: int) -> List[Piece]:
+    """
+    >>> __pieces_on_path([Piece(1, 0, 1)], 15)
+    [0]
+
+    >>> __pieces_on_path([Piece(2, 0, 1)], 29)
+    [0]
+
+    >>> __pieces_on_path([Piece(0, 0, 15), Piece(0, 1, 15)], 15)
+    [0, 1]
+    """
+    return [o for o in status if position == o.position()]
+
+
 def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
     """
     >>> p = Piece(1, 1); is_valid_move(p, 6, [p])
@@ -331,18 +343,39 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
     >>> p = Piece(1, 1, 1); is_valid_move(p, 6, [p])
     True
 
+    >> p = Piece(1, 1); is_valid_move(p, 6, [p, Piece(0, 0, 15)])
+    True
+
+    >>> p = Piece(1, 1); is_valid_move(p, 6, [p, Piece(0, 0, 15), Piece(0, 1, 15)])
+    False
+
+    >>> piece = Piece(0, 0, 58); is_valid_move(piece, 6, [piece])
+    False
+
+    >>> piece = Piece(1, 0, 0); is_valid_move(piece, 5, [piece])
+    False
+
     """
-    if 0 == dice:
+    if dice < 1 or dice > 6:
         raise ValueError("Invalid dice: {}".format(dice))
 
+    # can exit from home?
     pos = piece.progress()
     if pos == 0:
-        return dice == 6
+        if dice != 6:
+            return False
+
+        # Do other players block exit from home
+        expected = piece.player() * PLAYER_SHIFT + 1
+        on_path = __pieces_on_path(status, expected)
+        others = [o for o in on_path if o.player() != piece.player()]
+        return len(others) < 2
+
     if 0 < pos <= LAST_ON_PATH:
         at_dest = [
             p
-            for p in status
-            if piece.position() == p.position() and piece.player() != p.player()
+            for p in __pieces_on_path(status, piece.position())
+            if piece.player() != p.player()
         ]
         return 2 > len(at_dest)
     if LAST_ON_PATH < pos < END_PROGRESS:
