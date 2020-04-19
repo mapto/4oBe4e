@@ -1,11 +1,7 @@
 from typing import Any
 
-# TODO: Extract to board
-PLAYER_SHIFT = 14
-LAST_ON_PATH = PLAYER_SHIFT * 4
-END_PROGRESS = LAST_ON_PATH + 6
-
-OUT_OF_CLASH = -1
+from const import END_PROGRESS
+from util import progress_to_position
 
 
 class Piece:
@@ -44,13 +40,14 @@ class Piece:
         return self.progress() == END_PROGRESS
 
     def position(self) -> int:
-        """Position of player on board. On path is common for all players
+        """Position of player on board. On path is common for all players.
+        Return 0 when not on path (i.e. no clashes possible)
         
         >>> p = Piece(0, 0); p.position()
-        -1
+        0
                 
         >>> p = Piece(3, 0, 57); p.position()
-        -1
+        0
 
         >>> p = Piece(0, 0, 55); p.position()
         55
@@ -64,11 +61,7 @@ class Piece:
         >>> p = Piece(3, 0, 13); p.position()
         55
         """
-        if self.__position < 1 or self.__position > LAST_ON_PATH:
-            return OUT_OF_CLASH
-        return (
-            self.__player_num * PLAYER_SHIFT + self.__position - 1
-        ) % LAST_ON_PATH + 1
+        return progress_to_position(self.__player_num, self.__position)
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Piece):

@@ -8,6 +8,7 @@ from game import do_move, is_valid_move
 
 Player.create()
 Player.create()
+Player.create()
 
 
 def test_do_move_take_out_of_home():
@@ -62,6 +63,14 @@ def test_do_move_on_path():
     assert success
     assert status[0].progress() == 0
     assert status[1].progress() == 2
+
+
+def test_do_move_blocked_on_path():
+    p2 = Player.get(2)
+    piece = Piece(2, 0, 28)
+    status = [piece, Piece(0, 0, 1), Piece(0, 1, 1)]
+
+    assert not is_valid_move(piece, 1, status)
 
 
 def test_do_move_on_target():
