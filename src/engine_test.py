@@ -42,7 +42,8 @@ def test_play_roll_dice_6(monkeypatch):
     new_state = game.play(GameMove.roll_dice(player=1))
 
     # Then
-    assert new_state == game.get_state()
+    # assert new_state == game.get_state()
+    assert new_state.number == 1
     assert new_state.dice == 6
     assert new_state.valid_actions == [
         GameMove.piece_out(player=1, piece=0, dice=6),
@@ -65,8 +66,18 @@ def test_play_roll_dice_3(monkeypatch):
 
     # Then
     assert new_state == game.get_state()
+    assert new_state.number == 1
     assert new_state.dice == 3
-    # assert new_state.valid_actions == [GameMove.roll_dice(player=3)]
+    assert new_state.valid_actions == [GameMove.roll_dice(player=3)]
+
+    # And When
+    new_state = game.play(GameMove.roll_dice(player=3))
+
+    # Then
+    assert new_state == game.get_state()
+    assert new_state.number == 2
+    assert new_state.dice == 3
+    assert new_state.valid_actions == [GameMove.roll_dice(player=1)]
 
 
 # TODO write tests for playing the game to completion from 2 players without knock outs

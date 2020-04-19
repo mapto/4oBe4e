@@ -193,10 +193,10 @@ def test_board_is_on_start():
     board = Board.create()
 
     p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=0))
-    assert not p0_on_start
+    assert p0_on_start
 
     p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=1))
-    assert p0_on_start
+    assert not p0_on_start
 
     p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=2))
     assert not p0_on_start
@@ -207,6 +207,9 @@ def test_board_is_on_path():
 
     p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=0))
     assert not p0_on_path
+
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=1))
+    assert p0_on_path
 
     p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=10))
     assert p0_on_path
