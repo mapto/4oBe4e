@@ -1,4 +1,4 @@
-from state import Piece, Board, GameMove, GameState, ROLL_DICE
+from state import Piece, Board, GameMove, GameState, ROLL_DICE, MOVE_PIECE, PIECE_OUT
 from util import roll as roll_dice
 from typing import List, Sequence
 
@@ -23,6 +23,13 @@ class GameEngine:
             return self.state.board.players[0]
         return self.state.board.players[current_player_index + 1]
 
+    def __find_piece(self, move: GameMove) -> Piece:
+        for i in range(len(self.state.board.pieces)):
+            piece = self.state.board.pieces[i]
+            if piece.number == move.piece and piece.player == move.player:
+                return piece
+        raise ValueError("Cannot find piece: ", move.piece)
+
     def __on_roll_dice(self, player: int) -> GameState:
         dice = self.dice.roll()
         self.state.dice = dice
@@ -46,10 +53,15 @@ class GameEngine:
         self.state.number = self.state.number + 1
         return self.state
 
-    def __on_piece_out(self, player: int, piece: Piece, dice: int) -> GameState:
-        pass
+    def __on_piece_out(self, piece: Piece, dice: int) -> GameState:
+        assert self.state.board.is_on_start(piece)
+        assert dice == 6
+        piece.position = 1
+        self.state.number = self.state.number + 1
+        self.state.valid_actions = [GameMove.roll_dice(piece.player)]
+        return self.state
 
-    def __on_move_piece(self, player: int, piece: Piece, dice: int) -> GameState:
+    def __on_move_piece(self, piece: Piece, dice: int) -> GameState:
         pass
 
     def play(self, move: GameMove) -> GameState:
@@ -60,5 +72,7 @@ class GameEngine:
 
         if move.move_type == ROLL_DICE:
             self.__on_roll_dice(move.player)
+        elif move.move_type == PIECE_OUT:
+            self.__on_piece_out(self.__find_piece(move), move.dice)
 
         return self.state
