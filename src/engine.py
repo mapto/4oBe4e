@@ -39,7 +39,8 @@ class GameEngine:
         def calc_valid_actions(piece: Piece) -> None:
             if self.state.board.is_on_start(piece) and dice == 6:
                 valid_actions.append(GameMove.piece_out(player, piece.number, dice))
-            # elif self.state.board.is_on_path(piece):
+            elif self.state.board.is_on_path(piece):
+                valid_actions.append(GameMove.move_piece(player, piece.number, dice))
 
         for piece in self.state.board.pieces:
             if piece.player == player:
@@ -57,12 +58,31 @@ class GameEngine:
         assert self.state.board.is_on_start(piece)
         assert dice == 6
         piece.position = 1
-        self.state.number = self.state.number + 1
         self.state.valid_actions = [GameMove.roll_dice(piece.player)]
+        self.state.number = self.state.number + 1
         return self.state
 
     def __on_move_piece(self, piece: Piece, dice: int) -> GameState:
-        pass
+        if piece.position + dice < self.state.board.end_progress + 1:
+            piece.position = piece.position + dice
+
+        winner = True
+        for _piece in self.state.board.pieces:
+            if _piece.player == piece.player:
+                winner = winner and _piece.position == self.state.board.end_progress
+        if winner:
+            self.state.winners.append(piece.player)
+        if len(self.state.winners) >= len(self.state.board.players) - 1:
+            self.state.valid_actions = []
+        else:
+            if dice == 6:
+                self.state.valid_actions = [GameMove.roll_dice(piece.player)]
+            else:
+                next_player = self.__next_player()
+                self.state.valid_actions = [GameMove.roll_dice(next_player)]
+
+        self.state.number = self.state.number + 1
+        return self.state
 
     def play(self, move: GameMove) -> GameState:
         if move not in self.state.valid_actions:
@@ -74,5 +94,7 @@ class GameEngine:
             self.__on_roll_dice(move.player)
         elif move.move_type == PIECE_OUT:
             self.__on_piece_out(self.__find_piece(move), move.dice)
+        elif move.move_type == MOVE_PIECE:
+            self.__on_move_piece(self.__find_piece(move), move.dice)
 
         return self.state
