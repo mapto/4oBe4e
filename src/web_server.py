@@ -8,6 +8,7 @@ import uuid
 from state import Board, GameState, GameMove
 from engine import GameEngine
 from typing import Dict
+from flask.json import jsonify
 
 static_path = "."
 
@@ -37,16 +38,18 @@ curl -H '4oBe4e-user-token:<user-token>' localhost:5000/play/roll
 
 @app.route("/join/<player>")
 def join(player: str):
-    global engine
+    global engine  # TODO Where shall we keep the curren running GameEngine/s ?
     if player in player_name_token:
-        return json.dumps({"player_token": player_name_token[player]})
+        token = player_name_token[player]
+        num = player_token_number[token]
+        return jsonify({"player_token": token, "player_num": num})
     if len(player_token_name) == 4:
         players: Dict[str, int] = dict(
             (name, player_token_number[token])
             for name, token in player_name_token.items()
         )
         raise ValueError("Game is full. Players are ", players)
-    player_uuid: str = uuid.uuid4().__str__()
+    player_uuid: str = str(uuid.uuid4())
     player_token_name[player_uuid] = player
     player_number: int = len(player_token_number)
     player_name_token[player] = player_uuid
@@ -54,7 +57,7 @@ def join(player: str):
     if len(player_token_name) == 4:
         board = Board.create(list(player_token_number.values()))
         engine = GameEngine(board)
-    return json.dumps({"player_token": player_uuid})
+    return jsonify({"player_token": player_uuid, "player_num": player_number})
 
 
 @app.route("/players")
@@ -86,8 +89,8 @@ def __error_response__(err: str) -> Response:
     return Response(err, status=400, mimetype="application/json")
 
 
-def __state_to_json(state: GameState) -> str:
-    return json.dumps(dataclasses.asdict(state))
+def __state_to_json(state: GameState) -> Response:
+    return jsonify(dataclasses.asdict(state))
 
 
 @app.route("/state")
@@ -116,6 +119,9 @@ def play_roll():
         return __state_to_json(new_state)
 
 
+# We pass the dice here to vrify the client had made a choice based on
+# the current server state.
+# TODO: shall we pass the state number for the same reason?
 @app.route("/play/move/<piece>/<dice>")
 def play_move(piece: int, dice: int):
     try:
@@ -127,6 +133,9 @@ def play_move(piece: int, dice: int):
         return __state_to_json(new_state)
 
 
+# We pass the dice here to vrify the client had made a choice based on
+# the current server state.
+# TODO: shall we pass the state number for the same reason?
 @app.route("/play/out/<piece>/<dice>")
 def play_out(piece: int, dice: int):
     try:
