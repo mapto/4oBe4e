@@ -54,14 +54,14 @@ def test_2_players_board_init(monkeypatch):
 
     assert len(board.pieces) == 8
     assert board.pieces == [
-        Piece(0, 0, 0),
-        Piece(1, 0, 0),
-        Piece(2, 0, 0),
-        Piece(3, 0, 0),
         Piece(0, 1, 0),
         Piece(1, 1, 0),
         Piece(2, 1, 0),
         Piece(3, 1, 0),
+        Piece(0, 3, 0),
+        Piece(1, 3, 0),
+        Piece(2, 3, 0),
+        Piece(3, 3, 0),
     ]
 
 
@@ -86,14 +86,14 @@ def test_3_players_5_corner_board_init(monkeypatch):
         Piece(1, 0, 0),
         Piece(2, 0, 0),
         Piece(3, 0, 0),
-        Piece(0, 1, 0),
-        Piece(1, 1, 0),
-        Piece(2, 1, 0),
-        Piece(3, 1, 0),
         Piece(0, 2, 0),
         Piece(1, 2, 0),
         Piece(2, 2, 0),
         Piece(3, 2, 0),
+        Piece(0, 3, 0),
+        Piece(1, 3, 0),
+        Piece(2, 3, 0),
+        Piece(3, 3, 0),
     ]
 
 
@@ -209,6 +209,9 @@ def test_board_is_on_path():
 
     p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=0))
     assert not p0_on_path
+
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=1))
+    assert p0_on_path
 
     p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=10))
     assert p0_on_path

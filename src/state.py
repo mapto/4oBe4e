@@ -83,9 +83,9 @@ class Board:
         player_shift: int = (board_side_length + 1)
         path_zone_length: int = (board_corners * board_side_length) + board_corners
         end_progress: int = (path_zone_length + finish_zone_length + 1)
-        for player_num in range(0, len(players)):
+        for player_index in range(0, len(players)):
             for piece_num in range(pieces_per_player):
-                pieces.append(Piece(piece_num, player_num))
+                pieces.append(Piece(piece_num, players[player_index]))
 
         return Board(
             players=players,
@@ -131,9 +131,6 @@ class GameState:
     number: int = 0  # unique ordinal number of the state
     dice: int = -1
     winners: List[int] = field(default_factory=lambda: [])
-
-    def next_player(self) -> int:
-        return -1
 
     @staticmethod
     def create(board: Board):
