@@ -111,7 +111,7 @@ class Board:
         return relative_position
 
     def is_on_start(self, piece: Piece) -> bool:
-        return True if piece.position == 1 else False
+        return piece.position == 0
 
     def is_on_path(self, piece: Piece) -> bool:
         return True if 1 <= piece.position <= self.path_zone_length else False
