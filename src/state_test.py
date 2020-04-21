@@ -77,7 +77,9 @@ def test_3_players_5_corner_board_init(monkeypatch):
     assert board.player_shift == 15
     assert board.path_zone_length == 5 * 14 + 5
     assert board.finish_zone_length == 5
-    assert board.end_progress == 5 * 14 + 5 + 5 + 1
+    # end_progress == path_zone_length + finish_zone_length + 1 THAT IS
+    # end_progress == ((board_corners * board_side_length) + board_corners) + finish_zone_length + 1
+    assert board.end_progress == ((5 * 14) + 5) + 5 + 1
     assert len(board.pieces) == 3 * 4
     assert board.pieces == [
         Piece(0, 0, 0),

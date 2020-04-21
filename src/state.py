@@ -42,15 +42,14 @@ class Board:
     pieces_per_player: int = 4  # how many pieces each player has
     pieces: List[Piece] = field(default_factory=lambda: [])
 
-    # board shape and constants with their defaults for a square board
-    # with side 14 positions
-    board_corners: int = 4  # rectangular = 4, triangular = 3, pentagon = 5
-    board_side_length: int = 14  # side length of the board shape
+    # board constants for a square board with 14 positions per side
+    board_corners: int = 4
+    board_side_length: int = 14
 
-    # the offset between two neighbor players start possitions on the board
+    # the offset between the start positions of two neighbouring players
     player_shift: int = (board_side_length + 1)
 
-    # normal walk path length including connecting corners
+    # the normal walk path including connecting corners
     path_zone_length: int = (board_corners * board_side_length) + board_corners
 
     # the length of the finish zone (at the end of the path_zone)
@@ -112,24 +111,16 @@ class Board:
         return relative_position
 
     def is_on_start(self, piece: Piece) -> bool:
-        return True if piece.position == 0 else False
+        return piece.position == 0
 
     def is_on_path(self, piece: Piece) -> bool:
-        return True if 1 <= piece.position <= self.path_zone_length else False
+        return 1 <= piece.position <= self.path_zone_length
 
     def is_on_finish(self, piece: Piece) -> bool:
-        return (
-            True
-            if self.path_zone_length < piece.position < self.end_progress
-            else False
-        )
+        return self.path_zone_length < piece.position < self.end_progress
 
     def is_on_target(self, piece: Piece) -> bool:
-        return (
-            True
-            if piece.position > (self.path_zone_length + self.finish_zone_length)
-            else False
-        )
+        return piece.position > (self.path_zone_length + self.finish_zone_length)
 
 
 @dataclass
