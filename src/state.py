@@ -114,21 +114,13 @@ class Board:
         return piece.position == 0
 
     def is_on_path(self, piece: Piece) -> bool:
-        return True if 1 <= piece.position <= self.path_zone_length else False
+        return 1 <= piece.position <= self.path_zone_length
 
     def is_on_finish(self, piece: Piece) -> bool:
-        return (
-            True
-            if self.path_zone_length < piece.position < self.end_progress
-            else False
-        )
+        return self.path_zone_length < piece.position < self.end_progress
 
     def is_on_target(self, piece: Piece) -> bool:
-        return (
-            True
-            if piece.position > (self.path_zone_length + self.finish_zone_length)
-            else False
-        )
+        return piece.position > (self.path_zone_length + self.finish_zone_length)
 
 
 @dataclass
