@@ -35,15 +35,19 @@ def test_join(monkeypatch, client):
     # When we join player1
     rv = client.get("/join/player1")
     players1 = json.loads(rv.data)
-    player1_token = players1["player_token"]
+    assert rv.headers["content-type"].lower() == "application/json"
     # Then we expect to recieve it's token
+    player1_token = players1["player_token"]
     assert isinstance(player1_token, str)
+    # And to recieve it's number
+    assert players1["player_num"] == 0
 
     # When we ask for state before the game has begun (4 players joined)
     rv = client.get("/state")
     error = json.loads(rv.data)
     # Then we expect response code 400
     assert rv.status_code == 400
+    assert rv.headers["content-type"].lower() == "application/json"
     # And an error message
     assert json.dumps(error) == json.dumps(
         {
@@ -56,6 +60,8 @@ def test_join(monkeypatch, client):
     rv = client.get("/join/player1")
     players1_second = json.loads(rv.data)
     player1_token_second = players1_second["player_token"]
+    # And to recieve it's number
+    assert players1_second["player_num"] == 0
 
     # Then we expect to receive the same token as from first join
     assert player1_token_second == player1_token
@@ -65,19 +71,23 @@ def test_join(monkeypatch, client):
     players2 = json.loads(rv.data)
     player2_token = players2["player_token"]
     assert isinstance(player2_token, str)
+    assert players2["player_num"] == 1
 
     rv = client.get("/join/player3")
     players3 = json.loads(rv.data)
     player3_token = players3["player_token"]
     assert isinstance(player3_token, str)
+    assert players3["player_num"] == 2
 
     rv = client.get("/join/player4")
     players4 = json.loads(rv.data)
     player4_token = players4["player_token"]
     assert isinstance(player4_token, str)
+    assert players4["player_num"] == 3
 
     # Then we expect their numbers returned
     rv = client.get("/players")
+    assert rv.headers["content-type"].lower() == "application/json"
     players = json.loads(rv.data)
     assert players == {
         "player1": 0,
@@ -112,6 +122,9 @@ def test_roll_no_user_token(monkeypatch, client):
 
     # Then we expect response code 400
     assert rv.status_code == 400
+
+    # And expect content type application/json
+    assert rv.headers["content-type"].lower() == "application/json"
 
     # And an error message
     assert error == {"error": "There is no user token in the 4oBe4e-user-token header"}
