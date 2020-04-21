@@ -4,12 +4,13 @@ from typing import Any, List, Dict
 
 from colorama import Back, Fore, Style  # type: ignore
 
+
+from const import HOME_ZONE, END_PROGRESS
+
 from piece import Piece
 from player import Player
 from game import put_piece_on_board
 
-HOME_ZONE = 0
-END_PROGRESS = 62
 
 # Define players' board attributes
 players: List[Dict[str, Any]] = [
@@ -47,8 +48,6 @@ def _colour(name: str = "WHITE") -> str:
 def draw_board() -> List[List[Any]]:
     """ Draw an ASCII board with the current pieces.
     """
-
-    # TODO (@vkantsev): Discuss how to add the pieces with their current positions
 
     ROWS = 19
     COLS = 19

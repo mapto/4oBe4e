@@ -7,8 +7,13 @@ This should be independent of media used to interact with player."""
 from typing import Tuple, List, Set, Dict
 
 
+from const import PLAYER_SHIFT, LAST_ON_PATH, END_PROGRESS
+
 from piece import Piece
 from player import Player
+
+from util import progress_to_position
+from model_util import others_on_position
 from action import roll_dice
 
 
@@ -18,15 +23,22 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
     if not (piece_to_move in movable_piece_nums):
         return False
 
-    for piece in status:
-        if piece.player() == player.number and piece.index() == piece_to_move:
-            if piece.progress() == 0:
-                if dice == 6:
-                    piece.move(1)
-                else:
-                    raise ValueError("Home can only be left with a full dice")
-            else:
-                piece.move(dice)
+    current = [
+        p for p in status if p.player() == player.number and p.index() == piece_to_move
+    ]
+    assert len(current) == 1
+    piece = current[0]
+    if piece.progress() == 0:
+        if dice == 6:
+            piece.move(1)
+        else:
+            raise ValueError("Home can only be left with a full dice")
+    else:
+        piece.move(dice)
+    if 0 < piece.progress() <= LAST_ON_PATH:
+        others = others_on_position(status, player.number, piece.position())
+        for other in others:
+            other.send_home()
     return True
 
 
@@ -39,7 +51,7 @@ def choose_first(players: Set[Player]) -> Player:
     while need_more:
         for i in range(len(score)):
             if score[i] != -1:
-                # TODO: Resolve problem that this relies on logic that involves console interaction
+                # TODO: Decouple this logic from console interaction
                 score[i] = roll_dice(player_num=i)
         m = max(score)
         if len([v for v in score if v == m]) > 1:
@@ -51,7 +63,26 @@ def choose_first(players: Set[Player]) -> Player:
 
 
 def check_endgame(status: List[Piece]) -> bool:
-    """Check if any of the players has ended the game."""
+    """Check if any of the players has ended the game.
+    
+    >>> check_endgame([Piece(0, 0),Piece(0, 1),Piece(0, 2),Piece(0, 3),\
+        Piece(1, 0),Piece(1, 1),Piece(1, 2),Piece(1, 3),\
+        Piece(2, 0),Piece(2, 1),Piece(2, 2),Piece(2, 3),\
+        Piece(3, 0),Piece(3, 1),Piece(3, 2),Piece(3, 3)])
+    False
+    
+    >>> check_endgame([Piece(0, 0),Piece(0, 1),Piece(0, 2),Piece(0, 3),\
+        Piece(1, 0),Piece(1, 1),Piece(1, 2),Piece(1, 3),\
+        Piece(2, 0),Piece(2, 1),Piece(2, 2),Piece(2, 3),\
+        Piece(3, 0, 62),Piece(3, 1, 62),Piece(3, 2, 62),Piece(3, 3, 62)])
+    True
+    
+    >>> check_endgame([Piece(0, 0),Piece(0, 1),Piece(0, 2),Piece(0, 3),\
+        Piece(1, 0, 62),Piece(1, 1, 62),Piece(1, 2, 62),Piece(1, 3, 61),\
+        Piece(2, 0, 60),Piece(2, 1, 60),Piece(2, 2, 60),Piece(2, 3, 60),\
+        Piece(3, 0, 10),Piece(3, 1, 20),Piece(3, 2, 30),Piece(3, 3, 40)])
+    False
+    """
     player_finished: Dict[int, bool] = {}
     for piece in status:
         player = piece.player()
@@ -59,7 +90,8 @@ def check_endgame(status: List[Piece]) -> bool:
             player_finished[player] = player_finished[player] and piece.is_finished()
         else:
             player_finished[player] = True
-    return len([s for s in player_finished if s]) < 2
+
+    return len([k for k, v in player_finished.items() if v]) > 0
 
 
 def coord_in_home(piece: Piece) -> Tuple[int, int]:
@@ -89,10 +121,10 @@ def coord_in_home(piece: Piece) -> Tuple[int, int]:
 
 
 def coord_on_path(piece: Piece) -> Tuple[int, int]:
-    """TODO: draw on path: if two or more pieces on same cell, instead of number,
-    draw a placeholder, which does not need to show piece number
-    possibly split this in 4 or 8 different cases.
-    Parameter piece does't influence logic
+    """Draws on path: if two or more pieces on same cell, instead of number,
+    draws a placeholder, which does not need to show piece number
+    Logic split this in 4 different cases, determined by player offset.
+    Parameter piece does't influence logic.
 
     Player (absolute) Progress to (relative) Position conversion:
         P0     1..56: (pos)
@@ -129,7 +161,7 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     (10, 14)
     """
 
-    assert 1 <= piece.progress() <= 56 and 0 <= piece.player() <= 3
+    assert 1 <= piece.progress() <= LAST_ON_PATH and 0 <= piece.player() <= 3
 
     POSITION_TO_ROWCOL: Tuple[Tuple[int, int], ...] = (
         (0, 0),
@@ -191,51 +223,41 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
         (9, 2),
     )
 
-    progress = piece.progress()
-    player = piece.player()
-    shift = 14
-    path_wrap = 56
-    position = player * shift + progress
-    position = position if position <= path_wrap else position % path_wrap
-
-    return POSITION_TO_ROWCOL[position]
+    return POSITION_TO_ROWCOL[piece.position()]
 
 
 def coord_on_finish(piece: Piece) -> Tuple[int, int]:
-    """TODO: draw on path: if two or more pieces on same cell, instead of number,
-    draw a placeholder, which does not need to show piece number.
-    Parameter piece does't influence logic
+    """Piece number is irrelevant
     
-    >>> coord_on_finish(Piece(1, 1, 57))
+    >>> coord_on_finish(Piece(0, 1, 57))
     (9, 3)
 
-    The following tests currently fail, thus disabled when pushed. Enable for development:
+    >>> coord_on_finish(Piece(0, 1, 61))
+    (9, 7)
+    
+    >>> coord_on_finish(Piece(1, 1, 57))
+    (3, 9)
+
     >>> coord_on_finish(Piece(2, 1, 58))
-    (4, 9)
+    (9, 14)
 
     >>> coord_on_finish(Piece(3, 1, 59))
-    (9, 13)
+    (13, 9)
 
     >>> coord_on_finish(Piece(3, 1, 61))
-    (9, 11)
-
-    >>> coord_on_finish(Piece(4, 1, 57))
-    (15, 9)
-
-    >>> coord_on_finish(Piece(4, 1, 61))
     (11, 9)
     """
-    pos = piece.progress() - 56
+    pos = piece.progress() - LAST_ON_PATH
     assert 0 < pos < 6
 
     player = piece.player()
     (x, y) = (0, 0)
 
-    if player in [1, 3]:
+    if player in [0, 2]:
         x = 9
-        y = pos + 2 if player == 1 else 15 - (pos - 1)
-    elif player in [2, 4]:
-        x = pos + 2 if player == 2 else 15 - (pos - 1)
+        y = pos + 2 if player == 0 else 15 - (pos - 1)
+    elif player in [1, 3]:
+        x = pos + 2 if player == 1 else 15 - (pos - 1)
         y = 9
     else:
         raise NotImplementedError()
@@ -244,7 +266,8 @@ def coord_on_finish(piece: Piece) -> Tuple[int, int]:
 
 
 def coord_in_target(piece: Piece) -> Tuple[int, int]:
-    """Draw in target positions: each piece has its location. Progress is always same, thus irrelevant
+    """Draw in target positions: each piece has its location.
+    Progress is always same, thus irrelevant
     
     >>> coord_in_target(Piece(0, 0, 62))
     (7, 6)
@@ -277,11 +300,11 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     progress = piece.progress()
     if progress == 0:
         coords = coord_in_home(piece)
-    elif 0 < progress <= 56:
+    elif 0 < progress <= LAST_ON_PATH:
         coords = coord_on_path(piece)
-    elif 56 < progress <= 61:
+    elif LAST_ON_PATH < progress < END_PROGRESS:
         coords = coord_on_finish(piece)
-    elif progress == 62:
+    elif progress == END_PROGRESS:
         coords = coord_in_target(piece)
     else:
         raise NotImplementedError()
@@ -303,24 +326,45 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
     >>> p = Piece(1, 1, 1); is_valid_move(p, 6, [p])
     True
 
+    >> p = Piece(1, 1); is_valid_move(p, 6, [p, Piece(0, 0, 15)])
+    True
+
+    >>> p = Piece(1, 1); is_valid_move(p, 6, [p, Piece(0, 0, 15), Piece(0, 1, 15)])
+    False
+
+    >>> piece = Piece(0, 0, 58); is_valid_move(piece, 6, [piece])
+    False
+
+    >>> piece = Piece(1, 0, 0); is_valid_move(piece, 5, [piece])
+    False
+
+    >>> piece = Piece(2, 0, 28); is_valid_move(piece, 1, [piece, Piece(0, 0, 1), Piece(0, 1, 1)])
+    False
+
     """
-    if 0 == dice:
+    if dice < 1 or dice > 6:
         raise ValueError("Invalid dice: {}".format(dice))
 
+    # can exit from home?
     pos = piece.progress()
     if pos == 0:
-        return dice == 6
-    if 0 < pos <= 56:
-        at_dest = [
-            p
-            for p in status
-            if piece.position() == p.position() and piece.player() != p.player()
-        ]
-        return 2 > len(at_dest)
-    if 56 < pos <= 61:
-        return pos + dice <= 62
+        if dice != 6:
+            return False
 
-    assert pos == 62
+        # Do other players block exit from home
+        expected = progress_to_position(piece.player(), 1)
+        return 2 > len(others_on_position(status, piece.player(), expected))
+
+    if 0 < pos <= LAST_ON_PATH:
+        if pos + dice > LAST_ON_PATH:
+            return True
+        expected = progress_to_position(piece.player(), pos + dice)
+        return 2 > len(others_on_position(status, piece.player(), expected))
+
+    if LAST_ON_PATH < pos < END_PROGRESS:
+        return pos + dice <= END_PROGRESS
+
+    assert pos == END_PROGRESS
     return False
 
 
