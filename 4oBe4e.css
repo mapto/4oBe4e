@@ -8,35 +8,42 @@ body {
     float: left;
     margin-left: 20px;
     width: 55%;
+    margin-top: -50px;
     }
-.players {
+div.players {
     font-weight: bold;
-    font-size: xx-large;
-    border-style: hidden;
     list-style:none;
+    margin-top: 50px;
     float: right;
-    margin-right: 150px;
-    margin-top: 40px;
-    margin-top: 70px;
+    margin-right: 300px;
+    text-shadow: 1px 0 black;
   }
-label.red {color: red;}
-label.green {color: green;}
-label.blue {color: blue;}
-label.yellow {color: rgb(255, 208, 0);}
-label {text-shadow: 1px 0 black;}
+.red {color: red;}
+.green {color: green;}
+.blue {color: blue;}
+.yellow {color: rgb(255, 208, 0);}
 
 .img1 {
     float: right;
     margin-right: 380px;
-    margin-top: 100px;
+    margin-top: 80px;
     height: 130px;
+
 }
 .rules {
     font-weight: bold;
     font-size: xx-large;
     border-style: hidden;
     float: right;
-    margin-top: 200px;
+    margin-top: 150px;
     margin-right: 380px;
     list-style:none;
+}
+.roll {
+    font-weight: bold;
+    border-style: hidden;
+    float: right;
+    margin-right: 405px;
+    margin-top: 30px;
+    height: 30px;
 }
