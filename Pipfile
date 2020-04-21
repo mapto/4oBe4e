@@ -15,6 +15,7 @@ flask = "*"
 dataclasses = "*"
 importlib_metadata = "*"
 requests = "*"
+docopt = "*"
 
 [dev-packages]
 pytest = "*"
