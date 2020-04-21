@@ -1,8 +1,10 @@
 *.code-workspace
 *.ipynb
 *.pyc
-.mypy_cache/
+*.swp
+*.tmp
 .env
+.mypy_cache/
 .pytest_cache/
 .venv
 .vscode
