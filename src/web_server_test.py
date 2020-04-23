@@ -20,6 +20,54 @@ player3_token: str = ""
 player4_token: str = ""
 
 
+def test_roll_no_game(monkeypatch, client):
+    # Given the game hasn't started yet
+    # When we try to roll befor the game has begun (4 players joined)
+    rv = client.get("/play/roll")
+    error = json.loads(rv.data)
+    # Then we expect response code 400
+    assert rv.status_code == 400
+    # And an error message
+    assert json.dumps(error) == json.dumps(
+        {
+            "error": "There is no game started yet because there is no 4 players",
+            "players": {},
+        }
+    )
+
+
+def test_play_move_piece_no_game(monkeypatch, client):
+    # Given the game hasn't started yet
+    # When we try to move a piece befor the game has begun (4 players joined)
+    rv = client.get("/play/move/0/2")
+    error = json.loads(rv.data)
+    # Then we expect response code 400
+    assert rv.status_code == 400
+    # And an error message
+    assert json.dumps(error) == json.dumps(
+        {
+            "error": "There is no game started yet because there is no 4 players",
+            "players": {},
+        }
+    )
+
+
+def test_play_piece_out_no_game(monkeypatch, client):
+    # Given the game hasn't started yet
+    # When we try to move a piece out befor the game has begun (4 players joined)
+    rv = client.get("/play/out/0/6")
+    error = json.loads(rv.data)
+    # Then we expect response code 400
+    assert rv.status_code == 400
+    # And an error message
+    assert json.dumps(error) == json.dumps(
+        {
+            "error": "There is no game started yet because there is no 4 players",
+            "players": {},
+        }
+    )
+
+
 def test_join(monkeypatch, client):
     # Given
     global player1_token
