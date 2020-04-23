@@ -89,6 +89,17 @@ def __error_response__(err: str) -> Response:
     return Response(err, status=400, mimetype="application/json")
 
 
+def __no_game_response() -> Response:
+    return __error_response__(
+        json.dumps(
+            {
+                "error": "There is no game started yet because there is no 4 players",
+                "players": players(),
+            }
+        )
+    )
+
+
 def __state_to_json(state: GameState) -> Response:
     return jsonify(dataclasses.asdict(state))
 
@@ -98,18 +109,15 @@ def get_state():
     try:
         return __state_to_json(engine.state)
     except NameError:
-        return __error_response__(
-            json.dumps(
-                {
-                    "error": "There is no game started yet because there is no 4 players",
-                    "players": players(),
-                }
-            )
-        )
+        return __no_game_response()
 
 
 @app.route("/play/roll")
 def play_roll():
+    try:
+        engine.state
+    except:
+        return __no_game_response()
     try:
         player = __get_player_number()
     except ValueError as ve:
@@ -125,6 +133,10 @@ def play_roll():
 @app.route("/play/move/<piece>/<dice>")
 def play_move(piece: int, dice: int):
     try:
+        engine.state
+    except:
+        return __no_game_response()
+    try:
         player = __get_player_number()
     except ValueError as ve:
         return __error_response(str(ve.args[0]))
@@ -138,6 +150,10 @@ def play_move(piece: int, dice: int):
 # TODO: shall we pass the state number for the same reason?
 @app.route("/play/out/<piece>/<dice>")
 def play_out(piece: int, dice: int):
+    try:
+        engine.state
+    except:
+        return __no_game_response()
     try:
         player = __get_player_number()
     except ValueError as ve:
