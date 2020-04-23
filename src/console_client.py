@@ -14,9 +14,12 @@ Options:
   --version     Show version
 
 """
-from typing import Dict, Tuple
+import console_view
+
+from typing import Any, Dict, List, Tuple
 
 from docopt import docopt  # type: ignore
+from colorama import Back, Fore, Style  # type: ignore
 import requests
 
 
@@ -52,17 +55,15 @@ def main():
     session = requests.Session()
 
     player = join_player(session, server_address, player_name)
-    print(f"\nPlayer number: {player[0]}, token: {player[1]}")
     session.headers.update({"4oBe4e-user-token": player[1]})
-
-    players = get_players(session, server_address)
-    print(f"\nPlayers: {players}")
 
     state = get_state(session, server_address)
     print(f"\nState: {state}")
 
-    # dice = roll_dice(session, server_address)
-    # print(f"\nDice: {dice}")
+    board = console_view.draw_board()
+    print()
+    for row in board:
+        print("".join(row))
 
 
 if __name__ == "__main__":
