@@ -11,8 +11,11 @@ def test_default_board_init(monkeypatch):
     assert board.board_side_length == 14
     assert board.player_shift == 14
     assert board.finish_zone_length == 5
-    assert board.end_progress == 62
-    assert len(board.pieces) == 16
+    assert (
+        board.end_progress
+        == board.player_shift * len(board.players) + board.finish_zone_length + 1
+    )
+    assert len(board.pieces) == len(board.players) * board.pieces_per_player
     assert list(filter(lambda p: p.player == 0, board.pieces)) == [
         Piece(0, 0, 0),
         Piece(1, 0, 0),
@@ -48,11 +51,14 @@ def test_2_players_board_init(monkeypatch):
     assert board.pieces_per_player == 4
     assert board.board_sides == 4
     assert board.board_side_length == 14
-    assert board.player_shift == 14
+    assert board.player_shift == 2 * board.board_side_length
     assert board.finish_zone_length == 5
-    assert board.end_progress == 62
+    assert (
+        board.end_progress
+        == board.player_shift * len(board.players) + board.finish_zone_length + 1
+    )
 
-    assert len(board.pieces) == 8
+    assert len(board.pieces) == len(board.players) * board.pieces_per_player
     assert board.pieces == [
         Piece(0, 1, 0),
         Piece(1, 1, 0),
@@ -74,7 +80,9 @@ def test_3_players_5_corner_board_init(monkeypatch):
     assert board.pieces_per_player == 4
     assert board.board_sides == 5
     assert board.board_side_length == 14
-    assert board.player_shift == 14
+    # TODO: Uneven distances between players shouldn't be allowed,
+    # because they lead to unfair advantages
+    # assert board.player_shift == 14
     assert board.path_zone_length == 5 * 14
     assert board.finish_zone_length == 5
     # end_progress == path_zone_length + finish_zone_length + 1 THAT IS
@@ -109,7 +117,9 @@ def test_custom_board_init(monkeypatch):
     assert board.pieces_per_player == 1
     assert board.board_sides == 5
     assert board.board_side_length == 13
-    assert board.player_shift == 13
+    # TODO: Uneven distances between players shouldn't be allowed,
+    # because they lead to unfair advantages
+    # assert board.player_shift == 13
     assert board.path_zone_length == 5 * 13
     assert board.finish_zone_length == 3
     assert board.end_progress == 5 * 13 + 3 + 1

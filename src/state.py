@@ -7,7 +7,7 @@ from enum import Enum
 class Piece:
     number: int
     player: int
-    position: int = 0  # the absolute position on the board
+    position: int = 0  # the absolute position on the board, AKA progress
 
 
 ROLL_DICE = 1
@@ -61,6 +61,9 @@ class Board:
     def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
+        # TODO: Unequal distance between players gives unfair advantage.
+        # Because of this only the following should be allowed:
+        # assert self.board_sides % len(self.players) == 0
         assert len(self.players) <= self.board_sides
         assert self.pieces_per_player > 0
         assert len(self.pieces) == len(self.players) * self.pieces_per_player
@@ -80,10 +83,10 @@ class Board:
         finish_zone_length: int = 5,
     ):
         pieces: List[Piece] = []
-        player_shift: int = board_side_length
+        player_shift: int = board_side_length * board_sides // len(players)
         path_zone_length: int = (board_sides * board_side_length)
         end_progress: int = (path_zone_length + finish_zone_length + 1)
-        for player_index in range(0, len(players)):
+        for player_index in range(len(players)):
             for piece_num in range(pieces_per_player):
                 pieces.append(Piece(piece_num, players[player_index]))
 
@@ -100,7 +103,7 @@ class Board:
         )
 
     def relative_position(self, piece: Piece) -> int:
-        # Relative position is only relevant within the path_zone
+        """ Relative position is only relevant within the path_zone """
         assert self.is_on_path(piece)
         relative_position = (piece.player * self.player_shift) + piece.position
         relative_position = (
