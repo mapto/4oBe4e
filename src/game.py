@@ -100,10 +100,8 @@ def check_endgame(status: List[Piece]) -> bool:
     player_finished: Dict[int, bool] = {}
     for piece in status:
         player = piece.player()
-        if player in player_finished:
-            player_finished[player] = player_finished[player] and piece.is_finished()
-        else:
-            player_finished[player] = piece.is_finished()
+        preexisting = player_finished[player] if player in player_finished else True
+        player_finished[player] = preexisting and piece.is_finished()
 
     return len([k for k, v in player_finished.items() if v]) > 0
 
