@@ -14,12 +14,10 @@ Options:
   --version     Show version
 
 """
-import console_view
-
+from time import sleep
 from typing import Any, Dict, List, Tuple
 
 from docopt import docopt  # type: ignore
-from colorama import Back, Fore, Style  # type: ignore
 import requests
 
 
@@ -54,16 +52,38 @@ def main():
 
     session = requests.Session()
 
-    player = join_player(session, server_address, player_name)
-    session.headers.update({"4oBe4e-user-token": player[1]})
+    player_number, player_token = join_player(session, server_address, player_name)
+    session.headers.update({"4oBe4e-user-token": player_token})
 
-    state = get_state(session, server_address)
-    print(f"\nState: {state}")
+    # Changes on state update
+    state_serial = -1
+    while True:
+        state = get_state(session, server_address)
+        if "error" in state:
+            print(f"DEBUG: No valid game found ({state['error']})")
+        else:
+            # TODO:
+            # draw the board
+            # check if_winner
+            if state["number"] != state_serial:
+                state_serial = state["number"]
+                if state["current_player"] == player_number:
+                    # TODO:
+                    # roll the dice
+                    # make a move
+                    print("DEBUG: In turn")
+                else:
+                    print(
+                        f"DEBUG: Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
+                    )
+            else:
+                print("DEBUG: No change in state")
 
-    board = console_view.draw_board()
-    print()
-    for row in board:
-        print("".join(row))
+        # Pause before polling for state changes
+        sleep(5)
+        print("DEBUG: Polling state")
+
+    # DEBUG import ipdb; ipdb.set_trace()
 
 
 if __name__ == "__main__":
