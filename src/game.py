@@ -82,6 +82,12 @@ def check_endgame(status: List[Piece]) -> bool:
         Piece(2, 0, 60),Piece(2, 1, 60),Piece(2, 2, 60),Piece(2, 3, 60),\
         Piece(3, 0, 10),Piece(3, 1, 20),Piece(3, 2, 30),Piece(3, 3, 40)])
     False
+
+    >>> check_endgame([Piece(0,0,62),Piece(0,1,57),Piece(0,2,62),Piece(0,3,21),Piece(1,0,28),Piece(1,1,62),Piece(1,2,62),Piece(1,3,62),Piece(2,0,62),Piece(2,1,20),Piece(2,2,58),Piece(2,3,62),Piece(3,0,62),Piece(3,1,62),Piece(3,2,0),Piece(3,3,62)])
+    False
+
+    to_move: player = 1, dice=2, piece=2
+
     """
     player_finished: Dict[int, bool] = {}
     for piece in status:

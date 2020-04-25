@@ -69,3 +69,17 @@ $ pipenv sync --dev
     $ ./dummy-webapp.py
     ```
 3. Open http://127.0.0.1:5000 in browser
+
+### KNOWN ISSUES
+* Visualise individual pieces when 2 on same position (show as `.2.` at present)
+* Indicate which player has which colour
+* Premature win:
+```
+Debug:
+Piece(0,0,62),Piece(0,1,57),Piece(0,2,62),Piece(0,3,21)
+Piece(1,0,28),Piece(1,1,62),Piece(1,2,60),Piece(1,3,62)
+Piece(2,0,62),Piece(2,1,20),Piece(2,2,58),Piece(2,3,62)
+Piece(3,0,62),Piece(3,1,62),Piece(3,2,0),Piece(3,3,62)
+to_move: player = 1, dice=2, piece=2
+Should not win!
+```
