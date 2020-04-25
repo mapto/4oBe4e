@@ -7,17 +7,16 @@
 from typing import Any, List
 
 # local
+from const import NUMBER_OF_PLAYERS, NUMBER_OF_PIECES
 from piece import Piece
-from board import Board
 from player import Player
-from game import check_endgame, choose_first, do_move, get_valid_moves
+from game import check_endgame, choose_first, do_move, get_valid_moves, set_board
 from action import ask_move, roll_dice
 from console_view import redraw, end_game
 
 
-def play(players: int, first_player: Player) -> None:
-    board = Board()
-    status = board.pieces()
+def play(num_players: int, num_pieces: int, first_player: Player) -> None:
+    status = set_board(num_players, num_pieces)
 
     next = first_player.number
     win = False
@@ -33,12 +32,12 @@ def play(players: int, first_player: Player) -> None:
 
         win = check_endgame(status)
         if not win and dice != 6:
-            next = (next + 1) % players
+            next = (next + 1) % num_players
 
     end_game(status, player)
 
 
-def main(num_players: int) -> None:
+def main(num_players: int, num_pieces: int) -> None:
     """The main game loop"""
     for _ in range(num_players):
         Player.create()
@@ -47,8 +46,8 @@ def main(num_players: int) -> None:
     print()
     print("{:s} plays first!".format(player))
 
-    play(num_players, player)
+    play(num_players, num_pieces, player)
 
 
 if __name__ == "__main__":
-    main(num_players=4)
+    main(NUMBER_OF_PLAYERS, NUMBER_OF_PIECES)
