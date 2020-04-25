@@ -7,26 +7,25 @@
 <body>
 	<div>
         <h3></h3>
-        <ul class="players">
-        <form action="/action_page">
-            <label class= red for="player1">ИГРАЧ 1</label>
-            <input type="text" id="player1" name="player1">
-            <input type="submit" value="Submit"><br>
-            <label class= green for="player2">ИГРАЧ 2</label>
-            <input type="text" id="player2" name="player2">
-            <input type="submit" value="Submit"><br>
-            <label class= blue for="player3">ИГРАЧ 3</label>
-            <input type="text" id="player3" name="player3">
-            <input type="submit" value="Submit"><br>
-            <label class= yellow for="player4">ИГРАЧ 4</label>
-            <input type="text" id="player4" name="player4">
-            <input type="submit" value="Submit">
-        </form>
-        </ul>
+        <div class="players">
+            <input class= red type="text" id="player1" value="RED"> 
+            <button class= red onclick="myFunction1()">ИГРАЧ</button>
+            <p class= red id="demo1"></p>
+            <input class= green type="text" id="player2" value="GREEN">
+            <button class= green onclick="myFunction2()">ИГРАЧ</button>
+            <p class= green id="demo2"></p>
+            <input class= blue type="text" id="player3" value="BLUE">
+            <button class= blue onclick="myFunction3()">ИГРАЧ</button>
+            <p class= blue id="demo3"></p>
+            <input class= yellow type="text" id="player4" value="YELLOW">
+            <button class= yellow onclick="myFunction4()">ИГРАЧ</button>
+            <p class= yellow id="demo4"></p>
+        </div>
     <div class="board">
         <img class="board1" src="https://upload.wikimedia.org/wikipedia/commons/7/78/PetitsChevaux1.svg" alt="не се сърди човече">
     </div>
         <img class="img1" src="images/red1.png">
+        <button class= "roll" onclick="rollDice()">Хвърли зара</button>
       <div>
         <ul>
             <a class="rules" href="https://bg.wikipedia.org/wiki/%D0%9D%D0%B5_%D1%81%D0%B5_%D1%81%D1%8A%D1%80%D0%B4%D0%B8,_%D1%87%D0%BE%D0%B2%D0%B5%D1%87%D0%B5" target="_blank"><li >Правила</li></a>
