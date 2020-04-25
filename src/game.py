@@ -312,7 +312,14 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     return coords
 
 
-def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
+def is_valid_move(
+    piece: Piece,
+    dice: int,
+    status: List[Piece],
+    player_shift: int = PLAYER_SHIFT,
+    last_on_path: int = LAST_ON_PATH,
+    end_progress: int = END_PROGRESS,
+) -> bool:
     """
     >>> p = Piece(1, 1); is_valid_move(p, 6, [p])
     True
@@ -352,19 +359,23 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
             return False
 
         # Do other players block exit from home
-        expected = progress_to_position(piece.player(), 1)
+        expected = progress_to_position(piece.player(), 1, player_shift, last_on_path)
         return 2 > len(others_on_position(status, piece.player(), expected))
 
-    if 0 < pos <= LAST_ON_PATH:
-        if pos + dice > LAST_ON_PATH:
+    if 0 < pos <= last_on_path:
+        if pos + dice > last_on_path:
             return True
-        expected = progress_to_position(piece.player(), pos + dice)
-        return 2 > len(others_on_position(status, piece.player(), expected))
+        expected = progress_to_position(
+            piece.player(), pos + dice, player_shift, last_on_path
+        )
+        return 2 > len(
+            others_on_position(status, piece.player(), expected, last_on_path)
+        )
 
-    if LAST_ON_PATH < pos < END_PROGRESS:
-        return pos + dice <= END_PROGRESS
+    if last_on_path < pos < end_progress:
+        return pos + dice <= end_progress
 
-    assert pos == END_PROGRESS
+    assert pos == end_progress
     return False
 
 

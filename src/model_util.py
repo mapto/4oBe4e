@@ -28,10 +28,12 @@ def __other_player_pieces(pieces: List[Piece], player_num: int) -> List[Piece]:
     return [p for p in pieces if p.player() != player_num]
 
 
-def others_on_position(pieces: List[Piece], player: int, pos: int) -> List[Piece]:
+def others_on_position(
+    pieces: List[Piece], player: int, pos: int, last_on_path: int = LAST_ON_PATH
+) -> List[Piece]:
     """Do other players block the position by having more than one piece on it.
     Position argument is board position, not piece progress."""
-    assert 0 < pos <= LAST_ON_PATH
+    assert 0 < pos <= last_on_path
     at_dest = __pieces_on_path_position(pieces, pos)
     others = __other_player_pieces(at_dest, player)
     return others

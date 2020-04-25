@@ -37,10 +37,24 @@ class GameEngine:
         valid_actions: List[GameMove] = []
 
         def calc_valid_actions(piece: Piece) -> None:
-            if self.state.board.is_on_start(piece) and dice == 6:
-                valid_actions.append(GameMove.piece_out(player, piece.number, dice))
-            elif self.state.board.is_on_path(piece):
-                valid_actions.append(GameMove.move_piece(player, piece.number, dice))
+            from game import is_valid_move
+            from piece import Piece as GamePiece
+
+            b = self.state.board
+            game_piece = GamePiece(piece.player, piece.number, piece.position)
+            status = [GamePiece(p.player, p.number, p.position) for p in b.pieces]
+            if is_valid_move(
+                game_piece,
+                dice,
+                status,
+                b.player_shift,
+                b.path_zone_length,
+                b.end_progress,
+            ):
+                creator = (
+                    GameMove.piece_out if piece.position == 0 else GameMove.move_piece
+                )
+                valid_actions.append(creator(player, piece.number, dice))
 
         for piece in self.state.board.pieces:
             if piece.player == player:
