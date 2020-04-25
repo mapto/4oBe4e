@@ -7,7 +7,7 @@ from enum import Enum
 class Piece:
     number: int
     player: int
-    position: int = 0  # the absolute position on the board
+    position: int = 0  # the absolute position on the board, AKA progress
 
 
 ROLL_DICE = 1
@@ -43,14 +43,14 @@ class Board:
     pieces: List[Piece] = field(default_factory=lambda: [])
 
     # board constants for a square board with 14 positions per side
-    board_corners: int = 4
+    board_sides: int = 4
     board_side_length: int = 14
 
     # the offset between the start positions of two neighbouring players
-    player_shift: int = (board_side_length + 1)
+    player_shift: int = board_side_length
 
-    # the normal walk path including connecting corners
-    path_zone_length: int = (board_corners * board_side_length) + board_corners
+    # the normal walk path
+    path_zone_length: int = (board_sides * board_side_length)
 
     # the length of the finish zone (at the end of the path_zone)
     finish_zone_length: int = 5
@@ -61,10 +61,10 @@ class Board:
     def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
-        assert len(self.players) <= self.board_corners
+        assert self.board_sides % len(self.players) == 0
         assert self.pieces_per_player > 0
         assert len(self.pieces) == len(self.players) * self.pieces_per_player
-        assert self.board_corners > 2
+        assert self.board_sides > 2
         assert self.board_side_length > 5
         assert self.finish_zone_length > 2
         assert self.end_progress == (
@@ -75,22 +75,22 @@ class Board:
     def create(
         players: List[int] = [0, 1, 2, 3],
         pieces_per_player: int = 4,
-        board_corners: int = 4,
+        board_sides: int = 4,
         board_side_length: int = 14,
         finish_zone_length: int = 5,
     ):
         pieces: List[Piece] = []
-        player_shift: int = (board_side_length + 1)
-        path_zone_length: int = (board_corners * board_side_length) + board_corners
+        player_shift: int = board_side_length * board_sides // len(players)
+        path_zone_length: int = (board_sides * board_side_length)
         end_progress: int = (path_zone_length + finish_zone_length + 1)
-        for player_index in range(0, len(players)):
+        for player_index in range(len(players)):
             for piece_num in range(pieces_per_player):
                 pieces.append(Piece(piece_num, players[player_index]))
 
         return Board(
             players=players,
             pieces_per_player=pieces_per_player,
-            board_corners=board_corners,
+            board_sides=board_sides,
             board_side_length=board_side_length,
             finish_zone_length=finish_zone_length,
             pieces=pieces,
@@ -100,15 +100,11 @@ class Board:
         )
 
     def relative_position(self, piece: Piece) -> int:
-        # Relative position is only relevant within the path_zone
+        """ Relative position is only relevant within the path_zone.
+Has values 1..path_zone_length """
         assert self.is_on_path(piece)
-        relative_position = (piece.player * self.player_shift) + piece.position
-        relative_position = (
-            relative_position
-            if relative_position <= self.path_zone_length
-            else relative_position % self.path_zone_length
-        )
-        return relative_position
+        pos = (piece.player * self.player_shift) + piece.position
+        return (pos - 1) % self.path_zone_length + 1
 
     def is_on_start(self, piece: Piece) -> bool:
         return piece.position == 0
@@ -120,7 +116,7 @@ class Board:
         return self.path_zone_length < piece.position < self.end_progress
 
     def is_on_target(self, piece: Piece) -> bool:
-        return piece.position > (self.path_zone_length + self.finish_zone_length)
+        return self.end_progress <= piece.position <= self.end_progress + 3
 
 
 @dataclass

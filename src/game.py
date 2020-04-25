@@ -13,8 +13,15 @@ from piece import Piece
 from player import Player
 
 from util import progress_to_position
-from model_util import others_on_position
 from action import roll_dice
+
+
+def set_board(num_players: int, num_pieces: int):
+    pieces: List[Piece] = []
+    for player_num in range(num_players):
+        for piece_num in range(num_pieces):
+            pieces.append(Piece(player_num, piece_num))
+    return pieces
 
 
 def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) -> bool:
@@ -100,19 +107,19 @@ def check_endgame(status: List[Piece]) -> bool:
     return len([k for k, v in player_finished.items() if v]) > 0
 
 
-def coord_in_home(piece: Piece) -> Tuple[int, int]:
+def __coord_in_home(piece: Piece) -> Tuple[int, int]:
     """Draw in home positions: each piece has its location. Progress is always same, thus irrelevant
     
-    >>> coord_in_home(Piece(0, 0))
+    >>> __coord_in_home(Piece(0, 0))
     (5, 2)
 
-    >>> coord_in_home(Piece(1, 1))
+    >>> __coord_in_home(Piece(1, 1))
     (2, 13)
 
-    >>> coord_in_home(Piece(2, 2))
+    >>> __coord_in_home(Piece(2, 2))
     (13, 15)
 
-    >>> coord_in_home(Piece(3, 3))
+    >>> __coord_in_home(Piece(3, 3))
     (16, 6)
     """
     assert piece.progress() == 0
@@ -126,7 +133,7 @@ def coord_in_home(piece: Piece) -> Tuple[int, int]:
     )
 
 
-def coord_on_path(piece: Piece) -> Tuple[int, int]:
+def __coord_on_path(piece: Piece) -> Tuple[int, int]:
     """Draws on path: if two or more pieces on same cell, instead of number,
     draws a placeholder, which does not need to show piece number
     Logic split this in 4 different cases, determined by player offset.
@@ -143,27 +150,27 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
 
 
     Test player 1:
-    >>> coord_on_path(Piece(0, 1, 1))
+    >>> __coord_on_path(Piece(0, 1, 1))
     (8, 2)
 
     Test player 2:
-    >>> coord_on_path(Piece(1, 1, 1))
+    >>> __coord_on_path(Piece(1, 1, 1))
     (2, 10)
 
     Test player 3:
-    >>> coord_on_path(Piece(2, 1, 1))
+    >>> __coord_on_path(Piece(2, 1, 1))
     (10, 16)
 
     Test player 4:
-    >>> coord_on_path(Piece(3, 1, 1))
+    >>> __coord_on_path(Piece(3, 1, 1))
     (16, 8)
 
     Test path wrap:
-    >>> coord_on_path(Piece(3, 1, 56))
+    >>> __coord_on_path(Piece(3, 1, 56))
     (16, 9)
 
     Test overlap:
-    >> coord_on_path(Piece(2, 1, 17))
+    >> __coord_on_path(Piece(2, 1, 17))
     (10, 14)
     """
 
@@ -232,25 +239,25 @@ def coord_on_path(piece: Piece) -> Tuple[int, int]:
     return POSITION_TO_ROWCOL[piece.position()]
 
 
-def coord_on_finish(piece: Piece) -> Tuple[int, int]:
+def __coord_on_finish(piece: Piece) -> Tuple[int, int]:
     """Piece number is irrelevant
     
-    >>> coord_on_finish(Piece(0, 1, 57))
+    >>> __coord_on_finish(Piece(0, 1, 57))
     (9, 3)
 
-    >>> coord_on_finish(Piece(0, 1, 61))
+    >>> __coord_on_finish(Piece(0, 1, 61))
     (9, 7)
     
-    >>> coord_on_finish(Piece(1, 1, 57))
+    >>> __coord_on_finish(Piece(1, 1, 57))
     (3, 9)
 
-    >>> coord_on_finish(Piece(2, 1, 58))
+    >>> __coord_on_finish(Piece(2, 1, 58))
     (9, 14)
 
-    >>> coord_on_finish(Piece(3, 1, 59))
+    >>> __coord_on_finish(Piece(3, 1, 59))
     (13, 9)
 
-    >>> coord_on_finish(Piece(3, 1, 61))
+    >>> __coord_on_finish(Piece(3, 1, 61))
     (11, 9)
     """
     pos = piece.progress() - LAST_ON_PATH
@@ -271,20 +278,20 @@ def coord_on_finish(piece: Piece) -> Tuple[int, int]:
     return (x, y)
 
 
-def coord_in_target(piece: Piece) -> Tuple[int, int]:
+def __coord_in_target(piece: Piece) -> Tuple[int, int]:
     """Draw in target positions: each piece has its location.
     Progress is always same, thus irrelevant
     
-    >>> coord_in_target(Piece(0, 0, 62))
+    >>> __coord_in_target(Piece(0, 0, 62))
     (7, 6)
 
-    >>> coord_in_target(Piece(1, 1, 62))
+    >>> __coord_in_target(Piece(1, 1, 62))
     (6, 11)
 
-    >>> coord_in_target(Piece(2, 2, 62))
+    >>> __coord_in_target(Piece(2, 2, 62))
     (11, 11)
 
-    >>> coord_in_target(Piece(3, 3, 62))
+    >>> __coord_in_target(Piece(3, 3, 62))
     (12, 8)
     """
     assert piece.progress() == 62
@@ -305,13 +312,13 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     coords = (0, 0)
     progress = piece.progress()
     if progress == 0:
-        coords = coord_in_home(piece)
+        coords = __coord_in_home(piece)
     elif 0 < progress <= LAST_ON_PATH:
-        coords = coord_on_path(piece)
+        coords = __coord_on_path(piece)
     elif LAST_ON_PATH < progress < END_PROGRESS:
-        coords = coord_on_finish(piece)
+        coords = __coord_on_finish(piece)
     elif progress == END_PROGRESS:
-        coords = coord_in_target(piece)
+        coords = __coord_in_target(piece)
     else:
         raise NotImplementedError()
 
@@ -405,3 +412,32 @@ def get_valid_moves(player: Player, dice: int, status: List[Piece]) -> List[Piec
     """
     own = [p for p in status if p.player() == player.number]
     return [p for p in own if is_valid_move(p, dice, status)]
+
+
+def __pieces_on_path_position(pieces: List[Piece], path_pos: int) -> List[Piece]:
+    """
+    >>> __pieces_on_path_position([Piece(1, 0, 1)], 15)
+    [0]
+
+    >>> __pieces_on_path_position([Piece(2, 0, 1)], 29)
+    [0]
+
+    >>> __pieces_on_path_position([Piece(0, 0, 15), Piece(0, 1, 15)], 15)
+    [0, 1]
+    """
+    return [p for p in pieces if path_pos == p.position()]
+
+
+def __other_player_pieces(pieces: List[Piece], player_num: int) -> List[Piece]:
+    return [p for p in pieces if p.player() != player_num]
+
+
+def others_on_position(
+    pieces: List[Piece], player: int, pos: int, last_on_path: int = LAST_ON_PATH
+) -> List[Piece]:
+    """Do other players block the position by having more than one piece on it.
+    Position argument is board position, not piece progress."""
+    assert 0 < pos <= last_on_path
+    at_dest = __pieces_on_path_position(pieces, pos)
+    others = __other_player_pieces(at_dest, player)
+    return others

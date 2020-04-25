@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>960</x>
+      <y>550</y>
+      <w>100</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;dataclass&gt;&gt;
+Piece
+--
+number: int
+player: int
+position: int</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>580</x>
+      <y>200</y>
+      <w>240</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;dataclass&gt;&gt;
+GameMove
+--
+roll_dice(player)
+move_piece(player, piece, dice)
+piece_out(player, piece, dice)
+--
+move_type: int
+player: int
+piece: int
+dice: int</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>600</x>
+      <y>480</y>
+      <w>180</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;contains logic&gt;&gt;
+Board
+--
+players: List[int]
+pieces_per_player
+board_sides
+board_sides_length
+player_shift
+path_zone_length
+end_progress
+--
+relative_position(piece)
+is_on_start(piece)
+is_on_path(piece)
+is_on_finish(piece)
+is_on_target(piece)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>770</x>
+      <y>570</y>
+      <w>210</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+pieces
+m2=1..n
+</panel_attributes>
+    <additional_attributes>10.0;20.0;190.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>340</x>
+      <y>370</y>
+      <w>140</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>GameState
+--
+current_player: int
+number: int
+dice: int
+winners: List[int]
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>410</x>
+      <y>460</y>
+      <w>210</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+board
+m2=1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;150.0;190.0;150.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>410</x>
+      <y>270</y>
+      <w>190</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+valid_actions
+m2=0..4</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0;170.0;10.0</additional_attributes>
+  </element>
+</diagram>
