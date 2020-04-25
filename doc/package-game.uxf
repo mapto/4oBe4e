@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>510</x>
+      <y>620</y>
+      <w>150</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>Player
+--
+number: int
+name: str
+color: str
+--
+create() -&gt; Player
+get(i: int) -&gt; Player</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>270</x>
+      <y>590</y>
+      <w>110</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>Piece
+--
+number: int
+player: int
+position: int
+--
+move(int)
+send_home()
+progress()
+position()
+is_finished()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>890</x>
+      <y>560</y>
+      <w>200</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>action.py
+--
+roll_dice()
+ask_move(movable_pieces)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>320</x>
+      <y>340</y>
+      <w>330</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>game.py
+--
+do_move(status, player, piece_to_move, dice)
+set_board(num_players, num_pieces)
+choose_first(players)
+check_endgame(status)
+__coord_in_home(piece)
+__coord_on_path(piece)
+__coord_on_finish(piece)
+__coord_in_target(piece)
+put_piece_on_board(piece)
+is_valid_move(piece, dice, status)
+get_valid_moves(player, dice, status)
+others_on_position(pieces, player, pos)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>450</x>
+      <y>850</y>
+      <w>280</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>util.py
+--
+roll(sides)
+progress_to_position(player, progress)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>160</x>
+      <y>800</y>
+      <w>280</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>const.py
+--
+NUMBER_OF_PLAYERS
+NUMBER_OF_PIECES
+HOME_ZONE
+PLAYER_SHIFT
+LAST_ON_PATH
+END_PROGRESS
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>840</x>
+      <y>260</y>
+      <w>270</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>console_view.py
+--
+draw_board()
+draw_pieces_on_board(board, pieces)
+end_game(status, winner)
+redraw(status)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>330</x>
+      <y>220</y>
+      <w>320</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>main.py
+--
+play(num_players, num_pieces, first_player)
+main()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>470</y>
+      <w>270</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;import&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;250.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>720</x>
+      <y>600</y>
+      <w>190</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;import&gt;&gt;</panel_attributes>
+    <additional_attributes>170.0;10.0;10.0;280.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>250</y>
+      <w>220</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;import&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;200.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>330</y>
+      <w>220</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;import&gt;&gt;</panel_attributes>
+    <additional_attributes>200.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>250</y>
+      <w>270</w>
+      <h>350</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;import&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;250.0;330.0</additional_attributes>
+  </element>
+</diagram>
