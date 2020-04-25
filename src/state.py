@@ -61,10 +61,7 @@ class Board:
     def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
-        # TODO: Unequal distance between players gives unfair advantage.
-        # Because of this only the following should be allowed:
-        # assert self.board_sides % len(self.players) == 0
-        assert len(self.players) <= self.board_sides
+        assert self.board_sides % len(self.players) == 0
         assert self.pieces_per_player > 0
         assert len(self.pieces) == len(self.players) * self.pieces_per_player
         assert self.board_sides > 2
@@ -103,15 +100,11 @@ class Board:
         )
 
     def relative_position(self, piece: Piece) -> int:
-        """ Relative position is only relevant within the path_zone """
+        """ Relative position is only relevant within the path_zone.
+Has values 1..path_zone_length """
         assert self.is_on_path(piece)
-        relative_position = (piece.player * self.player_shift) + piece.position
-        relative_position = (
-            relative_position
-            if relative_position <= self.path_zone_length
-            else relative_position % self.path_zone_length
-        )
-        return relative_position
+        pos = (piece.player * self.player_shift) + piece.position
+        return (pos - 1) % self.path_zone_length + 1
 
     def is_on_start(self, piece: Piece) -> bool:
         return piece.position == 0

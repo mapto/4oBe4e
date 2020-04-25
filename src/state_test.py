@@ -5,17 +5,23 @@ import dataclasses, json
 
 def test_default_board_init(monkeypatch):
     board = Board.create()
+
+    # Defaults asserts
     assert board.players == [0, 1, 2, 3]
     assert board.pieces_per_player == 4
     assert board.board_sides == 4
     assert board.board_side_length == 14
-    assert board.player_shift == 14
     assert board.finish_zone_length == 5
+
+    # Consistency asserts
+    assert board.player_shift == 14
     assert (
         board.end_progress
         == board.player_shift * len(board.players) + board.finish_zone_length + 1
     )
     assert len(board.pieces) == len(board.players) * board.pieces_per_player
+
+    # Explicit asserts
     assert list(filter(lambda p: p.player == 0, board.pieces)) == [
         Piece(0, 0, 0),
         Piece(1, 0, 0),
@@ -46,19 +52,29 @@ def test_2_players_board_init(monkeypatch):
     """Make sure if we have just two players in a 4 corner board for them
       to be at the opposite corners instead of next to each other.
     """
-    board = Board.create(players=[1, 3])
+    board = Board.create([1, 3])
+
+    # Redundant asserts
     assert board.players == [1, 3]
+
+    # Defaults asserts
     assert board.pieces_per_player == 4
     assert board.board_sides == 4
     assert board.board_side_length == 14
-    assert board.player_shift == 2 * board.board_side_length
     assert board.finish_zone_length == 5
+
+    # Consistency asserts
+    assert board.player_shift == board.board_side_length * board.board_sides // len(
+        board.players
+    )
+    assert board.path_zone_length == len(board.players) * board.player_shift
     assert (
         board.end_progress
         == board.player_shift * len(board.players) + board.finish_zone_length + 1
     )
-
     assert len(board.pieces) == len(board.players) * board.pieces_per_player
+
+    # Explicit asserts
     assert board.pieces == [
         Piece(0, 1, 0),
         Piece(1, 1, 0),
@@ -71,24 +87,35 @@ def test_2_players_board_init(monkeypatch):
     ]
 
 
-def test_3_players_5_corner_board_init(monkeypatch):
+def test_3_players_6_corner_board_init(monkeypatch):
     """Make sure if we have just 3 players in a 5 corner board for them
       to be at the opposite corners instead of next to each other.
     """
-    board = Board.create(players=[0, 2, 3], board_sides=5)
+    board = Board.create([0, 2, 3], board_sides=6, board_side_length=9)
+
+    # Redundant asserts
     assert board.players == [0, 2, 3]
-    assert board.pieces_per_player == 4
-    assert board.board_sides == 5
-    assert board.board_side_length == 14
-    # TODO: Uneven distances between players shouldn't be allowed,
-    # because they lead to unfair advantages
-    # assert board.player_shift == 14
-    assert board.path_zone_length == 5 * 14
+    assert board.board_sides == 6
+    assert board.board_side_length == 9
+
+    # Defaults asserts
     assert board.finish_zone_length == 5
+    assert board.pieces_per_player == 4
+
+    # Consistency asserts
+    assert board.player_shift == board.board_side_length * board.board_sides // len(
+        board.players
+    )
+    assert board.path_zone_length == len(board.players) * board.player_shift
     # end_progress == path_zone_length + finish_zone_length + 1 THAT IS
     # end_progress == (board_sides * board_side_length) + finish_zone_length + 1
-    assert board.end_progress == (5 * 14) + 5 + 1
-    assert len(board.pieces) == 3 * 4
+    assert (
+        board.end_progress
+        == board.player_shift * len(board.players) + board.finish_zone_length + 1
+    )
+    assert len(board.pieces) == len(board.players) * board.pieces_per_player
+
+    # Explicit asserts
     assert board.pieces == [
         Piece(0, 0, 0),
         Piece(1, 0, 0),
@@ -106,24 +133,34 @@ def test_3_players_5_corner_board_init(monkeypatch):
 
 
 def test_custom_board_init(monkeypatch):
-    board = Board.create(
-        players=[0, 1],
-        pieces_per_player=1,
-        board_sides=5,
-        board_side_length=13,
-        finish_zone_length=3,
-    )
-    assert board.players == [0, 1]
+    board = Board.create([0, 1, 2, 3, 4], 1, 5, 10, 3)
+
+    # Redundant asserts
+    assert board.players == [0, 1, 2, 3, 4]
     assert board.pieces_per_player == 1
     assert board.board_sides == 5
-    assert board.board_side_length == 13
-    # TODO: Uneven distances between players shouldn't be allowed,
-    # because they lead to unfair advantages
-    # assert board.player_shift == 13
-    assert board.path_zone_length == 5 * 13
+    assert board.board_side_length == 10
     assert board.finish_zone_length == 3
-    assert board.end_progress == 5 * 13 + 3 + 1
-    assert board.pieces == [Piece(0, 0, 0), Piece(0, 1, 0)]
+
+    # Consistency asserts
+    assert board.player_shift == board.board_side_length * board.board_sides // len(
+        board.players
+    )
+    assert board.path_zone_length == len(board.players) * board.player_shift
+    assert (
+        board.end_progress
+        == board.player_shift * len(board.players) + board.finish_zone_length + 1
+    )
+    assert len(board.pieces) == len(board.players) * board.pieces_per_player
+
+    # Explicit asserts
+    assert board.pieces == [
+        Piece(0, 0, 0),
+        Piece(0, 1, 0),
+        Piece(0, 2, 0),
+        Piece(0, 3, 0),
+        Piece(0, 4, 0),
+    ]
 
 
 def test_negative_create_wrong_players_board(monkeypatch):
@@ -132,17 +169,17 @@ def test_negative_create_wrong_players_board(monkeypatch):
     #    board = Board.create(players=[6, 1], board_sides=5)
     # board with no players
     with pytest.raises(Exception):
-        Board.create(players=[])
+        Board.create([])
     # board with duplicate players
     with pytest.raises(Exception):
-        Board.create(players=[1, 1])
+        Board.create([1, 1])
     # board with too many players
     with pytest.raises(Exception):
-        Board.create(players=[0, 1, 2], board_sides=2)
+        Board.create([0, 1, 2], board_sides=2)
 
 
 def test_state_next_player(monkeypatch):
-    board = Board.create(players=[0, 1, 3, 5])
+    board = Board.create([0, 1, 3, 5])
     state = GameState.create(board)
 
     assert state.current_player == 0
