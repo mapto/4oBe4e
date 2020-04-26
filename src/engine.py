@@ -37,12 +37,17 @@ class GameEngine:
         valid_actions: List[GameMove] = []
 
         def calc_valid_actions(piece: Piece) -> None:
+            """ Converts representation from state/engine representation to game/main representation to reuse logic """
             from game import is_valid_move
             from piece import Piece as GamePiece
 
             b = self.state.board
-            game_piece = GamePiece(piece.player, piece.number, piece.position)
-            status = [GamePiece(p.player, p.number, p.position) for p in b.pieces]
+            pl = b.players
+            # in game terms players are 0..n, in state terms they are (not necessarily ordered unique identifiers)
+            game_piece = GamePiece(pl.index(piece.player), piece.number, piece.position)
+            status = [
+                GamePiece(pl.index(p.player), p.number, p.position) for p in b.pieces
+            ]
             if is_valid_move(
                 game_piece,
                 dice,
