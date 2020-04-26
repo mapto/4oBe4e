@@ -37,7 +37,7 @@ class GameMove:
 
 @dataclass
 class Board:
-    # number of the players playing the current game
+    # unique identifiers of the players playing the current game
     players: List[int] = field(default_factory=lambda: [1, 3])
     pieces_per_player: int = 4  # how many pieces each player has
     pieces: List[Piece] = field(default_factory=lambda: [])
@@ -101,9 +101,10 @@ class Board:
 
     def relative_position(self, piece: Piece) -> int:
         """ Relative position is only relevant within the path_zone.
-Has values 1..path_zone_length """
+        Has values 1..path_zone_length
+        """
         assert self.is_on_path(piece)
-        pos = (piece.player * self.player_shift) + piece.position
+        pos = (self.players.index(piece.player) * self.player_shift) + piece.position
         return (pos - 1) % self.path_zone_length + 1
 
     def is_on_start(self, piece: Piece) -> bool:
