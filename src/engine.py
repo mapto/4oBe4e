@@ -77,17 +77,20 @@ class GameEngine:
         return self.state
 
     def __on_move_piece(self, piece: Piece, dice: int) -> GameState:
+        def __is_winning(piece: Piece):
+            winner = True
+            for _piece in self.state.board.pieces:
+                if _piece.player == piece.player:
+                    winner = winner and _piece.position == self.state.board.end_progress
+            return winner
+
         if piece.position + dice < self.state.board.end_progress + 1:
             piece.position = piece.position + dice
 
-        winner = True
-        for _piece in self.state.board.pieces:
-            if _piece.player == piece.player:
-                winner = winner and _piece.position == self.state.board.end_progress
-        if winner:
+        if __is_winning(piece):
             self.state.winners.append(piece.player)
-        if len(self.state.winners) >= len(self.state.board.players) - 1:
-            self.state.valid_actions = []
+            if len(self.state.winners) >= len(self.state.board.players) - 1:
+                self.state.valid_actions = []
         else:
             if dice == 6:
                 self.state.valid_actions = [GameMove.roll_dice(piece.player)]
