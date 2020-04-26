@@ -206,46 +206,55 @@ def test_do_move_take_out_of_home(monkeypatch):
 
     b = Board.create(players=[0, 1], pieces_per_player=1)
     g = GameEngine(b)
+    assert GameMove.roll_dice(0) in g.state.valid_actions
 
     g.dice = dice4
     s = g.play(GameMove.roll_dice(0))
+    assert GameMove.roll_dice(1) in s.valid_actions
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.piece_out(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 1)]
+    assert GameMove.roll_dice(1) in s.valid_actions
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 7)]
+    assert GameMove.roll_dice(1) in s.valid_actions
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 13)]
+    assert GameMove.roll_dice(1) in s.valid_actions
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 19)]
+    assert GameMove.roll_dice(1) in s.valid_actions
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 25)]
+    assert GameMove.roll_dice(1) in s.valid_actions
 
     g.dice = dice4
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 4))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 29)]
+    assert GameMove.roll_dice(0) in s.valid_actions
+
+    g.dice = dice6
+    s = g.play(GameMove.roll_dice(0))
+    assert GameMove.piece_out(0, 0, 6) in s.valid_actions
+    s = g.play(GameMove.piece_out(0, 0, 6))
+
+    # TODO: Not yet implemented:
+    # assert s.board.pieces == [Piece(0, 0, 1), Piece(0, 1, 0)]
+    assert s.board.pieces == [Piece(0, 0, 1), Piece(0, 1, 29)]
 
 
 """ TODO: Convert into state-syntax
-
-    print(s)
-    g.dice = dice6
-    s = g.play(GameMove.roll_dice(0))
-    s = g.play(GameMove.piece_out(0, 0, 6))
-
-    # assert s.board.pieces == [Piece(0, 0, 1),Piece(0, 1, 0)]
-
 
 
 def test_do_move_cant_out_of_home():

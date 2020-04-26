@@ -16,12 +16,13 @@ class GameEngine:
     def get_state(self) -> GameState:
         return self.state
 
-    def __next_player(self) -> int:
+    def __on_next_player(self) -> GameMove:
+        """ Update engine state for next player's turn and return corresponding dice roll """
         current_player_index = self.state.board.players.index(self.state.current_player)
-        if current_player_index >= (len(self.state.board.players) - 1):
-            current_player_index = 0
-            return self.state.board.players[0]
-        return self.state.board.players[current_player_index + 1]
+        next_index = (current_player_index + 1) % len(self.state.board.players)
+        next_player = self.state.board.players[next_index]
+        self.state.current_player = next_player
+        return GameMove.roll_dice(next_player)
 
     def __find_piece(self, move: GameMove) -> Piece:
         for i in range(len(self.state.board.pieces)):
@@ -64,10 +65,8 @@ class GameEngine:
         for piece in self.state.board.pieces:
             if piece.player == player:
                 calc_valid_actions(piece)
-        if len(valid_actions) == 0:
-            next_player = self.__next_player()
-            self.state.current_player = next_player
-            valid_actions.append(GameMove.roll_dice(next_player))
+        if not valid_actions:
+            valid_actions = [self.__on_next_player()]
 
         self.state.valid_actions = valid_actions
         self.state.number = self.state.number + 1
@@ -97,11 +96,11 @@ class GameEngine:
             if len(self.state.winners) >= len(self.state.board.players) - 1:
                 self.state.valid_actions = []
         else:
-            if dice == 6:
-                self.state.valid_actions = [GameMove.roll_dice(piece.player)]
-            else:
-                next_player = self.__next_player()
-                self.state.valid_actions = [GameMove.roll_dice(next_player)]
+            self.state.valid_actions = [
+                GameMove.roll_dice(piece.player)
+                if dice == 6
+                else self.__on_next_player()
+            ]
 
         self.state.number = self.state.number + 1
         return self.state
