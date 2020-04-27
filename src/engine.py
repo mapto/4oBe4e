@@ -72,7 +72,7 @@ class GameEngine:
         self.state.number = self.state.number + 1
         return self.state
 
-    def __knock_out_others(self, piece: Piece) -> None:
+    def __knock_out_other_players(self, piece: Piece) -> None:
         for p in self.state.board.pieces:
             if p.player != piece.player:
                 p.position = 0
@@ -82,7 +82,7 @@ class GameEngine:
         assert self.state.board.is_on_start(piece)
         assert dice == 6
         piece.position = 1
-        self.__knock_out_others(piece)
+        self.__knock_out_other_players(piece)
         self.state.valid_actions = [GameMove.roll_dice(piece.player)]
         self.state.number = self.state.number + 1
         return self.state
@@ -99,7 +99,7 @@ class GameEngine:
         if piece.position + dice < b.end_progress + 1:
             piece.position = piece.position + dice
             if b.is_on_path(piece):
-                self.__knock_out_others(piece)
+                self.__knock_out_other_players(piece)
 
         if __is_winning(piece):
             self.state.winners.append(piece.player)
