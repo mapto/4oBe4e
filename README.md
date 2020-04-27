@@ -1,6 +1,13 @@
 <h1 align="center">Не се сърди, човече!</h1>
 
-<p align="left"><a href="https://github.com/mapto/4oBe4e/actions"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg"></a></p>
+<p align="left">
+    <a href="https://github.com/mapto/4oBe4e/actions"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg">
+    </a>
+    <a href="https://repl.it/@mapto/4oBe4e"><img alt="repl.it" src="https://repl.it/public/images/logo-small.png" height="20">
+    </a>
+</p>
+
+
 
 ## Game rules 
 https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
