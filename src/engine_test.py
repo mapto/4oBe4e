@@ -196,3 +196,43 @@ def test_do_not_move_piece_to_end_on_bigger_dice(monkeypatch):
         Piece(number=0, player=2, position=0),
     ]
     assert new_state.winners == []
+
+def test_knock_out_single_piece(monkeypatch):
+    # Given we have started the game and player 0 piece 0 is on the path
+    board = Board.create(players=[0, 2], pieces_per_player=1)
+    state = GameState.create(board)
+    dice = Dice()
+    monkeypatch.setattr(dice, "roll", lambda: 5)
+    game = GameEngine(board, dice)
+
+    state.board.pieces[0].position = 5
+    state.board.pieces[1].position = 30
+    state.current_player = 2
+
+    # When player 2 rolls the dice with 5 which is exactly how much he
+    # needs to hit player's 0 0 piece
+    new_state = game.play(GameMove.roll_dice(player=2))
+
+    # Then the piece should not go to the goal and it should be the
+    # next player turn
+    assert new_state == game.get_state()
+    assert new_state.number == 1
+    assert new_state.dice == 5
+    assert new_state.valid_actions == [
+        GameMove.move_piece(player=2, piece=0, dice=5),
+    ]
+
+    # When player 2 plays it's only possible move
+    new_state = game.play(GameMove.move_piece(player=2, piece=0, dice=5))
+
+    # Then hist piece should go to the new possition
+    # And should knock out plaers 0 piece 0
+    assert new_state.board.pieces == [
+        Piece(number=0, player=0, position=0),
+        Piece(number=0, player=2, position=35),
+    ]
+    # And it should be players 0 turn to roll the dice
+    assert new_state.valid_actions == [
+        GameMove.roll_dice(player=0),
+    ]
+    assert new_state.winners == []
