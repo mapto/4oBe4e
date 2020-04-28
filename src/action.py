@@ -7,7 +7,7 @@ Web application will use another implementation of this logic."""
 
 from typing import List
 
-from colorama import Fore
+from colorama import Fore  # type: ignore
 
 from const import PLAYER_COLOURS
 from piece import Piece
