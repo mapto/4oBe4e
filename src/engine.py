@@ -16,12 +16,13 @@ class GameEngine:
     def get_state(self) -> GameState:
         return self.state
 
-    def __next_player(self) -> int:
+    def __on_next_player(self) -> GameMove:
+        """ Update engine state for next player's turn and return corresponding dice roll """
         current_player_index = self.state.board.players.index(self.state.current_player)
-        if current_player_index >= (len(self.state.board.players) - 1):
-            current_player_index = 0
-            return self.state.board.players[0]
-        return self.state.board.players[current_player_index + 1]
+        next_index = (current_player_index + 1) % len(self.state.board.players)
+        next_player = self.state.board.players[next_index]
+        self.state.current_player = next_player
+        return GameMove.roll_dice(next_player)
 
     def __find_piece(self, move: GameMove) -> Piece:
         for i in range(len(self.state.board.pieces)):
@@ -37,49 +38,79 @@ class GameEngine:
         valid_actions: List[GameMove] = []
 
         def calc_valid_actions(piece: Piece) -> None:
-            if self.state.board.is_on_start(piece) and dice == 6:
-                valid_actions.append(GameMove.piece_out(player, piece.number, dice))
-            elif self.state.board.is_on_path(piece):
-                valid_actions.append(GameMove.move_piece(player, piece.number, dice))
+            """ Converts representation from state/engine representation to game/main representation to reuse logic """
+            from game import is_valid_move
+            from piece import Piece as GamePiece
+
+            b = self.state.board
+            pl = b.players
+            # in game terms players are 0..n, in state terms they are (not necessarily ordered unique identifiers)
+            game_piece = GamePiece(pl.index(piece.player), piece.number, piece.position)
+            status = [
+                GamePiece(pl.index(p.player), p.number, p.position) for p in b.pieces
+            ]
+            if is_valid_move(
+                game_piece,
+                dice,
+                status,
+                b.player_shift,
+                b.path_zone_length,
+                b.end_progress,
+            ):
+                creator = (
+                    GameMove.piece_out if piece.position == 0 else GameMove.move_piece
+                )
+                valid_actions.append(creator(player, piece.number, dice))
 
         for piece in self.state.board.pieces:
             if piece.player == player:
                 calc_valid_actions(piece)
-        if len(valid_actions) == 0:
-            next_player = self.__next_player()
-            self.state.current_player = next_player
-            valid_actions.append(GameMove.roll_dice(next_player))
+        if not valid_actions:
+            valid_actions = [self.__on_next_player()]
 
         self.state.valid_actions = valid_actions
         self.state.number = self.state.number + 1
         return self.state
 
+    def __knock_out_other_players(self, piece: Piece) -> None:
+        for p in self.state.board.pieces:
+            if p.player != piece.player:
+                p.position = 0
+                return  # only one piece can be knocked out
+
     def __on_piece_out(self, piece: Piece, dice: int) -> GameState:
         assert self.state.board.is_on_start(piece)
         assert dice == 6
         piece.position = 1
+        self.__knock_out_other_players(piece)
         self.state.valid_actions = [GameMove.roll_dice(piece.player)]
         self.state.number = self.state.number + 1
         return self.state
 
     def __on_move_piece(self, piece: Piece, dice: int) -> GameState:
-        if piece.position + dice < self.state.board.end_progress + 1:
-            piece.position = piece.position + dice
+        def __is_winning(piece: Piece) -> bool:
+            winner = True
+            for _piece in self.state.board.pieces:
+                if _piece.player == piece.player:
+                    winner = winner and _piece.position == self.state.board.end_progress
+            return winner
 
-        winner = True
-        for _piece in self.state.board.pieces:
-            if _piece.player == piece.player:
-                winner = winner and _piece.position == self.state.board.end_progress
-        if winner:
+        b = self.state.board
+        if piece.position + dice < b.end_progress + 1:
+            piece.position = piece.position + dice
+            if b.is_on_path(piece):
+                self.__knock_out_other_players(piece)
+
+        if __is_winning(piece):
             self.state.winners.append(piece.player)
-        if len(self.state.winners) >= len(self.state.board.players) - 1:
-            self.state.valid_actions = []
+            if len(self.state.winners) >= len(b.players) - 1:
+                self.state.valid_actions = []
         else:
-            if dice == 6:
-                self.state.valid_actions = [GameMove.roll_dice(piece.player)]
-            else:
-                next_player = self.__next_player()
-                self.state.valid_actions = [GameMove.roll_dice(next_player)]
+            self.state.valid_actions = [
+                GameMove.roll_dice(piece.player)
+                if dice == 6
+                else self.__on_next_player()
+            ]
 
         self.state.number = self.state.number + 1
         return self.state

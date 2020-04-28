@@ -89,14 +89,19 @@ def check_endgame(status: List[Piece]) -> bool:
         Piece(2, 0, 60),Piece(2, 1, 60),Piece(2, 2, 60),Piece(2, 3, 60),\
         Piece(3, 0, 10),Piece(3, 1, 20),Piece(3, 2, 30),Piece(3, 3, 40)])
     False
+
+    A real game we played that had a bug:
+    >>> check_endgame([Piece(0,0,62),Piece(0,1,57),Piece(0,2,62),Piece(0,3,21),\
+        Piece(1,0,28),Piece(1,1,62),Piece(1,2,62),Piece(1,3,62),\
+        Piece(2,0,62),Piece(2,1,20),Piece(2,2,58),Piece(2,3,62),\
+        Piece(3,0,62),Piece(3,1,62),Piece(3,2,0),Piece(3,3,62)])
+    False
     """
     player_finished: Dict[int, bool] = {}
     for piece in status:
         player = piece.player()
-        if player in player_finished:
-            player_finished[player] = player_finished[player] and piece.is_finished()
-        else:
-            player_finished[player] = True
+        preexisting = player_finished[player] if player in player_finished else True
+        player_finished[player] = preexisting and piece.is_finished()
 
     return len([k for k, v in player_finished.items() if v]) > 0
 
@@ -319,7 +324,14 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     return coords
 
 
-def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
+def is_valid_move(
+    piece: Piece,
+    dice: int,
+    status: List[Piece],
+    player_shift: int = PLAYER_SHIFT,
+    last_on_path: int = LAST_ON_PATH,
+    end_progress: int = END_PROGRESS,
+) -> bool:
     """
     >>> p = Piece(1, 1); is_valid_move(p, 6, [p])
     True
@@ -359,19 +371,23 @@ def is_valid_move(piece: Piece, dice: int, status: List[Piece]) -> bool:
             return False
 
         # Do other players block exit from home
-        expected = progress_to_position(piece.player(), 1)
+        expected = progress_to_position(piece.player(), 1, player_shift, last_on_path)
         return 2 > len(others_on_position(status, piece.player(), expected))
 
-    if 0 < pos <= LAST_ON_PATH:
-        if pos + dice > LAST_ON_PATH:
+    if 0 < pos <= last_on_path:
+        if pos + dice > last_on_path:
             return True
-        expected = progress_to_position(piece.player(), pos + dice)
-        return 2 > len(others_on_position(status, piece.player(), expected))
+        expected = progress_to_position(
+            piece.player(), pos + dice, player_shift, last_on_path
+        )
+        return 2 > len(
+            others_on_position(status, piece.player(), expected, last_on_path)
+        )
 
-    if LAST_ON_PATH < pos < END_PROGRESS:
-        return pos + dice <= END_PROGRESS
+    if last_on_path < pos < end_progress:
+        return pos + dice <= end_progress
 
-    assert pos == END_PROGRESS
+    assert pos == end_progress
     return False
 
 
@@ -415,10 +431,12 @@ def __other_player_pieces(pieces: List[Piece], player_num: int) -> List[Piece]:
     return [p for p in pieces if p.player() != player_num]
 
 
-def others_on_position(pieces: List[Piece], player: int, pos: int) -> List[Piece]:
+def others_on_position(
+    pieces: List[Piece], player: int, pos: int, last_on_path: int = LAST_ON_PATH
+) -> List[Piece]:
     """Do other players block the position by having more than one piece on it.
     Position argument is board position, not piece progress."""
-    assert 0 < pos <= LAST_ON_PATH
+    assert 0 < pos <= last_on_path
     at_dest = __pieces_on_path_position(pieces, pos)
     others = __other_player_pieces(at_dest, player)
     return others

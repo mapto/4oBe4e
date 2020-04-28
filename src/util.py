@@ -26,7 +26,12 @@ def roll(sides: int = 6) -> int:
     return num_rolled
 
 
-def progress_to_position(player: int, progress: int) -> int:
+def progress_to_position(
+    player: int,
+    position: int,
+    player_shift: int = PLAYER_SHIFT,
+    last_on_path: int = LAST_ON_PATH,
+) -> int:
     """Position of player on board. Shared by all players.
     Used to determine colisions when on common path.
     Return 0 when not in a position where could clash with others
@@ -49,7 +54,7 @@ def progress_to_position(player: int, progress: int) -> int:
     >>> progress_to_position(3, 13)
     55
     """
-    if progress < 1 or progress > LAST_ON_PATH:
+    if position < 1 or position > last_on_path:
         return 0
-    abs_pos = player * PLAYER_SHIFT + progress
-    return (abs_pos - 1) % LAST_ON_PATH + 1
+    abs_pos = player * player_shift + position
+    return (abs_pos - 1) % last_on_path + 1

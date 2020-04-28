@@ -38,6 +38,9 @@ class Piece:
 
         >>> p = Piece(2, 2); p.is_finished()
         False
+
+        >>> p = Piece(1,0,28); p.is_finished()
+        False
         """
         return self.progress() == END_PROGRESS
 
