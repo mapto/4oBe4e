@@ -6,6 +6,8 @@
 # standard
 from typing import Any, List
 
+from colorama import Style  # type: ignore
+
 # local
 from const import NUMBER_OF_PLAYERS, NUMBER_OF_PIECES
 from piece import Piece
@@ -44,7 +46,7 @@ def main(num_players: int, num_pieces: int) -> None:
 
     player = choose_first(Player.players)
     print()
-    print("{:s} plays first!".format(player))
+    print(f"{Style.RESET_ALL}{player:s} plays first!")
 
     play(num_players, num_pieces, player)
 
