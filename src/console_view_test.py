@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+
 def test_draw_board():
     """ Test drawing of ASCII board. """
 

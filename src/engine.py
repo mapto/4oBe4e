@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from state import Piece, Board, GameMove, GameState, ROLL_DICE, MOVE_PIECE, PIECE_OUT
 from util import roll as roll_dice
 from typing import List, Sequence
