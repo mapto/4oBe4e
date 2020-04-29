@@ -106,8 +106,8 @@ def test_play_until_the_end_two_players_once_piece(monkeypatch):
     assert new_state.number == 2
     assert new_state.dice == 6
     assert new_state.board.pieces == [
-        Piece(number=0, player=0, position=1),
-        Piece(number=0, player=2, position=0),
+        Piece(number=0, player=0, progress=1),
+        Piece(number=0, player=2, progress=0),
     ]
     assert new_state.valid_actions == [GameMove.roll_dice(player=0)]
 
@@ -124,8 +124,8 @@ def test_play_until_the_end_two_players_once_piece(monkeypatch):
     assert new_state.number == 4
     assert new_state.winners == []
     assert new_state.board.pieces == [
-        Piece(number=0, player=0, position=7),
-        Piece(number=0, player=2, position=0),
+        Piece(number=0, player=0, progress=7),
+        Piece(number=0, player=2, progress=0),
     ]
     assert new_state.valid_actions == [GameMove.roll_dice(player=0)]
 
@@ -141,14 +141,14 @@ def test_play_until_the_end_two_players_once_piece(monkeypatch):
     # Then the piece should go forward and we should be able to roll the dice again
     assert new_state.number == 6
     assert new_state.board.pieces == [
-        Piece(number=0, player=0, position=13),
-        Piece(number=0, player=2, position=0),
+        Piece(number=0, player=0, progress=13),
+        Piece(number=0, player=2, progress=0),
     ]
     assert new_state.winners == []
     assert new_state.valid_actions == [GameMove.roll_dice(player=0)]
 
     # And When we position the piece toward the end of the board
-    new_state.board.pieces[0].position = board.end_progress - 6
+    new_state.board.pieces[0].progress = board.end_progress - 6
 
     # And When we roll the dice again with 6
     new_state = game.play(GameMove.roll_dice(player=0))
@@ -162,8 +162,8 @@ def test_play_until_the_end_two_players_once_piece(monkeypatch):
     # Then the piece should go forward and we should be able to roll the dice again
     assert new_state.number == 8
     assert new_state.board.pieces == [
-        Piece(number=0, player=0, position=board.end_progress),
-        Piece(number=0, player=2, position=0),
+        Piece(number=0, player=0, progress=board.end_progress),
+        Piece(number=0, player=2, progress=0),
     ]
     assert new_state.winners == [0]
     assert new_state.valid_actions == []
@@ -177,7 +177,7 @@ def test_do_not_move_piece_to_end_on_bigger_dice(monkeypatch):
     monkeypatch.setattr(dice, "roll", lambda: 5)
     game = GameEngine(board, dice)
 
-    state.board.pieces[0].position = board.end_progress - 3
+    state.board.pieces[0].progress = board.end_progress - 3
 
     # When we roll the dice with 5 which is bigger then we need to
     # get to the goal
@@ -192,8 +192,8 @@ def test_do_not_move_piece_to_end_on_bigger_dice(monkeypatch):
         GameMove.roll_dice(player=2),
     ]
     assert new_state.board.pieces == [
-        Piece(number=0, player=0, position=board.end_progress - 3),
-        Piece(number=0, player=2, position=0),
+        Piece(number=0, player=0, progress=board.end_progress - 3),
+        Piece(number=0, player=2, progress=0),
     ]
     assert new_state.winners == []
 
