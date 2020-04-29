@@ -7,7 +7,7 @@ from enum import Enum
 class Piece:
     number: int
     player: int
-    position: int = 0  # the absolute position on the board, AKA progress
+    progress: int = 0  # the absolute position of a player throughout the game
 
 
 ROLL_DICE = 1
@@ -104,20 +104,22 @@ class Board:
         Has values 1..path_zone_length
         """
         assert self.is_on_path(piece)
-        pos = (self.players.index(piece.player) * self.player_shift) + piece.position
-        return (pos - 1) % self.path_zone_length + 1
+        position = (
+            self.players.index(piece.player) * self.player_shift
+        ) + piece.progress
+        return (position - 1) % self.path_zone_length + 1
 
     def is_on_start(self, piece: Piece) -> bool:
-        return piece.position == 0
+        return piece.progress == 0
 
     def is_on_path(self, piece: Piece) -> bool:
-        return 1 <= piece.position <= self.path_zone_length
+        return 1 <= piece.progress <= self.path_zone_length
 
     def is_on_finish(self, piece: Piece) -> bool:
-        return self.path_zone_length < piece.position < self.end_progress
+        return self.path_zone_length < piece.progress < self.end_progress
 
     def is_on_target(self, piece: Piece) -> bool:
-        return self.end_progress <= piece.position <= self.end_progress + 3
+        return self.end_progress <= piece.progress <= self.end_progress + 3
 
 
 @dataclass
