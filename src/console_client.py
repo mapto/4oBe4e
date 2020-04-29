@@ -19,6 +19,10 @@ from typing import Any, Dict, List, Tuple
 
 from docopt import docopt  # type: ignore
 import requests
+import logging
+
+logging.basicConfig(format="%(levelname)s: %(message)s")
+log = logging.getLogger(__name__)
 
 
 def get_state(session: requests.sessions.Session, server_address: str) -> Dict:
@@ -60,7 +64,7 @@ def main():
     while True:
         state = get_state(session, server_address)
         if "error" in state:
-            print(f"DEBUG: No valid game found ({state['error']})")
+            log.error(f"No valid game found ({state['error']})")
         else:
             # TODO:
             # draw the board
@@ -71,17 +75,17 @@ def main():
                     # TODO:
                     # roll the dice
                     # make a move
-                    print("DEBUG: In turn")
+                    log.debug("In turn")
                 else:
-                    print(
-                        f"DEBUG: Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
+                    log.debug(
+                        f"Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
                     )
             else:
-                print("DEBUG: No change in state")
+                log.debug("No change in state")
 
         # Pause before polling for state changes
         sleep(5)
-        print("DEBUG: Polling state")
+        log.debug("Polling state")
 
     # DEBUG import ipdb; ipdb.set_trace()
 
