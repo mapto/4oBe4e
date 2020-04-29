@@ -19,7 +19,7 @@ def roll_dice(player_num: int) -> int:
     """Asks player to roll dice"""
     sides = 6
     player_colour = eval(f"Fore.{PLAYER_COLOURS[player_num]}")
-    input(f"{player_colour}{Player.get(player_num)}: Press ENTER to roll your dice")
+    input(f"{player_colour}{Player.get(player_num):s}: Press ENTER to roll your dice")
     num_rolled = roll(sides)
     print("You rolled {}.".format(num_rolled))
     return num_rolled
@@ -36,7 +36,7 @@ def ask_move(movable_pieces: List[Piece]) -> int:
         try:
             player_colour = eval(f"Fore.{PLAYER_COLOURS[player_num]}")
             pawn_symbol = input(
-                f"{player_colour}{Player.get(player_num)}: Choose a piece to move [{', '.join(valid_moves)}]: "
+                f"{player_colour}{Player.get(player_num):s}: Choose a piece to move [{', '.join(valid_moves)}]: "
             )
         except ValueError:
             continue
