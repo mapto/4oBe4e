@@ -1,4 +1,4 @@
-Web client for **He Ce CbPgu 4oBe4e!**
+Web client for **Не се сърди, 4oBe4e!**
 
 ## Dummy Web Server
 1. Setup Pipenv as shown above

@@ -1,4 +1,4 @@
-Backend application for **He Ce CbPgu 4oBe4e!**
+Backend application for **Не се сърди,4oBe4e!**
 
 Includes two currently interwinded implementations:
 * **game-based**: local, console-based, with a game loop, which can be started via main.py
