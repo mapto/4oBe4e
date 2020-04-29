@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 """Board constants - extracted to avoid circular dependency between models of board and piece"""
 
 NUMBER_OF_PLAYERS = 4

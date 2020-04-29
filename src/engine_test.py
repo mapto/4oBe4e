@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 import pytest  # type: ignore
 from state import Board, Piece, GameState, GameMove
 from engine import GameEngine, Dice
