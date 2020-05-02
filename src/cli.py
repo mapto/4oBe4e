@@ -22,6 +22,7 @@ from colorama import Back, Fore, Style  # type: ignore
 import requests
 
 from const import HOME_ZONE, END_PROGRESS, LAST_ON_PATH, PLAYER_COLOURS
+from state import Piece
 from util import progress_to_position
 
 
@@ -52,145 +53,6 @@ players: List[Dict[str, Any]] = [
         "finish": [[11, [9]], [12, [9]], [13, [9]], [14, [9]], [15, [9]]],
     },
 ]
-
-
-class Player:
-    players: Set["Player"] = set()
-
-    @staticmethod
-    def create(color: str = None, name: str = None) -> "Player":
-        colors = set(PLAYER_COLOURS)
-
-        if not color:
-            if len(Player.players) == len(colors):
-                raise PermissionError(
-                    "Console interface cannot assign any more colours"
-                )
-            color = colors.difference([p.color for p in Player.players]).pop()
-        number = len(Player.players)
-        if not name:
-            name = "Player {:d}".format(number + 1)
-        player = Player(number, name, color)
-        Player.players.add(player)
-
-        return player
-
-    @staticmethod
-    def get(num: int) -> "Player":
-        return [p for p in Player.players if p.number == num].pop()
-
-    def __init__(self, number: int, name: str, color: str):
-        self.number = number
-        self.name = name
-        self.color = color
-
-    def __str__(self):
-        return str(self.number)
-
-    def __format__(self, format):
-        if format == "s":
-            return self.name
-        if format == "d":
-            return self.number
-        return str(self)
-
-    def __repr__(self):
-        return str(self.number)
-
-    def __eq__(self, other):
-        if isinstance(other, Player):
-            return self.name == other.name and self.number == other.number
-        return False
-
-    def __hash__(self):
-        return hash((self.name, self.number))
-
-
-class Piece:
-    def __init__(self, player_number: int, piece_number: int, progress: int = 0):
-        self.piece_number: int = piece_number
-        self.__player_num: int = player_number
-        self.__progress: int = progress
-
-    def move(self, move: int) -> None:
-        self.__progress += move
-
-    def send_home(self) -> None:
-        self.__progress = 0
-
-    def index(self) -> int:
-        return self.piece_number
-
-    def player(self) -> int:
-        return self.__player_num
-
-    def progress(self) -> int:
-        """Progress of player relative to start position. Unique for each player.
-        Normally always incremental (see move()).
-        Only exception is when hit by another player (see send_home())"""
-        return self.__progress
-
-    def is_finished(self) -> bool:
-        """
-        >>> p = Piece(0, 0, 62); p.is_finished()
-        True
-
-        >>> p = Piece(1, 1, 61); p.is_finished()
-        False
-
-        >>> p = Piece(2, 2); p.is_finished()
-        False
-
-        >>> p = Piece(1,0,28); p.is_finished()
-        False
-        """
-        return self.progress() == END_PROGRESS
-
-    def position(self) -> int:
-        """Position of player on board. Shared by pieces of all players.
-        Used to determine colisions when on common path.
-        Return 0 when not in a position where could clash with others.
-        
-        >>> p = Piece(0, 0); p.position()
-        0
-                
-        >>> p = Piece(3, 0, 57); p.position()
-        0
-
-        >>> p = Piece(0, 0, 55); p.position()
-        55
-
-        >>> p = Piece(1, 0, 41); p.position()
-        55
-
-        >>> p = Piece(2, 0, 27); p.position()
-        55
-                
-        >>> p = Piece(3, 0, 13); p.position()
-        55
-        """
-        return progress_to_position(self.__player_num, self.__progress)
-
-    def __eq__(self, other: Any) -> bool:
-        if isinstance(other, Piece):
-            return self.player() == other.player() and self.index() == other.index()
-        return False
-
-    def __str__(self):
-        return str(chr(ord("A") + self.piece_number))
-
-    def __int__(self):
-        return self.index()
-
-    def __repr__(self):
-        return str(self.index())
-
-    def __format__(self, format):
-        if format == "s":
-            return str(self)
-        if format == "d":
-            return int(self)
-        return str(self.index())
 
 
 def _colour(name: str = "WHITE") -> str:
@@ -253,11 +115,11 @@ def draw_board() -> List[List[Any]]:
     return board
 
 
-def redraw(status: List[Piece]) -> None:
+def redraw(pieces: List[Piece]) -> None:
     """The screen update function. Do not modify this for now."""
 
     board = draw_board()
-    draw_pieces_on_board(board, status)
+    draw_pieces_on_board(board, pieces)
 
     print()
     for row in board:
@@ -267,7 +129,7 @@ def redraw(status: List[Piece]) -> None:
 def _cant_overlap(piece: Piece) -> bool:
     """Even though this is piece-related logic, it has to do only with visualisation.
     Thus in view, rather than object logic"""
-    return not (HOME_ZONE < piece.progress() < END_PROGRESS)
+    return not (HOME_ZONE < piece.progress < END_PROGRESS)
 
 
 def draw_pieces_on_board(
@@ -277,10 +139,10 @@ def draw_pieces_on_board(
     such as collision of pieces of different players on the path"""
     for piece in pieces:
         (x, y) = put_piece_on_board(piece)
-        player_progress = [p.progress() for p in pieces if p.player() == piece.player()]
-        count = player_progress.count(piece.progress())
+        player_progress = [p.progress for p in pieces if p.player == piece.player]
+        count = player_progress.count(piece.progress)
         val = str(piece) if _cant_overlap(piece) or count == 1 else str(count)
-        board[x][y] = f"{_colour(players[piece.player()]['colour'])}.{val}."
+        board[x][y] = f"{_colour(players[piece.player]['colour'])}.{val}."
 
     return board
 
@@ -290,7 +152,7 @@ def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
     TODO: Refactor to implement startegy pattern
     """
     coords = (0, 0)
-    progress = piece.progress()
+    progress = piece.progress
     if progress == 0:
         coords = __coord_in_home(piece)
     elif 0 < progress <= LAST_ON_PATH:
@@ -343,14 +205,14 @@ def __coord_in_home(piece: Piece) -> Tuple[int, int]:
     >>> __coord_in_home(Piece(3, 3))
     (16, 6)
     """
-    assert piece.progress() == 0
+    assert piece.progress == 0
 
     zones = [(5, 2), (2, 12), (12, 15), (15, 5)]
     shift = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
     return (
-        zones[piece.player()][0] + shift[piece.index()][0],
-        zones[piece.player()][1] + shift[piece.index()][1],
+        zones[piece.player][0] + shift[piece.number][0],
+        zones[piece.player][1] + shift[piece.number][1],
     )
 
 
@@ -395,7 +257,7 @@ def __coord_on_path(piece: Piece) -> Tuple[int, int]:
     (10, 14)
     """
 
-    assert 1 <= piece.progress() <= LAST_ON_PATH and 0 <= piece.player() <= 3
+    assert 1 <= piece.progress <= LAST_ON_PATH and 0 <= piece.player <= 3
 
     POSITION_TO_ROWCOL: Tuple[Tuple[int, int], ...] = (
         (0, 0),
@@ -457,34 +319,34 @@ def __coord_on_path(piece: Piece) -> Tuple[int, int]:
         (9, 2),
     )
 
-    return POSITION_TO_ROWCOL[piece.position()]
+    return POSITION_TO_ROWCOL[progress_to_position(piece.number, piece.progress)]
 
 
 def __coord_on_finish(piece: Piece) -> Tuple[int, int]:
     """Piece number is irrelevant
     
-    >>> __coord_on_finish(Piece(0, 1, 57))
+    >>> __coord_on_finish(Piece(1, 0, 57))
     (9, 3)
 
-    >>> __coord_on_finish(Piece(0, 1, 61))
+    >>> __coord_on_finish(Piece(1, 0, 61))
     (9, 7)
     
     >>> __coord_on_finish(Piece(1, 1, 57))
     (3, 9)
 
-    >>> __coord_on_finish(Piece(2, 1, 58))
+    >>> __coord_on_finish(Piece(1, 2, 58))
     (9, 14)
 
-    >>> __coord_on_finish(Piece(3, 1, 59))
+    >>> __coord_on_finish(Piece(1, 3, 59))
     (13, 9)
 
-    >>> __coord_on_finish(Piece(3, 1, 61))
+    >>> __coord_on_finish(Piece(1, 3, 61))
     (11, 9)
     """
-    pos = piece.progress() - LAST_ON_PATH
+    pos = piece.progress - LAST_ON_PATH
     assert 0 < pos < 6
 
-    player = piece.player()
+    player = piece.player
     (x, y) = (0, 0)
 
     if player in [0, 2]:
@@ -515,14 +377,14 @@ def __coord_in_target(piece: Piece) -> Tuple[int, int]:
     >>> __coord_in_target(Piece(3, 3, 62))
     (12, 8)
     """
-    assert piece.progress() == 62
+    assert piece.progress == 62
 
     zones = [(7, 6), (6, 10), (10, 11), (11, 7)]
     shift = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
     return (
-        zones[piece.player()][0] + shift[piece.index()][0],
-        zones[piece.player()][1] + shift[piece.index()][1],
+        zones[piece.player][0] + shift[piece.number][0],
+        zones[piece.player][1] + shift[piece.number][1],
     )
 
 
@@ -544,8 +406,12 @@ def main():
         if "error" in state:
             print(f"DEBUG: No valid game found ({state['error']})")
         else:
+            from pprint import pprint
+
+            pprint(state)
+            pprint(state["board"]["pieces"])
+            redraw(state["board"]["pieces"])
             # TODO:
-            # draw the board
             # check if_winner
             if state["number"] != state_serial:
                 state_serial = state["number"]
