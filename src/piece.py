@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from typing import Any
 
 from const import PLAYER_SHIFT, LAST_ON_PATH, END_PROGRESS

@@ -7,16 +7,19 @@ Web application will use another implementation of this logic."""
 
 from typing import List
 
-from util import roll
+from colorama import Fore  # type: ignore
 
+from const import PLAYER_COLOURS
 from piece import Piece
 from player import Player
+from util import roll
 
 
 def roll_dice(player_num: int) -> int:
     """Asks player to roll dice"""
     sides = 6
-    input("{:s}: Press ENTER to roll your dice...".format(Player.get(player_num)))
+    player_colour = eval(f"Fore.{PLAYER_COLOURS[player_num]}")
+    input(f"{player_colour}{Player.get(player_num):s}: Press ENTER to roll your dice")
     num_rolled = roll(sides)
     print("You rolled {}.".format(num_rolled))
     return num_rolled
@@ -31,10 +34,9 @@ def ask_move(movable_pieces: List[Piece]) -> int:
 
     while True:
         try:
+            player_colour = eval(f"Fore.{PLAYER_COLOURS[player_num]}")
             pawn_symbol = input(
-                "{:s}: Choose a piece to move [{}]: ".format(
-                    Player.get(player_num), ", ".join(valid_moves)
-                )
+                f"{player_colour}{Player.get(player_num):s}: Choose a piece to move [{', '.join(valid_moves)}]: "
             )
         except ValueError:
             continue

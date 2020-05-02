@@ -62,5 +62,5 @@ def progress_to_position(
     """
     if position < 1 or position > last_on_path:
         return 0
-    abs_pos = player * player_shift + position
-    return (abs_pos - 1) % last_on_path + 1
+    progress = player * player_shift + position
+    return (progress - 1) % last_on_path + 1

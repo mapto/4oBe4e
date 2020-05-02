@@ -147,7 +147,7 @@ def __coord_on_path(piece: Piece) -> Tuple[int, int]:
     Logic split this in 4 different cases, determined by player offset.
     Parameter piece does't influence logic.
 
-    Player (absolute) Progress to (relative) Position conversion:
+    Player Progress to Position conversion:
         P0     1..56: (pos)
         P1     1..42: (p_num * shift + pos)
               43..56: (p_num * shift + pos) % end_progress

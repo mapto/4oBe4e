@@ -1,6 +1,11 @@
-<h1 align="center">Не се сърди, човече!</h1>
+<h1 align="center">Не се сърди, 4oBe4e!</h1>
 
-<p align="left"><a href="https://github.com/mapto/4oBe4e/actions"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg"></a></p>
+<p align="left">
+    <a href="https://github.com/mapto/4oBe4e/actions"><img alt="build status" src="https://github.com/mapto/4oBe4e/workflows/build/badge.svg">
+    </a>
+    <a href="https://repl.it/@mapto/4oBe4e"><img alt="repl.it" src="https://repl.it/public/images/logo-small.png" height="20">
+    </a>
+</p>
 
 ## Game rules 
 https://bg.wikipedia.org/wiki/Не_се_сърди,_човече
@@ -60,12 +65,3 @@ $ pip3 install pipenv
 $ pipenv --python /usr/bin/python3
 $ pipenv sync --dev
 ```
-
-### Dummy Web Server
-1. Setup Pipenv as shown above
-2. Start the Web app:  
-    ```
-    $ pipenv shell
-    $ ./dummy-webapp.py
-    ```
-3. Open http://127.0.0.1:5000 in browser

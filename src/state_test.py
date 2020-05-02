@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 import pytest  # type: ignore
 from state import Board, Piece, GameState, GameMove
 import dataclasses, json
@@ -221,73 +224,73 @@ def test_board_relative_position():
     board = Board.create()
 
     # Test relative position for each player
-    rel_pos_p0 = board.relative_position(piece=Piece(number=0, player=0, position=20))
+    rel_pos_p0 = board.relative_position(piece=Piece(number=0, player=0, progress=20))
     assert rel_pos_p0 == 20
 
-    rel_pos_p1 = board.relative_position(piece=Piece(number=0, player=1, position=20))
+    rel_pos_p1 = board.relative_position(piece=Piece(number=0, player=1, progress=20))
     assert rel_pos_p1 == 34
 
-    rel_pos_p2 = board.relative_position(piece=Piece(number=0, player=2, position=20))
+    rel_pos_p2 = board.relative_position(piece=Piece(number=0, player=2, progress=20))
     assert rel_pos_p2 == 48
 
-    rel_pos_p3 = board.relative_position(piece=Piece(number=0, player=3, position=20))
+    rel_pos_p3 = board.relative_position(piece=Piece(number=0, player=3, progress=20))
     assert rel_pos_p3 == 6
 
     # Test a position outside of path_zone
     with pytest.raises(Exception):
-        board.relative_position(piece=Piece(number=0, player=0, position=61))
+        board.relative_position(piece=Piece(number=0, player=0, progress=61))
 
 
 def test_board_is_on_start():
     board = Board.create()
 
-    p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=0))
+    p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, progress=0))
     assert p0_on_start
 
-    p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=1))
+    p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, progress=1))
     assert not p0_on_start
 
-    p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, position=2))
+    p0_on_start = board.is_on_start(piece=Piece(number=0, player=0, progress=2))
     assert not p0_on_start
 
 
 def test_board_is_on_path():
     board = Board.create()
 
-    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=0))
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, progress=0))
     assert not p0_on_path
 
-    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=1))
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, progress=1))
     assert p0_on_path
 
-    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=10))
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, progress=10))
     assert p0_on_path
 
-    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, position=61))
+    p0_on_path = board.is_on_path(piece=Piece(number=0, player=0, progress=61))
     assert not p0_on_path
 
 
 def test_board_is_on_finish():
     board = Board.create()
 
-    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, position=56))
+    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, progress=56))
     assert not p0_on_finish
 
-    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, position=61))
+    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, progress=61))
     assert p0_on_finish
 
-    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, position=62))
+    p0_on_finish = board.is_on_finish(piece=Piece(number=0, player=0, progress=62))
     assert not p0_on_finish
 
 
 def test_board_is_on_target():
     board = Board.create()
 
-    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, position=61))
+    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, progress=61))
     assert not p0_on_target
 
-    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, position=62))
+    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, progress=62))
     assert p0_on_target
 
-    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, position=66))
+    p0_on_target = board.is_on_target(piece=Piece(number=0, player=0, progress=66))
     assert not p0_on_target

@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from state import Piece, Board, GameMove, GameState, ROLL_DICE, MOVE_PIECE, PIECE_OUT
 from util import roll as roll_dice
 from typing import List, Sequence
@@ -50,9 +53,9 @@ class GameEngine:
             b = self.state.board
             pl = b.players
             # in game terms players are 0..n, in state terms they are (not necessarily ordered unique identifiers)
-            game_piece = GamePiece(pl.index(piece.player), piece.number, piece.position)
+            game_piece = GamePiece(pl.index(piece.player), piece.number, piece.progress)
             status = [
-                GamePiece(pl.index(p.player), p.number, p.position) for p in b.pieces
+                GamePiece(pl.index(p.player), p.number, p.progress) for p in b.pieces
             ]
             if is_valid_move(
                 game_piece,
@@ -91,14 +94,14 @@ class GameEngine:
         ]
         for p in at_position:
             if p.player != piece.player:
-                p.position = 0
+                p.progress = 0
                 assert len(at_position) == 1
                 return  # only one piece can be knocked out
 
     def __on_piece_out(self, piece: Piece, dice: int) -> GameState:
         assert self.state.board.is_on_start(piece)
         assert dice == 6
-        piece.position = 1
+        piece.progress = 1
         self.__knock_out_other_players(piece)
         self.state.valid_actions = [GameMove.roll_dice(piece.player)]
         self.state.number = self.state.number + 1
@@ -109,12 +112,12 @@ class GameEngine:
             winner = True
             for _piece in self.state.board.pieces:
                 if _piece.player == piece.player:
-                    winner = winner and _piece.position == self.state.board.end_progress
+                    winner = winner and _piece.progress == self.state.board.end_progress
             return winner
 
         b = self.state.board
-        if piece.position + dice < b.end_progress + 1:
-            piece.position = piece.position + dice
+        if piece.progress + dice < b.end_progress + 1:
+            piece.progress = piece.progress + dice
             if b.is_on_path(piece):
                 self.__knock_out_other_players(piece)
 
