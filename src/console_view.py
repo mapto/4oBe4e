@@ -6,7 +6,7 @@ from typing import Any, List, Dict
 from colorama import Back, Fore, Style  # type: ignore
 
 
-from const import HOME_ZONE, END_PROGRESS, PLAYER_COLOURS
+from const import HOME_ZONE, LAST_ON_PATH, END_PROGRESS, PLAYER_COLOURS
 
 from piece import Piece
 from player import Player
