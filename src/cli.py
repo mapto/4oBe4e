@@ -135,13 +135,16 @@ def draw_pieces_on_board(board: List[List[Any]], pieces: List[Dict]) -> List[Lis
     """ It is not part of a job of this method to resolve game logic,
     such as collision of pieces of different players on the path"""
     for piece in pieces:
-        (x, y) = put_piece_on_board(**piece)
+        (x, y) = put_piece_on_board(piece["number"], piece["player"], piece["progress"])
         player_progress = [
             p["progress"] for p in pieces if p["player"] == piece["player"]
         ]
         count = player_progress.count(piece["progress"])
         val = (
-            str(piece["number"]) if _cant_overlap(**piece) or count == 1 else str(count)
+            str(piece["number"])
+            if _cant_overlap(piece["number"], piece["player"], piece["progress"])
+            or count == 1
+            else str(count)
         )
         board[x][y] = f"{_colour(players[piece['player']]['colour'])}.{val}."
 
