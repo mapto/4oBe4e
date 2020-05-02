@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from dataclasses import dataclass, field
 from typing import List, Sequence, Set
 from enum import Enum
@@ -7,7 +10,7 @@ from enum import Enum
 class Piece:
     number: int
     player: int
-    position: int = 0  # the absolute position on the board, AKA progress
+    progress: int = 0  # the absolute position of a player throughout the game
 
 
 ROLL_DICE = 1
@@ -37,7 +40,7 @@ class GameMove:
 
 @dataclass
 class Board:
-    # number of the players playing the current game
+    # unique identifiers of the players playing the current game
     players: List[int] = field(default_factory=lambda: [1, 3])
     pieces_per_player: int = 4  # how many pieces each player has
     pieces: List[Piece] = field(default_factory=lambda: [])
@@ -101,22 +104,25 @@ class Board:
 
     def relative_position(self, piece: Piece) -> int:
         """ Relative position is only relevant within the path_zone.
-Has values 1..path_zone_length """
+        Has values 1..path_zone_length
+        """
         assert self.is_on_path(piece)
-        pos = (piece.player * self.player_shift) + piece.position
-        return (pos - 1) % self.path_zone_length + 1
+        position = (
+            self.players.index(piece.player) * self.player_shift
+        ) + piece.progress
+        return (position - 1) % self.path_zone_length + 1
 
     def is_on_start(self, piece: Piece) -> bool:
-        return piece.position == 0
+        return piece.progress == 0
 
     def is_on_path(self, piece: Piece) -> bool:
-        return 1 <= piece.position <= self.path_zone_length
+        return 1 <= piece.progress <= self.path_zone_length
 
     def is_on_finish(self, piece: Piece) -> bool:
-        return self.path_zone_length < piece.position < self.end_progress
+        return self.path_zone_length < piece.progress < self.end_progress
 
     def is_on_target(self, piece: Piece) -> bool:
-        return self.end_progress <= piece.position <= self.end_progress + 3
+        return self.end_progress <= piece.progress <= self.end_progress + 3
 
 
 @dataclass

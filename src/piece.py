@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from typing import Any
 
 from const import END_PROGRESS
@@ -37,6 +40,9 @@ class Piece:
         False
 
         >>> p = Piece(2, 2); p.is_finished()
+        False
+
+        >>> p = Piece(1,0,28); p.is_finished()
         False
         """
         return self.progress() == END_PROGRESS

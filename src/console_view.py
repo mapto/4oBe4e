@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding: utf-8
 
 from typing import Any, List, Dict
@@ -5,7 +6,7 @@ from typing import Any, List, Dict
 from colorama import Back, Fore, Style  # type: ignore
 
 
-from const import HOME_ZONE, END_PROGRESS
+from const import HOME_ZONE, END_PROGRESS, PLAYER_COLOURS
 
 from piece import Piece
 from player import Player
@@ -15,25 +16,25 @@ from game import put_piece_on_board
 # Define players' board attributes
 players: List[Dict[str, Any]] = [
     {
-        "colour": "RED",
+        "colour": PLAYER_COLOURS[0],
         "home": [[5, [2, 3]], [6, [2, 3]]],
         "target": [[7, [6, 7]], [8, [6, 7]]],
         "finish": [[9, [*range(3, 8)]], None],
     },
     {
-        "colour": "BLUE",
+        "colour": PLAYER_COLOURS[1],
         "home": [[2, [12, 13]], [3, [12, 13]]],
         "target": [[6, [10, 11]], [7, [10, 11]]],
         "finish": [[3, [9]], [4, [9]], [5, [9]], [6, [9]], [7, [9]]],
     },
     {
-        "colour": "GREEN",
+        "colour": PLAYER_COLOURS[2],
         "home": [[12, [15, 16]], [13, [15, 16]]],
         "target": [[10, [11, 12]], [11, [11, 12]]],
         "finish": [[9, [*range(11, 16)]], None],
     },
     {
-        "colour": "YELLOW",
+        "colour": PLAYER_COLOURS[3],
         "home": [[15, [5, 6]], [16, [5, 6]]],
         "target": [[11, [7, 8]], [12, [7, 8]]],
         "finish": [[11, [9]], [12, [9]], [13, [9]], [14, [9]], [15, [9]]],
