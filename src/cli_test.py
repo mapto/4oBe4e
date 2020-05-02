@@ -1,6 +1,3 @@
-import console_client
-
-
 def test_get_state():
     pass
 
