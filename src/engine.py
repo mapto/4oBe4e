@@ -65,7 +65,7 @@ class GameEngine:
                 b.path_zone_length,
                 b.end_progress,
             ):
-                if piece.position == 0:
+                if piece.progress == 0:
                     valid_actions.append(GameMove.piece_out(player, piece.number, dice))
                 else:
                     valid_actions.append(
