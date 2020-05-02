@@ -24,6 +24,11 @@ class GameEngine:
         self.state.current_player = next_player
         return GameMove.roll_dice(next_player)
 
+    def __on_end_move(self) -> GameMove:
+        if self.state.dice == 6:
+            return GameMove.roll_dice(self.state.current_player)
+        return self.__on_next_player()
+
     def __find_piece(self, move: GameMove) -> Piece:
         for i in range(len(self.state.board.pieces)):
             piece = self.state.board.pieces[i]
@@ -66,8 +71,7 @@ class GameEngine:
             if piece.player == player:
                 calc_valid_actions(piece)
         if not valid_actions:
-            valid_actions = [self.__on_next_player()]
-
+            valid_actions = [self.__on_end_move()]
         self.state.valid_actions = valid_actions
         self.state.number = self.state.number + 1
         return self.state
@@ -106,11 +110,7 @@ class GameEngine:
             if len(self.state.winners) >= len(b.players) - 1:
                 self.state.valid_actions = []
         else:
-            self.state.valid_actions = [
-                GameMove.roll_dice(piece.player)
-                if dice == 6
-                else self.__on_next_player()
-            ]
+            self.state.valid_actions = [self.__on_end_move()]
 
         self.state.number = self.state.number + 1
         return self.state

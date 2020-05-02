@@ -24,7 +24,14 @@ def set_board(num_players: int, num_pieces: int):
     return pieces
 
 
-def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) -> bool:
+def do_move(
+    status: List[Piece],
+    player: Player,
+    piece_to_move: int,
+    dice: int,
+    player_shift: int = PLAYER_SHIFT,
+    last_on_path: int = LAST_ON_PATH,
+) -> bool:
     """Check if the move is valid. If it is, perform it. Returns whether it is valid."""
     movable_piece_nums = [p.index() for p in get_valid_moves(player, dice, status)]
     if not (piece_to_move in movable_piece_nums):
@@ -42,8 +49,10 @@ def do_move(status: List[Piece], player: Player, piece_to_move: int, dice: int) 
             raise ValueError("Home can only be left with a full dice")
     else:
         piece.move(dice)
-    if 0 < piece.progress() <= LAST_ON_PATH:
-        others = others_on_position(status, player.number, piece.position())
+    if 0 < piece.progress() <= last_on_path:
+        others = others_on_position(
+            status, player.number, piece.position(), player_shift, last_on_path
+        )
         for other in others:
             other.send_home()
     return True
@@ -360,6 +369,11 @@ def is_valid_move(
     >>> piece = Piece(2, 0, 28); is_valid_move(piece, 1, [piece, Piece(0, 0, 1), Piece(0, 1, 1)])
     False
 
+    >>> p = Piece(0,0,0); is_valid_move(p, 6, [p, Piece(0,1,0), Piece(1,0,29), Piece(1,1,29)],28,56)
+    False
+
+    >>> p = Piece(0,1,0); is_valid_move(p, 6, [Piece(0,0,0), p, Piece(1,0,29), Piece(1,1,29)],28,56)
+    False
     """
     if dice < 1 or dice > 6:
         raise ValueError("Invalid dice: {}".format(dice))
@@ -372,7 +386,11 @@ def is_valid_move(
 
         # Do other players block exit from home
         expected = progress_to_position(piece.player(), 1, player_shift, last_on_path)
-        return 2 > len(others_on_position(status, piece.player(), expected))
+        return 2 > len(
+            others_on_position(
+                status, piece.player(), expected, player_shift, last_on_path
+            )
+        )
 
     if 0 < pos <= last_on_path:
         if pos + dice > last_on_path:
@@ -381,7 +399,9 @@ def is_valid_move(
             piece.player(), pos + dice, player_shift, last_on_path
         )
         return 2 > len(
-            others_on_position(status, piece.player(), expected, last_on_path)
+            others_on_position(
+                status, piece.player(), expected, player_shift, last_on_path
+            )
         )
 
     if last_on_path < pos < end_progress:
@@ -413,7 +433,12 @@ def get_valid_moves(player: Player, dice: int, status: List[Piece]) -> List[Piec
     return [p for p in own if is_valid_move(p, dice, status)]
 
 
-def __pieces_on_path_position(pieces: List[Piece], path_pos: int) -> List[Piece]:
+def __pieces_on_path_position(
+    pieces: List[Piece],
+    path_pos: int,
+    player_shift: int = PLAYER_SHIFT,
+    last_on_path: int = LAST_ON_PATH,
+) -> List[Piece]:
     """
     >>> __pieces_on_path_position([Piece(1, 0, 1)], 15)
     [0]
@@ -424,7 +449,7 @@ def __pieces_on_path_position(pieces: List[Piece], path_pos: int) -> List[Piece]
     >>> __pieces_on_path_position([Piece(0, 0, 15), Piece(0, 1, 15)], 15)
     [0, 1]
     """
-    return [p for p in pieces if path_pos == p.position()]
+    return [p for p in pieces if path_pos == p.position(player_shift, last_on_path)]
 
 
 def __other_player_pieces(pieces: List[Piece], player_num: int) -> List[Piece]:
@@ -432,11 +457,23 @@ def __other_player_pieces(pieces: List[Piece], player_num: int) -> List[Piece]:
 
 
 def others_on_position(
-    pieces: List[Piece], player: int, pos: int, last_on_path: int = LAST_ON_PATH
+    pieces: List[Piece],
+    player: int,
+    pos: int,
+    player_shift: int = PLAYER_SHIFT,
+    last_on_path: int = LAST_ON_PATH,
 ) -> List[Piece]:
     """Do other players block the position by having more than one piece on it.
-    Position argument is board position, not piece progress."""
+    Position argument is board position, not piece progress.
+    
+    >>> others_on_position([Piece(1,0,29)], 0, 1, 28, 56)
+    [0]
+    
+    >>> others_on_position([Piece(1,0,29), Piece(1,1,29)], 0, 1, 28, 56)
+    [0, 1]
+
+    """
     assert 0 < pos <= last_on_path
-    at_dest = __pieces_on_path_position(pieces, pos)
+    at_dest = __pieces_on_path_position(pieces, pos, player_shift, last_on_path)
     others = __other_player_pieces(at_dest, player)
     return others

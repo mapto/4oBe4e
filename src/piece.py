@@ -1,6 +1,6 @@
 from typing import Any
 
-from const import END_PROGRESS
+from const import PLAYER_SHIFT, LAST_ON_PATH, END_PROGRESS
 from util import progress_to_position
 
 
@@ -44,7 +44,9 @@ class Piece:
         """
         return self.progress() == END_PROGRESS
 
-    def position(self) -> int:
+    def position(
+        self, player_shift: int = PLAYER_SHIFT, last_on_path: int = LAST_ON_PATH
+    ) -> int:
         """Position of player on board. Shared by pieces of all players.
         Used to determine colisions when on common path.
         Return 0 when not in a position where could clash with others.
@@ -67,7 +69,9 @@ class Piece:
         >>> p = Piece(3, 0, 13); p.position()
         55
         """
-        return progress_to_position(self.__player_num, self.__progress)
+        return progress_to_position(
+            self.__player_num, self.__progress, player_shift, last_on_path
+        )
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Piece):
