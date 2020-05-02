@@ -5,15 +5,17 @@
 4oBe4e Console Client
 
 Usage:
-  console_client.py <server_address> <player_name>
+  console_client.py <server_address> <player_name> [--logger=<level>]
   console_client.py (-h | --help)
   console_client.py --version
 
 Options:
-  -h --help     Show this screen
-  --version     Show version
+  -h --help         Show this screen
+  --version         Show version
+  --logger=<level>  Log level [default: warning]
 
 """
+import logging
 from time import sleep
 from typing import Any, Dict, List, Set, Tuple
 
@@ -23,7 +25,6 @@ import requests
 
 from const import HOME_ZONE, END_PROGRESS, LAST_ON_PATH, PLAYER_COLOURS
 from util import progress_to_position
-
 
 # Players' board attributes
 players: List[Dict[str, Any]] = [
@@ -407,6 +408,10 @@ def main():
 
     server_address = args["<server_address>"]
     player_name = args["<player_name>"]
+    log_level = args["--logger"]
+
+    logging.basicConfig(level=log_level.upper(), format="%(levelname)s: %(message)s")
+    log = logging.getLogger(__name__)
 
     session = requests.Session()
 
@@ -418,7 +423,7 @@ def main():
     while True:
         state = get_state(session, server_address)
         if "error" in state:
-            print(f"DEBUG: No valid game found ({state['error']})")
+            log.error(f"No valid game found ({state['error']})")
         else:
             redraw(state["board"]["pieces"])
             # TODO:
@@ -429,17 +434,17 @@ def main():
                     # TODO:
                     # roll the dice
                     # make a move
-                    print("DEBUG: In turn")
+                    log.debug("In turn")
                 else:
-                    print(
-                        f"DEBUG: Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
+                    log.debug(
+                        f"Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
                     )
             else:
-                print("DEBUG: No change in state")
+                log.debug("No change in state")
 
         # Pause before polling for state changes
         sleep(5)
-        print("DEBUG: Polling state")
+        log.debug("Polling state")
 
     # DEBUG import ipdb; ipdb.set_trace()
 
