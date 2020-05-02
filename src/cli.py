@@ -22,7 +22,6 @@ from colorama import Back, Fore, Style  # type: ignore
 import requests
 
 from const import HOME_ZONE, END_PROGRESS, LAST_ON_PATH, PLAYER_COLOURS
-from state import Piece
 from util import progress_to_position
 
 
@@ -115,7 +114,7 @@ def draw_board() -> List[List[Any]]:
     return board
 
 
-def redraw(pieces: List[Piece]) -> None:
+def redraw(pieces: List[Dict]) -> None:
     """The screen update function. Do not modify this for now."""
 
     board = draw_board()
@@ -126,41 +125,45 @@ def redraw(pieces: List[Piece]) -> None:
         print("".join(row))
 
 
-def _cant_overlap(piece: Piece) -> bool:
+def _cant_overlap(piece_number: int, player_number: int, piece_progress=0) -> bool:
     """Even though this is piece-related logic, it has to do only with visualisation.
     Thus in view, rather than object logic"""
-    return not (HOME_ZONE < piece.progress < END_PROGRESS)
+    return not (HOME_ZONE < piece_progress < END_PROGRESS)
 
 
-def draw_pieces_on_board(
-    board: List[List[Any]], pieces: List[Piece]
-) -> List[List[Any]]:
+def draw_pieces_on_board(board: List[List[Any]], pieces: List[Dict]) -> List[List[Any]]:
     """ It is not part of a job of this method to resolve game logic,
     such as collision of pieces of different players on the path"""
     for piece in pieces:
-        (x, y) = put_piece_on_board(piece)
-        player_progress = [p.progress for p in pieces if p.player == piece.player]
-        count = player_progress.count(piece.progress)
-        val = str(piece) if _cant_overlap(piece) or count == 1 else str(count)
-        board[x][y] = f"{_colour(players[piece.player]['colour'])}.{val}."
+        (x, y) = put_piece_on_board(**piece)
+        player_progress = [
+            p["progress"] for p in pieces if p["player"] == piece["player"]
+        ]
+        count = player_progress.count(piece["progress"])
+        val = (
+            str(piece["number"]) if _cant_overlap(**piece) or count == 1 else str(count)
+        )
+        board[x][y] = f"{_colour(players[piece['player']]['colour'])}.{val}."
 
     return board
 
 
-def put_piece_on_board(piece: Piece) -> Tuple[int, int]:
+def put_piece_on_board(
+    piece_number: int, player_number: int, piece_progress=0
+) -> Tuple[int, int]:
     """Currently player is in [1..4], piece is in [0..3]. Do we need to change this?
     TODO: Refactor to implement startegy pattern
     """
     coords = (0, 0)
-    progress = piece.progress
+    progress = piece_progress
     if progress == 0:
-        coords = __coord_in_home(piece)
+        coords = __coord_in_home(piece_number, player_number, piece_progress)
     elif 0 < progress <= LAST_ON_PATH:
-        coords = __coord_on_path(piece)
+        coords = __coord_on_path(piece_number, player_number, piece_progress)
     elif LAST_ON_PATH < progress < END_PROGRESS:
-        coords = __coord_on_finish(piece)
+        coords = __coord_on_finish(piece_number, player_number, piece_progress)
     elif progress == END_PROGRESS:
-        coords = __coord_in_target(piece)
+        coords = __coord_in_target(piece_number, player_number, piece_progress)
     else:
         raise NotImplementedError()
 
@@ -190,33 +193,37 @@ def roll_dice(session: requests.sessions.Session, server_address: str) -> Dict:
     return req.json()
 
 
-def __coord_in_home(piece: Piece) -> Tuple[int, int]:
+def __coord_in_home(
+    piece_number: int, player_number: int, piece_progress=0
+) -> Tuple[int, int]:
     """Draw in home positions: each piece has its location. Progress is always same, thus irrelevant
     
-    >>> __coord_in_home(Piece(0, 0))
+    >>> __coord_in_home(0, 0)
     (5, 2)
 
-    >>> __coord_in_home(Piece(1, 1))
+    >>> __coord_in_home(1, 1)
     (2, 13)
 
-    >>> __coord_in_home(Piece(2, 2))
+    >>> __coord_in_home(2, 2)
     (13, 15)
 
-    >>> __coord_in_home(Piece(3, 3))
+    >>> __coord_in_home(3, 3)
     (16, 6)
     """
-    assert piece.progress == 0
+    assert piece_progress == 0
 
     zones = [(5, 2), (2, 12), (12, 15), (15, 5)]
     shift = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
     return (
-        zones[piece.player][0] + shift[piece.number][0],
-        zones[piece.player][1] + shift[piece.number][1],
+        zones[player_number][0] + shift[piece_number][0],
+        zones[player_number][1] + shift[piece_number][1],
     )
 
 
-def __coord_on_path(piece: Piece) -> Tuple[int, int]:
+def __coord_on_path(
+    piece_number: int, player_number: int, piece_progress=0
+) -> Tuple[int, int]:
     """Draws on path: if two or more pieces on same cell, instead of number,
     draws a placeholder, which does not need to show piece number
     Logic split this in 4 different cases, determined by player offset.
@@ -233,31 +240,31 @@ def __coord_on_path(piece: Piece) -> Tuple[int, int]:
 
 
     Test player 1:
-    >>> __coord_on_path(Piece(0, 1, 1))
+    >>> __coord_on_path(0, 1, 1)
     (8, 2)
 
     Test player 2:
-    >>> __coord_on_path(Piece(1, 1, 1))
+    >>> __coord_on_path(1, 1, 1)
     (2, 10)
 
     Test player 3:
-    >>> __coord_on_path(Piece(2, 1, 1))
+    >>> __coord_on_path(2, 1, 1)
     (10, 16)
 
     Test player 4:
-    >>> __coord_on_path(Piece(3, 1, 1))
+    >>> __coord_on_path(3, 1, 1)
     (16, 8)
 
     Test path wrap:
-    >>> __coord_on_path(Piece(3, 1, 56))
+    >>> __coord_on_path(3, 1, 56)
     (16, 9)
 
     Test overlap:
-    >> __coord_on_path(Piece(2, 1, 17))
+    >> __coord_on_path(2, 1, 17)
     (10, 14)
     """
 
-    assert 1 <= piece.progress <= LAST_ON_PATH and 0 <= piece.player <= 3
+    assert 1 <= piece_progress <= LAST_ON_PATH and 0 <= player_number <= 3
 
     POSITION_TO_ROWCOL: Tuple[Tuple[int, int], ...] = (
         (0, 0),
@@ -319,34 +326,36 @@ def __coord_on_path(piece: Piece) -> Tuple[int, int]:
         (9, 2),
     )
 
-    return POSITION_TO_ROWCOL[progress_to_position(piece.number, piece.progress)]
+    return POSITION_TO_ROWCOL[progress_to_position(piece_number, piece_progress)]
 
 
-def __coord_on_finish(piece: Piece) -> Tuple[int, int]:
+def __coord_on_finish(
+    piece_number: int, player_number: int, piece_progress=0
+) -> Tuple[int, int]:
     """Piece number is irrelevant
     
-    >>> __coord_on_finish(Piece(1, 0, 57))
+    >>> __coord_on_finish(1, 0, 57)
     (9, 3)
 
-    >>> __coord_on_finish(Piece(1, 0, 61))
+    >>> __coord_on_finish(1, 0, 61)
     (9, 7)
     
-    >>> __coord_on_finish(Piece(1, 1, 57))
+    >>> __coord_on_finish(1, 1, 57)
     (3, 9)
 
-    >>> __coord_on_finish(Piece(1, 2, 58))
+    >>> __coord_on_finish(1, 2, 58)
     (9, 14)
 
-    >>> __coord_on_finish(Piece(1, 3, 59))
+    >>> __coord_on_finish(1, 3, 59)
     (13, 9)
 
-    >>> __coord_on_finish(Piece(1, 3, 61))
+    >>> __coord_on_finish(1, 3, 61)
     (11, 9)
     """
-    pos = piece.progress - LAST_ON_PATH
+    pos = piece_progress - LAST_ON_PATH
     assert 0 < pos < 6
 
-    player = piece.player
+    player = player_number
     (x, y) = (0, 0)
 
     if player in [0, 2]:
@@ -361,30 +370,32 @@ def __coord_on_finish(piece: Piece) -> Tuple[int, int]:
     return (x, y)
 
 
-def __coord_in_target(piece: Piece) -> Tuple[int, int]:
+def __coord_in_target(
+    piece_number: int, player_number: int, piece_progress=0
+) -> Tuple[int, int]:
     """Draw in target positions: each piece has its location.
     Progress is always same, thus irrelevant
     
-    >>> __coord_in_target(Piece(0, 0, 62))
+    >>> __coord_in_target(0, 0, 62)
     (7, 6)
 
-    >>> __coord_in_target(Piece(1, 1, 62))
+    >>> __coord_in_target(1, 1, 62)
     (6, 11)
 
-    >>> __coord_in_target(Piece(2, 2, 62))
+    >>> __coord_in_target(2, 2, 62)
     (11, 11)
 
-    >>> __coord_in_target(Piece(3, 3, 62))
+    >>> __coord_in_target(3, 3, 62)
     (12, 8)
     """
-    assert piece.progress == 62
+    assert piece_progress == 62
 
     zones = [(7, 6), (6, 10), (10, 11), (11, 7)]
     shift = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
     return (
-        zones[piece.player][0] + shift[piece.number][0],
-        zones[piece.player][1] + shift[piece.number][1],
+        zones[player_number][0] + shift[piece_number][0],
+        zones[player_number][1] + shift[piece_number][1],
     )
 
 
@@ -406,10 +417,6 @@ def main():
         if "error" in state:
             print(f"DEBUG: No valid game found ({state['error']})")
         else:
-            from pprint import pprint
-
-            pprint(state)
-            pprint(state["board"]["pieces"])
             redraw(state["board"]["pieces"])
             # TODO:
             # check if_winner
