@@ -132,6 +132,8 @@ def play_roll():
 # TODO: shall we pass the state number for the same reason?
 @app.route("/play/move/<piece>/<dice>")
 def play_move(piece: int, dice: int):
+    piece = int(piece)
+    dice = int(dice)
     try:
         engine.state
     except:
@@ -150,6 +152,8 @@ def play_move(piece: int, dice: int):
 # TODO: shall we pass the state number for the same reason?
 @app.route("/play/out/<piece>/<dice>")
 def play_out(piece: int, dice: int):
+    piece = int(piece)
+    dice = int(dice)
     try:
         engine.state
     except:
