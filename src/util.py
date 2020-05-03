@@ -28,7 +28,7 @@ def roll(sides: int = 6) -> int:
 
 def progress_to_position(
     player: int,
-    position: int,
+    progress: int,
     player_shift: int = PLAYER_SHIFT,
     last_on_path: int = LAST_ON_PATH,
 ) -> int:
@@ -54,7 +54,7 @@ def progress_to_position(
     >>> progress_to_position(3, 13)
     55
     """
-    if position < 1 or position > last_on_path:
+    if progress < 1 or progress > last_on_path:
         return 0
-    progress = player * player_shift + position
-    return (progress - 1) % last_on_path + 1
+    position = player * player_shift + progress
+    return (position - 1) % last_on_path + 1
