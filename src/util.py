@@ -53,6 +53,12 @@ def progress_to_position(
             
     >>> progress_to_position(3, 13)
     55
+            
+    >>> progress_to_position(0, 1, 28)
+    1
+            
+    >>> progress_to_position(1, 29, 28)
+    1
     """
     if position < 1 or position > last_on_path:
         return 0

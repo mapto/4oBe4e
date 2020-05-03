@@ -27,6 +27,11 @@ class GameEngine:
         self.state.current_player = next_player
         return GameMove.roll_dice(next_player)
 
+    def __on_end_move(self) -> GameMove:
+        if self.state.dice == 6:
+            return GameMove.roll_dice(self.state.current_player)
+        return self.__on_next_player()
+
     def __find_piece(self, move: GameMove) -> Piece:
         for i in range(len(self.state.board.pieces)):
             piece = self.state.board.pieces[i]
@@ -60,25 +65,37 @@ class GameEngine:
                 b.path_zone_length,
                 b.end_progress,
             ):
-                creator = (
-                    GameMove.piece_out if piece.progress == 0 else GameMove.move_piece
-                )
-                valid_actions.append(creator(player, piece.number, dice))
+                if piece.progress == 0:
+                    valid_actions.append(GameMove.piece_out(player, piece.number, dice))
+                else:
+                    valid_actions.append(
+                        GameMove.move_piece(player, piece.number, dice)
+                    )
 
         for piece in self.state.board.pieces:
             if piece.player == player:
                 calc_valid_actions(piece)
         if not valid_actions:
-            valid_actions = [self.__on_next_player()]
-
+            valid_actions = [self.__on_end_move()]
         self.state.valid_actions = valid_actions
         self.state.number = self.state.number + 1
         return self.state
 
     def __knock_out_other_players(self, piece: Piece) -> None:
-        for p in self.state.board.pieces:
+        b = self.state.board
+        assert b.is_on_path(piece)
+        contested = b.relative_position(piece)
+        at_position = [
+            p
+            for p in b.pieces
+            if b.is_on_path(p)
+            and b.relative_position(p) == contested
+            and p.player != piece.player
+        ]
+        for p in at_position:
             if p.player != piece.player:
                 p.progress = 0
+                assert len(at_position) == 1
                 return  # only one piece can be knocked out
 
     def __on_piece_out(self, piece: Piece, dice: int) -> GameState:
@@ -109,11 +126,7 @@ class GameEngine:
             if len(self.state.winners) >= len(b.players) - 1:
                 self.state.valid_actions = []
         else:
-            self.state.valid_actions = [
-                GameMove.roll_dice(piece.player)
-                if dice == 6
-                else self.__on_next_player()
-            ]
+            self.state.valid_actions = [self.__on_end_move()]
 
         self.state.number = self.state.number + 1
         return self.state

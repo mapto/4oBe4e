@@ -26,7 +26,7 @@ def test_play_invalid_action_on_initial_state(monkeypatch):
 
     # When we try to play an invalid action PieceOut
     with pytest.raises(Exception):
-        game.play(GameMove.piece_out(1, 1, 6))
+        game.play(GameMove.piece_out(1, 1))
 
     # When we try to play valid action for an invalid Player
     with pytest.raises(Exception):
@@ -217,40 +217,40 @@ def test_do_move_take_out_of_home_and_knock_out(monkeypatch):
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.piece_out(1, 0, 6))
+    s = g.play(GameMove.piece_out(1, 0))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 1)]
-    assert GameMove.roll_dice(1) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(1)]
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 7)]
-    assert GameMove.roll_dice(1) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(1)]
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 13)]
-    assert GameMove.roll_dice(1) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(1)]
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 19)]
-    assert GameMove.roll_dice(1) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(1)]
 
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 6))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 25)]
-    assert GameMove.roll_dice(1) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(1)]
 
     g.dice = dice4
     s = g.play(GameMove.roll_dice(1))
     s = g.play(GameMove.move_piece(1, 0, 4))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 29)]
-    assert GameMove.roll_dice(0) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(0)]
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(0))
-    assert GameMove.piece_out(0, 0, 6) in s.valid_actions
-    s = g.play(GameMove.piece_out(0, 0, 6))
+    assert GameMove.piece_out(0, 0) in s.valid_actions
+    s = g.play(GameMove.piece_out(0, 0))
 
     assert s.board.pieces == [Piece(0, 0, 1), Piece(0, 1, 0)]
 
@@ -271,13 +271,13 @@ def test_do_move_blocked_out_of_home(monkeypatch):
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.piece_out(1, 0, 6))
+    s = g.play(GameMove.piece_out(1, 0))
     assert s.board.pieces == [Piece(0, 0), Piece(1, 0), Piece(0, 1, 1), Piece(1, 1)]
     assert GameMove.roll_dice(1) in s.valid_actions
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.piece_out(1, 1, 6))
+    s = g.play(GameMove.piece_out(1, 1))
     assert s.board.pieces == [Piece(0, 0), Piece(1, 0), Piece(0, 1, 1), Piece(1, 1, 1)]
     assert GameMove.roll_dice(1) in s.valid_actions
 
@@ -333,7 +333,7 @@ def test_do_move_blocked_out_of_home(monkeypatch):
         Piece(0, 1, 29),
         Piece(1, 1, 25),
     ]
-    assert GameMove.roll_dice(0) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(0)]
 
     s = g.play(GameMove.roll_dice(0))
 
@@ -348,13 +348,20 @@ def test_do_move_blocked_out_of_home(monkeypatch):
         Piece(0, 1, 29),
         Piece(1, 1, 29),
     ]
-    assert GameMove.roll_dice(0) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(0)]
+    assert s.board.pieces == [
+        Piece(0, 0, 0),
+        Piece(1, 0, 0),
+        Piece(0, 1, 29),
+        Piece(1, 1, 29),
+    ]
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(0))
 
-    # i.e. player 0 can't move
-    # assert s.valid_actions == [GameMove.roll_dice(1)]
+    # i.e. player 0 can't move, but since she drew 6, repeats turn
+    assert s.current_player == 0
+    assert s.valid_actions == [GameMove.roll_dice(0)]
 
 
 def test_do_move_and_knock_out(monkeypatch):
@@ -375,7 +382,7 @@ def test_do_move_and_knock_out(monkeypatch):
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.piece_out(1, 0, 6))
+    s = g.play(GameMove.piece_out(1, 0))
     assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 1)]
     assert GameMove.roll_dice(1) in s.valid_actions
 
@@ -402,19 +409,28 @@ def test_do_move_and_knock_out(monkeypatch):
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(0))
-    assert GameMove.piece_out(0, 0, 6) in s.valid_actions
-    s = g.play(GameMove.piece_out(0, 0, 6))
-    # assert s.board.pieces == [Piece(0, 0, 1), Piece(0, 1, 24)]
+    assert GameMove.piece_out(0, 0) in s.valid_actions
+    s = g.play(GameMove.piece_out(0, 0))
+    assert s.board.pieces == [Piece(0, 0, 1), Piece(0, 1, 24)]
 
-    # g.dice = dice1
-    # s = g.play(GameMove.roll_dice(1))
-    # s = g.play(GameMove.move_piece(0, 0, 1))
-    # assert s.board.pieces == [Piece(0, 0, 2), Piece(0, 1, 24)]
+    g.dice = dice1
+    s = g.play(GameMove.roll_dice(0))
+    s = g.play(GameMove.move_piece(0, 0, 1))
+    assert s.board.pieces == [Piece(0, 0, 2), Piece(0, 1, 24)]
+
+    g.dice = dice6
+    s = g.play(GameMove.roll_dice(1))
+    assert GameMove.move_piece(1, 0, 6) in s.valid_actions
+    s = g.play(GameMove.move_piece(1, 0, 6))
+    # player 1 hits player 0 and sends her home
+    assert s.board.pieces == [Piece(0, 0, 0), Piece(0, 1, 30)]
 
 
 def test_move_blocked(monkeypatch):
-    dice4 = Dice()
-    monkeypatch.setattr(dice4, "roll", lambda: 4)
+    dice1 = Dice()
+    monkeypatch.setattr(dice1, "roll", lambda: 1)
+    dice5 = Dice()
+    monkeypatch.setattr(dice5, "roll", lambda: 5)
     dice6 = Dice()
     monkeypatch.setattr(dice6, "roll", lambda: 6)
 
@@ -422,19 +438,18 @@ def test_move_blocked(monkeypatch):
     g = GameEngine(b)
     assert GameMove.roll_dice(0) in g.state.valid_actions
 
-    g.dice = dice4
+    g.dice = dice5
     s = g.play(GameMove.roll_dice(0))
     assert GameMove.roll_dice(1) in s.valid_actions
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.piece_out(1, 0, 6))
+    s = g.play(GameMove.piece_out(1, 0))
     assert s.board.pieces == [Piece(0, 0), Piece(1, 0), Piece(0, 1, 1), Piece(1, 1)]
     assert GameMove.roll_dice(1) in s.valid_actions
 
-    g.dice = dice6
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.piece_out(1, 1, 6))
+    s = g.play(GameMove.piece_out(1, 1))
     assert s.board.pieces == [Piece(0, 0), Piece(1, 0), Piece(0, 1, 1), Piece(1, 1, 1)]
     assert GameMove.roll_dice(1) in s.valid_actions
 
@@ -481,16 +496,16 @@ def test_move_blocked(monkeypatch):
     ]
     assert GameMove.roll_dice(1) in s.valid_actions
 
-    g.dice = dice4
+    g.dice = dice5
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.move_piece(1, 0, 4))
+    s = g.play(GameMove.move_piece(1, 0, 5))
     assert s.board.pieces == [
         Piece(0, 0),
         Piece(1, 0),
-        Piece(0, 1, 29),
+        Piece(0, 1, 30),
         Piece(1, 1, 25),
     ]
-    assert GameMove.roll_dice(0) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(0)]
 
     s = g.play(GameMove.roll_dice(0))
 
@@ -498,17 +513,27 @@ def test_move_blocked(monkeypatch):
     assert s.valid_actions == [GameMove.roll_dice(1)]
 
     s = g.play(GameMove.roll_dice(1))
-    s = g.play(GameMove.move_piece(1, 1, 4))
+    s = g.play(GameMove.move_piece(1, 1, 5))
     assert s.board.pieces == [
         Piece(0, 0),
         Piece(1, 0),
-        Piece(0, 1, 29),
-        Piece(1, 1, 29),
+        Piece(0, 1, 30),
+        Piece(1, 1, 30),
     ]
-    assert GameMove.roll_dice(0) in s.valid_actions
+    assert s.valid_actions == [GameMove.roll_dice(0)]
 
     g.dice = dice6
     s = g.play(GameMove.roll_dice(0))
+    s = g.play(GameMove.piece_out(0, 0))
+    assert s.board.pieces == [
+        Piece(0, 0, 1),
+        Piece(1, 0),
+        Piece(0, 1, 30),
+        Piece(1, 1, 30),
+    ]
+    assert s.valid_actions == [GameMove.roll_dice(0)]
 
-    # i.e. player 0 can't move
-    # assert s.valid_actions == [GameMove.roll_dice(1)]
+    g.dice = dice1
+    s = g.play(GameMove.roll_dice(0))
+    # i.e. player 0 can't move: piece 1 is not out, and piece 0 is blocked
+    assert s.valid_actions == [GameMove.roll_dice(1)]

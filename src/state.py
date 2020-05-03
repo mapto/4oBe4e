@@ -34,7 +34,7 @@ class GameMove:
         return GameMove(MOVE_PIECE, player, piece, dice)
 
     @staticmethod
-    def piece_out(player: int, piece: int, dice: int):
+    def piece_out(player: int, piece: int, dice: int = 6):
         return GameMove(PIECE_OUT, player, piece, dice)
 
 
