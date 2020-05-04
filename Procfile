@@ -1,1 +1,1 @@
-web: pipenv run server
+web: pipenv sync && pipenv run server
