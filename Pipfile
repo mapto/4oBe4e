@@ -23,3 +23,6 @@ black = "*"
 mypy = "*"
 pylint = "*"
 rope = "*"
+
+[scripts]
+server = "src/web_server.py"
