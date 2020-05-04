@@ -175,25 +175,25 @@ def put_piece_on_board(
 
 
 def get_state(session: requests.sessions.Session, server_address: str) -> Dict:
-    req = session.get(f"http://{server_address}/state")
+    req = session.get(f"{server_address}/state")
     return req.json()
 
 
 def get_players(session: requests.sessions.Session, server_address: str) -> Dict:
-    req = session.get(f"http://{server_address}/players")
+    req = session.get(f"{server_address}/players")
     return req.json()
 
 
 def join_player(
     session: requests.sessions.Session, server_address: str, player_name: str
 ) -> Tuple:
-    req = session.get(f"http://{server_address}/join/{player_name}")
+    req = session.get(f"{server_address}/join/{player_name}")
     res = req.json()
     return (res["player_num"], res["player_token"])
 
 
 def roll_dice(session: requests.sessions.Session, server_address: str) -> Dict:
-    req = session.get(f"http://{server_address}/play/roll")
+    req = session.get(f"{server_address}/play/roll")
     return req.json()
 
 
@@ -203,7 +203,7 @@ def move_piece(
     piece_number: int,
     dice: int,
 ) -> Dict:
-    req = session.get(f"http://{server_address}/play/move/{piece_number}/{dice}")
+    req = session.get(f"{server_address}/play/move/{piece_number}/{dice}")
     return req.json()
 
 
@@ -213,7 +213,7 @@ def put_piece(
     piece_number: int,
     dice: int,
 ) -> Dict:
-    req = session.get(f"http://{server_address}/play/out/{piece_number}/{dice}")
+    req = session.get(f"{server_address}/play/out/{piece_number}/{dice}")
     return req.json()
 
 
@@ -461,9 +461,9 @@ def main():
                 if state["current_player"] == player_number:
                     log.debug(f">>> In turn")
                     if state["valid_actions"][0]["move_type"] == 1:
-                        # input(f"Press ENTER to roll dice")
+                        input(f"Press ENTER to roll dice")
                         dice = roll_dice(session, server_address)["dice"]
-                        # print(f">>> Rolled {dice}")
+                        print(f">>> Rolled {dice}")
                         continue
                     else:
                         dice = state["dice"]
