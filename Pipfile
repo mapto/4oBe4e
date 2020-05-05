@@ -25,4 +25,5 @@ pylint = "*"
 rope = "*"
 
 [scripts]
+client = "src/cli.py"
 server = "src/web_server.py"
