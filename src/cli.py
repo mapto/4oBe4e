@@ -457,23 +457,29 @@ def main():
             # check if_winner
             if state["number"] != state_serial:
                 state_serial = state["number"]
+                dice = state["valid_actions"][0]["dice"]
                 redraw(state["board"]["pieces"])
-                if state["current_player"] == player_number:
+                current_player_number = state["valid_actions"][0]["player"]
+                current_player_colour = eval(
+                    f"Fore.{PLAYER_COLOURS[current_player_number]}"
+                )
+                if current_player_number == player_number:
                     log.debug(f">>> In turn")
                     if state["valid_actions"][0]["move_type"] == 1:
-                        input(f"Press ENTER to roll dice")
+                        input(
+                            f"{current_player_colour}>>> Press ENTER to roll the dice"
+                        )
                         dice = roll_dice(session, server_address)["dice"]
-                        print(f">>> Rolled {dice}")
+                        print(f"{current_player_colour}>>> Rolled {dice}")
                         continue
                     else:
-                        dice = state["dice"]
                         actions = {}
                         for action in state["valid_actions"]:
                             actions[action["piece"]] = action["move_type"]
                         log.debug(actions)
                         piece = int(
                             input(
-                                f">>> Rolled {dice}, choose a piece {[piece for piece in actions.keys()]}: "
+                                f"{current_player_colour}>>> Rolled {dice}, choose a piece {[piece for piece in actions.keys()]}: "
                             )
                         )
                         if actions[piece] == 2:
@@ -482,6 +488,14 @@ def main():
                             put_piece(session, server_address, piece, dice)
                         continue
                 else:
+                    if dice == -1:
+                        print(
+                            f"{current_player_colour}>>> Waiting for Player {current_player_number} to roll"
+                        )
+                    else:
+                        print(
+                            f"{current_player_colour}>>> Player {current_player_number} rolled {dice}"
+                        )
                     log.debug(
                         f">>> Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
                     )
