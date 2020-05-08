@@ -164,6 +164,18 @@ def test_state(monkeypatch, client):
     assert game_state == dataclasses.asdict(state)
 
 
+def test_state_cached(monkeypatch, client):
+    # Given we have joined 4 players in the previous test
+
+    # When we call /state endpoint three times
+    state1 = json.loads(client.get("/state").data)
+    state2 = json.loads(client.get("/state").data)
+    state3 = json.loads(client.get("/state").data)
+
+    assert state1 == state2
+    assert state1 == state3
+
+
 def test_roll_no_user_token(monkeypatch, client):
     # Given 4 players had joined in the previous tests and the game had starte
 
