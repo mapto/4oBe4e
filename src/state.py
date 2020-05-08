@@ -64,7 +64,6 @@ class Board:
     def __post_init__(self):
         assert len(self.players) > 1
         assert len(set(self.players)) == len(self.players)
-        assert self.board_sides % len(self.players) == 0
         assert self.pieces_per_player > 0
         assert len(self.pieces) == len(self.players) * self.pieces_per_player
         assert self.board_sides > 2
