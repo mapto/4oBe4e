@@ -459,11 +459,18 @@ def main():
                 state_serial = state["number"]
                 dice = state["valid_actions"][0]["dice"]
                 redraw(state["board"]["pieces"])
+                winners = state["board"]["winners"]
                 current_player_number = state["valid_actions"][0]["player"]
                 current_player_colour = eval(
                     f"Fore.{PLAYER_COLOURS[current_player_number]}"
                 )
-                if current_player_number == player_number:
+                if current_player_number in winners:
+                    ordinals = ["1st", "2nd", "3rd"]
+                    winner_ordinal = ordinals[winners.index(current_player_number)]
+                    print(
+                        f"{current_player_colour}>>> Congratulations you are the {winner_ordinal} winner!"
+                    )
+                elif current_player_number == player_number:
                     log.debug(f">>> In turn")
                     if state["valid_actions"][0]["move_type"] == 1:
                         input(
