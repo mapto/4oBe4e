@@ -434,7 +434,9 @@ def main():
     log_level = args["--logger"]
 
     # Configure logger
-    logging.basicConfig(level=log_level.upper(), format="%(levelname)s: >>> %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(levelname)s: >>> %(message)s"
+    )
     log = logging.getLogger(__name__)
 
     # Init a Requests session
