@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from flask import Flask
-from flask import request, Response, redirect, send_from_directory
 import dataclasses, json
 import uuid
+from typing import Dict
+
+from flask import Flask
+from flask import request, Response
+
 from state import Board, GameState, GameMove
 from engine import GameEngine
-from typing import Dict
 from flask.json import jsonify
+
+from settings import host, port
 
 static_path = "."
 
-app = Flask(__name__, static_url_path="/.")
+app = Flask(__name__)
 
 player_token_name: Dict[str, str] = {}
 player_token_number: Dict[str, int] = {}
@@ -31,7 +35,7 @@ curl localhost:5000/players
 
 curl localhost:5000/state
 
-curl -H '4oBe4e-user-token:<user-token>' localhost:5000/play/roll
+curl -H 'user-token:<user-token>' localhost:5000/play/roll
 
 """
 
@@ -69,8 +73,8 @@ def players():
 
 def __get_player_number() -> int:
     try:
-        user_token = request.headers.get("4oBe4e-user-token")
-        missing_token_message = "There is no user token in the 4oBe4e-user-token header"
+        user_token = request.headers.get("user-token")
+        missing_token_message = "There is no user token in the user-token header"
         if user_token is None:
             raise ValueError(missing_token_message)
         user_id = player_token_number[user_token]
@@ -164,4 +168,4 @@ def play_out(piece: int, dice: int):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host=host, port=port, debug=True)

@@ -168,7 +168,7 @@ def test_roll_no_user_token(monkeypatch, client):
     # Given 4 players had joined in the previous tests and the game had starte
 
     # When we try to play with incorrect user token
-    rv = client.get("/play/roll", headers={"4oBe4e-user-token": "wrong-token"})
+    rv = client.get("/play/roll", headers={"user-token": "wrong-token"})
     error = json.loads(rv.data)
 
     # Then we expect response code 400
@@ -178,14 +178,14 @@ def test_roll_no_user_token(monkeypatch, client):
     assert rv.headers["content-type"].lower() == "application/json"
 
     # And an error message
-    assert error == {"error": "There is no user token in the 4oBe4e-user-token header"}
+    assert error == {"error": "There is no user token in the user-token header"}
 
 
 def test_roll(monkeypatch, client):
     # Given 4 players had joined in the previous tests and the game had starte
 
     # When we try to play with the correct user token
-    rv = client.get("/play/roll", headers={"4oBe4e-user-token": player1_token})
+    rv = client.get("/play/roll", headers={"user-token": player1_token})
     game_state = json.loads(rv.data)
 
     board = Board.create(players=[0, 1, 2, 3])

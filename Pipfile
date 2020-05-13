@@ -16,6 +16,8 @@ dataclasses = "*"
 importlib_metadata = "*"
 requests = "*"
 docopt = "*"
+uvicorn = "*"
+fastapi = "*"
 
 [dev-packages]
 pytest = "*"
