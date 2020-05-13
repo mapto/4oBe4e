@@ -175,25 +175,45 @@ def put_piece_on_board(
 
 
 def get_state(session: requests.sessions.Session, server_address: str) -> Dict:
-    req = session.get(f"http://{server_address}/state")
+    req = session.get(f"{server_address}/state")
     return req.json()
 
 
 def get_players(session: requests.sessions.Session, server_address: str) -> Dict:
-    req = session.get(f"http://{server_address}/players")
+    req = session.get(f"{server_address}/players")
     return req.json()
 
 
 def join_player(
     session: requests.sessions.Session, server_address: str, player_name: str
 ) -> Tuple:
-    req = session.get(f"http://{server_address}/join/{player_name}")
+    req = session.get(f"{server_address}/join/{player_name}")
     res = req.json()
     return (res["player_num"], res["player_token"])
 
 
 def roll_dice(session: requests.sessions.Session, server_address: str) -> Dict:
-    req = session.get(f"http://{server_address}/play/roll")
+    req = session.get(f"{server_address}/play/roll")
+    return req.json()
+
+
+def move_piece(
+    session: requests.sessions.Session,
+    server_address: str,
+    piece_number: int,
+    dice: int,
+) -> Dict:
+    req = session.get(f"{server_address}/play/move/{piece_number}/{dice}")
+    return req.json()
+
+
+def put_piece(
+    session: requests.sessions.Session,
+    server_address: str,
+    piece_number: int,
+    dice: int,
+) -> Dict:
+    req = session.get(f"{server_address}/play/out/{piece_number}/{dice}")
     return req.json()
 
 
@@ -244,27 +264,27 @@ def __coord_on_path(
 
 
     Test player 1:
-    >>> __coord_on_path(0, 1, 1)
+    >>> __coord_on_path(player_number=0, piece_number=1, piece_progress=1)
     (8, 2)
 
     Test player 2:
-    >>> __coord_on_path(1, 1, 1)
+    >>> __coord_on_path(player_number=1, piece_number=1, piece_progress=1)
     (2, 10)
 
     Test player 3:
-    >>> __coord_on_path(2, 1, 1)
+    >>> __coord_on_path(player_number=2, piece_number=1, piece_progress=1)
     (10, 16)
 
     Test player 4:
-    >>> __coord_on_path(3, 1, 1)
+    >>> __coord_on_path(player_number=3, piece_number=1, piece_progress=1)
     (16, 8)
 
     Test path wrap:
-    >>> __coord_on_path(3, 1, 56)
+    >>> __coord_on_path(player_number=3, piece_number=1, piece_progress=56)
     (16, 9)
 
     Test overlap:
-    >> __coord_on_path(2, 1, 17)
+    >>> __coord_on_path(player_number=1, piece_number=1, piece_progress=17)
     (10, 14)
     """
 
@@ -330,7 +350,7 @@ def __coord_on_path(
         (9, 2),
     )
 
-    return POSITION_TO_ROWCOL[progress_to_position(piece_number, piece_progress)]
+    return POSITION_TO_ROWCOL[progress_to_position(player_number, piece_progress)]
 
 
 def __coord_on_finish(
@@ -404,47 +424,96 @@ def __coord_in_target(
 
 
 def main():
+    """Main loop."""
+
+    # Parse args
     args = docopt(__doc__, version="4oBe4e Console Client v0.1")
 
     server_address = args["<server_address>"]
     player_name = args["<player_name>"]
     log_level = args["--logger"]
 
-    logging.basicConfig(level=log_level.upper(), format="%(levelname)s: %(message)s")
+    # Configure logger
+    logging.basicConfig(
+        level=log_level.upper(), format="%(levelname)s: >>> %(message)s"
+    )
     log = logging.getLogger(__name__)
 
+    # Init a Requests session
     session = requests.Session()
 
+    # Join game
     player_number, player_token = join_player(session, server_address, player_name)
     session.headers.update({"4oBe4e-user-token": player_token})
 
     # Changes on state update
     state_serial = -1
     while True:
+        log.debug("Polling state")
         state = get_state(session, server_address)
+        log.debug(state)
         if "error" in state:
             log.error(f"No valid game found ({state['error']})")
         else:
-            redraw(state["board"]["pieces"])
             # TODO:
             # check if_winner
             if state["number"] != state_serial:
                 state_serial = state["number"]
-                if state["current_player"] == player_number:
-                    # TODO:
-                    # roll the dice
-                    # make a move
-                    log.debug("In turn")
+                dice = state["valid_actions"][0]["dice"]
+                redraw(state["board"]["pieces"])
+                winners = state["board"]["winners"]
+                current_player_number = state["valid_actions"][0]["player"]
+                current_player_colour = eval(
+                    f"Fore.{PLAYER_COLOURS[current_player_number]}"
+                )
+                if current_player_number in winners:
+                    ordinals = ["1st", "2nd", "3rd"]
+                    winner_ordinal = ordinals[winners.index(current_player_number)]
+                    print(
+                        f"{current_player_colour}>>> Congratulations you are the {winner_ordinal} winner!"
+                    )
+                elif current_player_number == player_number:
+                    log.debug(f"In turn")
+                    if state["valid_actions"][0]["move_type"] == 1:
+                        input(
+                            f"{current_player_colour}>>> Press ENTER to roll the dice"
+                        )
+                        dice = roll_dice(session, server_address)["dice"]
+                        print(f"{current_player_colour}>>> Rolled {dice}")
+                        continue
+                    else:
+                        actions = {}
+                        for action in state["valid_actions"]:
+                            actions[action["piece"]] = action["move_type"]
+                        log.debug(actions)
+                        piece = int(
+                            input(
+                                f"{current_player_colour}>>> Rolled {dice}, choose a piece {[piece for piece in actions.keys()]}: "
+                            )
+                        )
+                        if actions[piece] == 2:
+                            move_piece(session, server_address, piece, dice)
+                        if actions[piece] == 3:
+                            put_piece(session, server_address, piece, dice)
+                        continue
                 else:
+                    if dice == -1:
+                        print(
+                            f"{current_player_colour}>>> Waiting for Player {current_player_number} to roll"
+                        )
+                    else:
+                        print(
+                            f"{current_player_colour}>>> Player {current_player_number} rolled {dice}"
+                        )
                     log.debug(
                         f"Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
                     )
             else:
-                log.debug("No change in state")
+                log.debug("No state change")
 
         # Pause before polling for state changes
-        sleep(5)
-        log.debug("Polling state")
+        log.debug("Sleeping")
+        sleep(1)
 
     # DEBUG import ipdb; ipdb.set_trace()
 
