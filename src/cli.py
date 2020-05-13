@@ -434,7 +434,7 @@ def main():
     log_level = args["--logger"]
 
     # Configure logger
-    logging.basicConfig(level=log_level.upper(), format="%(levelname)s: %(message)s")
+    logging.basicConfig(level=log_level.upper(), format="%(levelname)s: >>> %(message)s")
     log = logging.getLogger(__name__)
 
     # Init a Requests session
@@ -447,11 +447,11 @@ def main():
     # Changes on state update
     state_serial = -1
     while True:
-        log.debug(">>> Polling state")
+        log.debug("Polling state")
         state = get_state(session, server_address)
         log.debug(state)
         if "error" in state:
-            log.error(f">>> No valid game found ({state['error']})")
+            log.error(f"No valid game found ({state['error']})")
         else:
             # TODO:
             # check if_winner
@@ -471,7 +471,7 @@ def main():
                         f"{current_player_colour}>>> Congratulations you are the {winner_ordinal} winner!"
                     )
                 elif current_player_number == player_number:
-                    log.debug(f">>> In turn")
+                    log.debug(f"In turn")
                     if state["valid_actions"][0]["move_type"] == 1:
                         input(
                             f"{current_player_colour}>>> Press ENTER to roll the dice"
@@ -504,13 +504,13 @@ def main():
                             f"{current_player_colour}>>> Player {current_player_number} rolled {dice}"
                         )
                     log.debug(
-                        f">>> Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
+                        f"Not in turn (player: {player_number} | player_in_turn: {state['current_player']})"
                     )
             else:
-                log.debug(">>> No state change")
+                log.debug("No state change")
 
         # Pause before polling for state changes
-        log.debug(">>> Sleeping")
+        log.debug("Sleeping")
         sleep(1)
 
     # DEBUG import ipdb; ipdb.set_trace()
