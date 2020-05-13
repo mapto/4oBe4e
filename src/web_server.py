@@ -19,6 +19,7 @@ player_token_number: Dict[str, int] = {}
 player_number_token: Dict[int, str] = {}
 player_name_token: Dict[str, str] = {}
 engine: GameEngine
+current_state_json: Response
 
 doc = """
 Manual test:
@@ -57,6 +58,7 @@ def join(player: str):
     if len(player_token_name) == 4:
         board = Board.create(list(player_token_number.values()))
         engine = GameEngine(board)
+        __state_to_json(engine.state)
     return jsonify({"player_token": player_uuid, "player_num": player_number})
 
 
@@ -101,13 +103,15 @@ def __no_game_response() -> Response:
 
 
 def __state_to_json(state: GameState) -> Response:
-    return jsonify(dataclasses.asdict(state))
+    global current_state_json
+    current_state_json = jsonify(dataclasses.asdict(state))
+    return current_state_json
 
 
 @app.route("/state")
 def get_state():
     try:
-        return __state_to_json(engine.state)
+        return current_state_json
     except NameError:
         return __no_game_response()
 
