@@ -188,5 +188,4 @@ async def play_out(piece: int, dice: int):
 
 if __name__ == "__main__":
     import uvicorn  # type: ignore
-
     uvicorn.run(app, host=host, port=port, debug=True)
