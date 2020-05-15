@@ -444,7 +444,7 @@ def main():
 
     # Join game
     player_number, player_token = join_player(session, server_address, player_name)
-    session.headers.update({"4oBe4e-user-token": player_token})
+    session.headers.update({"user-token": player_token})
 
     # Changes on state update
     state_serial = -1

@@ -65,3 +65,9 @@ $ pip3 install pipenv
 $ pipenv --python /usr/bin/python3
 $ pipenv sync --dev
 ```
+
+### Run 
+Standalone server with reloading and debugging
+```
+$ uvicorn fastapi_server:app --host 0.0.0.0 --port 5000 --reload --debug
+```
