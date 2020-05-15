@@ -18,9 +18,8 @@ curl -H 'user-token:<user-token>' localhost:5000/play/roll
 
 from fastapi import FastAPI
 from fastapi import Header, HTTPException
-from fastapi.responses import JSONResponse
 
-import dataclasses, json
+import dataclasses
 import uuid
 
 from settings import host, port
@@ -40,13 +39,17 @@ player_name_token: Dict[str, str] = {}
 engine: GameEngine
 
 
-@app.get("/join/<player>")
-async def join(player: str) -> JSONResponse:
-    global engine  # TODO Where shall we keep the curren running GameEngine/s ?
+@app.get("/join/{player}")
+async def join(player: str) -> Dict[str, Any]:
+    """New player registration
+
+    Taking player name as parameter
+    """
+    global engine  # TODO Where shall we keep the current running GameEngine/s ?
     if player in player_name_token:
         token = player_name_token[player]
         num = player_token_number[token]
-        return JSONResponse(content={"player_token": token, "player_num": num})
+        return {"player_token": token, "player_num": num}
     if len(player_token_name) == 4:
         players: Dict[str, int] = dict(
             (name, player_token_number[token])
@@ -61,16 +64,16 @@ async def join(player: str) -> JSONResponse:
     if len(player_token_name) == 4:
         board = Board.create(list(player_token_number.values()))
         engine = GameEngine(board)
-    return JSONResponse(
-        content={"player_token": player_uuid, "player_num": player_number}
-    )
+    return {"player_token": player_uuid, "player_num": player_number}
 
 
 @app.get("/players")
-async def players():
-    return dict(
-        [name, player_token_number[token]] for name, token in player_name_token.items()
-    )
+async def players() -> Dict[str, int]:
+    """Shows the players registered in the game
+    """
+    return {
+        name: player_token_number[token] for name, token in player_name_token.items()
+    }
 
 
 def __get_player_number(*, user_token: str = Header(None)) -> int:
@@ -87,9 +90,13 @@ def __get_player_number(*, user_token: str = Header(None)) -> int:
 
 
 @app.get("/state")
-async def get_state():
+async def get_state() -> GameState:
+    """Shows the current game state
+
+    With all possible details
+    """
     try:
-        return JSONResponse(content=engine.state)
+        return engine.state
     except NameError:
         players = {
             name: player_token_number[token]
@@ -105,7 +112,11 @@ async def get_state():
 
 
 @app.get("/play/roll")
-async def play_roll():
+async def play_roll() -> GameState:
+    """Asks the game to roll a dice
+
+    Only the current player as identified by the state can legitimately do this
+    """
     try:
         engine.state
     except:
@@ -125,16 +136,20 @@ async def play_roll():
         player = __get_player_number()
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=ve.args[0])
-    else:
-        new_state = engine.play(GameMove.roll_dice(player))
-        return JSONResponse(content=new_state)
+
+    new_state = engine.play(GameMove.roll_dice(player))
+    return new_state
 
 
 # We pass the dice here to vrify the client had made a choice based on
 # the current server state.
 # TODO: shall we pass the state number for the same reason?
-@app.get("/play/move/<piece>/<dice>")
-async def play_move(piece: int, dice: int):
+@app.get("/play/move/{piece}/{dice}")
+async def play_move(piece: int, dice: int) -> GameState:
+    """Makes a move
+
+    Needs to be valid
+    """
     try:
         engine.state
     except:
@@ -153,16 +168,18 @@ async def play_move(piece: int, dice: int):
         player = __get_player_number()
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=ve.args[0])
-    else:
-        new_state = engine.play(GameMove.move_piece(player, piece, dice))
-        return JSONResponse(content=new_state)
+
+    new_state = engine.play(GameMove.move_piece(player, piece, dice))
+    return new_state
 
 
-# We pass the dice here to vrify the client had made a choice based on
-# the current server state.
-# TODO: shall we pass the state number for the same reason?
-@app.get("/play/out/<piece>/<dice>")
-async def play_out(piece: int, dice: int):
+@app.get("/play/out/{piece}")
+@app.get("/play/out/{piece}/{dice}")
+async def play_out(piece: int, dice: int = 6) -> GameState:
+    """Takes a piece out 
+
+    Dice is redundant, as it is always 6
+    """
     try:
         engine.state
     except:
@@ -181,11 +198,12 @@ async def play_out(piece: int, dice: int):
         player = __get_player_number()
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=ve.args[0])
-    else:
-        new_state = engine.play(GameMove.piece_out(player, piece, dice))
-        return JSONResponse(content=new_state)
+
+    new_state = engine.play(GameMove.piece_out(player, piece, dice))
+    return new_state
 
 
 if __name__ == "__main__":
     import uvicorn  # type: ignore
+
     uvicorn.run(app, host=host, port=port, debug=True)
