@@ -20,7 +20,7 @@ class GameEngine:
         return self.state
 
     def __on_next_player(self) -> GameMove:
-        """ Update engine state for next player's turn and return corresponding dice roll """
+        """Update engine state for next player's turn and return corresponding dice roll"""
         current_player_index = self.state.board.players.index(self.state.current_player)
         next_index = (current_player_index + 1) % len(self.state.board.players)
         next_player = self.state.board.players[next_index]
@@ -46,7 +46,7 @@ class GameEngine:
         valid_actions: List[GameMove] = []
 
         def calc_valid_actions(piece: Piece) -> None:
-            """ Converts representation from state/engine representation to game/main representation to reuse logic """
+            """Converts representation from state/engine representation to game/main representation to reuse logic"""
             from game import is_valid_move
             from piece import Piece as GamePiece
 

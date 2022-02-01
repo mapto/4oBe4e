@@ -60,8 +60,7 @@ def _colour(name: str = "WHITE") -> str:
 
 
 def draw_board() -> List[List[Any]]:
-    """ Draw an ASCII board with the current pieces.
-    """
+    """Draw an ASCII board with the current pieces."""
 
     ROWS = 19
     COLS = 19
@@ -133,7 +132,7 @@ def _cant_overlap(piece_number: int, player_number: int, piece_progress=0) -> bo
 
 
 def draw_pieces_on_board(board: List[List[Any]], pieces: List[Dict]) -> List[List[Any]]:
-    """ It is not part of a job of this method to resolve game logic,
+    """It is not part of a job of this method to resolve game logic,
     such as collision of pieces of different players on the path"""
     for piece in pieces:
         (x, y) = put_piece_on_board(piece["number"], piece["player"], piece["progress"])
@@ -221,7 +220,7 @@ def __coord_in_home(
     piece_number: int, player_number: int, piece_progress=0
 ) -> Tuple[int, int]:
     """Draw in home positions: each piece has its location. Progress is always same, thus irrelevant
-    
+
     >>> __coord_in_home(0, 0)
     (5, 2)
 
@@ -357,13 +356,13 @@ def __coord_on_finish(
     piece_number: int, player_number: int, piece_progress=0
 ) -> Tuple[int, int]:
     """Piece number is irrelevant
-    
+
     >>> __coord_on_finish(1, 0, 57)
     (9, 3)
 
     >>> __coord_on_finish(1, 0, 61)
     (9, 7)
-    
+
     >>> __coord_on_finish(1, 1, 57)
     (3, 9)
 
@@ -399,7 +398,7 @@ def __coord_in_target(
 ) -> Tuple[int, int]:
     """Draw in target positions: each piece has its location.
     Progress is always same, thus irrelevant
-    
+
     >>> __coord_in_target(0, 0, 62)
     (7, 6)
 

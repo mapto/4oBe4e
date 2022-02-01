@@ -59,8 +59,7 @@ def do_move(
 
 
 def choose_first(players: Set[Player]) -> Player:
-    """ score 0 means player hasn't drawn, -1 means is already out of drawing
-    """
+    """score 0 means player hasn't drawn, -1 means is already out of drawing"""
     m = 0
     score = [0] * len(players)
     need_more = True
@@ -117,7 +116,7 @@ def check_endgame(status: List[Piece]) -> bool:
 
 def __coord_in_home(piece: Piece) -> Tuple[int, int]:
     """Draw in home positions: each piece has its location. Progress is always same, thus irrelevant
-    
+
     >>> __coord_in_home(Piece(0, 0))
     (5, 2)
 
@@ -249,13 +248,13 @@ def __coord_on_path(piece: Piece) -> Tuple[int, int]:
 
 def __coord_on_finish(piece: Piece) -> Tuple[int, int]:
     """Piece number is irrelevant
-    
+
     >>> __coord_on_finish(Piece(0, 1, 57))
     (9, 3)
 
     >>> __coord_on_finish(Piece(0, 1, 61))
     (9, 7)
-    
+
     >>> __coord_on_finish(Piece(1, 1, 57))
     (3, 9)
 
@@ -289,7 +288,7 @@ def __coord_on_finish(piece: Piece) -> Tuple[int, int]:
 def __coord_in_target(piece: Piece) -> Tuple[int, int]:
     """Draw in target positions: each piece has its location.
     Progress is always same, thus irrelevant
-    
+
     >>> __coord_in_target(Piece(0, 0, 62))
     (7, 6)
 
@@ -465,10 +464,10 @@ def others_on_position(
 ) -> List[Piece]:
     """Do other players block the position by having more than one piece on it.
     Position argument is board position, not piece progress.
-    
+
     >>> others_on_position([Piece(1,0,29)], 0, 1, 28, 56)
     [0]
-    
+
     >>> others_on_position([Piece(1,0,29), Piece(1,1,29)], 0, 1, 28, 56)
     [0, 1]
 

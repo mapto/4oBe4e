@@ -53,10 +53,10 @@ class Piece:
         """Position of player on board. Shared by pieces of all players.
         Used to determine colisions when on common path.
         Return 0 when not in a position where could clash with others.
-        
+
         >>> p = Piece(0, 0); p.position()
         0
-                
+
         >>> p = Piece(3, 0, 57); p.position()
         0
 
@@ -68,7 +68,7 @@ class Piece:
 
         >>> p = Piece(2, 0, 27); p.position()
         55
-                
+
         >>> p = Piece(3, 0, 13); p.position()
         55
         """

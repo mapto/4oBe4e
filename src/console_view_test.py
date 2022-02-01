@@ -3,7 +3,7 @@
 
 
 def test_draw_board():
-    """ Test drawing of ASCII board. """
+    """Test drawing of ASCII board."""
 
     from console_view import draw_board
 

@@ -35,10 +35,10 @@ def progress_to_position(
     """Position of player on board. Shared by all players.
     Used to determine colisions when on common path.
     Return 0 when not in a position where could clash with others
-    
+
     >>> progress_to_position(0, 0)
     0
-            
+
     >>> progress_to_position(3, 57)
     0
 
@@ -50,13 +50,13 @@ def progress_to_position(
 
     >>> progress_to_position(2, 27)
     55
-            
+
     >>> progress_to_position(3, 13)
     55
-            
+
     >>> progress_to_position(0, 1, 28)
     1
-            
+
     >>> progress_to_position(1, 29, 28)
     1
     """

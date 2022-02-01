@@ -53,7 +53,7 @@ def test_default_board_init(monkeypatch):
 
 def test_2_players_board_init(monkeypatch):
     """Make sure if we have just two players in a 4 corner board for them
-      to be at the opposite corners instead of next to each other.
+    to be at the opposite corners instead of next to each other.
     """
     board = Board.create([1, 3])
 
@@ -92,7 +92,7 @@ def test_2_players_board_init(monkeypatch):
 
 def test_3_players_6_corner_board_init(monkeypatch):
     """Make sure if we have just 3 players in a 5 corner board for them
-      to be at the opposite corners instead of next to each other.
+    to be at the opposite corners instead of next to each other.
     """
     board = Board.create([0, 2, 3], board_sides=6, board_side_length=9)
 

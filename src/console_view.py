@@ -47,8 +47,7 @@ def _colour(name: str = "WHITE") -> str:
 
 
 def draw_board() -> List[List[Any]]:
-    """ Draw an ASCII board with the current pieces.
-    """
+    """Draw an ASCII board with the current pieces."""
 
     ROWS = 19
     COLS = 19
@@ -111,7 +110,7 @@ def _cant_overlap(piece: Piece) -> bool:
 def draw_pieces_on_board(
     board: List[List[Any]], pieces: List[Piece]
 ) -> List[List[Any]]:
-    """ It is not part of a job of this method to resolve game logic,
+    """It is not part of a job of this method to resolve game logic,
     such as collision of pieces of different players on the path"""
     for piece in pieces:
         (x, y) = put_piece_on_board(piece)

@@ -53,13 +53,13 @@ class Board:
     player_shift: int = board_side_length
 
     # the normal walk path
-    path_zone_length: int = (board_sides * board_side_length)
+    path_zone_length: int = board_sides * board_side_length
 
     # the length of the finish zone (at the end of the path_zone)
     finish_zone_length: int = 5
 
     # the position on which the piece is out of the finish zone
-    end_progress: int = (path_zone_length + finish_zone_length + 1)
+    end_progress: int = path_zone_length + finish_zone_length + 1
 
     def __post_init__(self):
         assert len(self.players) > 1
@@ -84,8 +84,8 @@ class Board:
     ):
         pieces: List[Piece] = []
         player_shift: int = board_side_length * board_sides // len(players)
-        path_zone_length: int = (board_sides * board_side_length)
-        end_progress: int = (path_zone_length + finish_zone_length + 1)
+        path_zone_length: int = board_sides * board_side_length
+        end_progress: int = path_zone_length + finish_zone_length + 1
         for player_index in range(len(players)):
             for piece_num in range(pieces_per_player):
                 pieces.append(Piece(piece_num, players[player_index]))
@@ -103,7 +103,7 @@ class Board:
         )
 
     def relative_position(self, piece: Piece) -> int:
-        """ Relative position is only relevant within the path_zone.
+        """Relative position is only relevant within the path_zone.
         Has values 1..path_zone_length
         """
         assert self.is_on_path(piece)
